@@ -39,21 +39,6 @@
         .form-link:hover {
             background-color: #45a049;
         }
-        .back-home {
-            display: block;
-            background-color: #673ab7;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            margin: 10px 0;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-        .back-home:hover {
-            background-color: #5e2fbb;
-        }
         footer {
             text-align: center;
             margin-top: 20px;
@@ -81,15 +66,12 @@
 <body>
     <div class="container">
         <h1>GERENCIAL HS</h1>
-        <!-- Substituindo o link de cadastro de folga para o novo site -->
-        <a href="https://www.seusite.com.br/cadastro-de-folga" class="form-link" target="_blank">CADASTRO DE FOLGA</a>
+        <!-- Substituí o link de "CADASTRO DE FOLGAS" pelo novo link -->
+        <a href="https://hsoperacoes.github.io/FOLGAS/" class="form-link" target="_blank">CADASTRO DE FOLGAS</a>
         <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">CADASTRO DE FALTA</a>
         <a href="https://forms.gle/Wy9axrgLnoC5ymBk6" class="form-link" target="_blank">CONTAGEM DE SACOLA</a>
         <a href="https://forms.gle/GCzCaD6iLEh9Hhhu7" class="form-link" target="_blank">DIVERGÊNCIA DE NOTAS FISCAIS</a>
         <a href="https://forms.gle/Qp1yY1EAX1FLc7Wg9" class="form-link" target="_blank">TRANSFERÊNCIA ENTRE LOJAS</a>
-        
-        <!-- Botão de retorno à página inicial -->
-        <a href="https://www.seusite.com.br" class="back-home">VOLTAR PARA A HOME</a>
     </div>
 </body>
 </html>
