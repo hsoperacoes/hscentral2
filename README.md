@@ -102,8 +102,8 @@
             margin-right: 10px;
             flex-shrink: 0;
         }
-        /* ESTILOS PARA OUTROS ELEMENTOS DO FORMULÁRIO */
-        input, select, textarea {
+        /* ESTILOS PARA INPUTS E TEXTAREA */
+        input, textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #666;
@@ -112,8 +112,35 @@
             color: white;
             font-size: 14px;
         }
+        /* ESTILO ESPECÍFICO PARA SELECT (DROPDOWN) - CORRIGIDO */
         select {
-            height: 46px;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #666;
+            border-radius: 4px;
+            background-color: #555;
+            color: white;
+            font-size: 14px;
+            height: auto;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        select:focus {
+            outline: none;
+            border-color: #673ab7;
+            box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.2);
+        }
+        select option {
+            background: #555;
+            color: white;
+            padding: 10px;
         }
         button[type="submit"] {
             background-color: #673ab7;
@@ -150,6 +177,9 @@
             display: none;
             margin-top: 15px;
         }
+        #outrosTransportadora {
+            display: none;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -175,7 +205,7 @@
         </a>
     </div>
     
-    <!-- Página de Folgas (NOVA VERSÃO) -->
+    <!-- Página de Folgas -->
     <div class="container" data-page="folga">
         <a href="#" class="home-btn" data-target="main">
             <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
@@ -266,7 +296,7 @@
                     </select>
                 </div>
 
-                <div class="form-group" id="outrosTransportadora" style="display: none;">
+                <div class="form-group" id="outrosTransportadora">
                     <legend>Qual é a Transportadora?</legend>
                     <input type="text" id="outraTransportadora" name="outraTransportadora">
                 </div>
@@ -356,8 +386,10 @@
                     // Configurar datas quando a página for mostrada
                     if (pageId === 'folga') {
                         document.getElementById('dataTrabalho').valueAsDate = new Date();
+                        document.getElementById('motivoOutros').style.display = 'none';
                     } else if (pageId === 'divergencia') {
                         document.getElementById('dataRecebimento').valueAsDate = new Date();
+                        document.getElementById('outrosTransportadora').style.display = 'none';
                     }
                 }
                 
