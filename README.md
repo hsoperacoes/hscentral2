@@ -83,22 +83,26 @@
             margin-bottom: 12px;
             display: block;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #ddd;
+        /* ESTILO ESPECÍFICO PARA RADIO BUTTONS ALINHADOS À ESQUERDA */
+        .radio-label {
+            display: flex;
+            align-items: center;
+            text-align: left;
             padding: 10px;
             border-radius: 4px;
             background-color: #555;
+            margin-bottom: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        label:hover {
+        .radio-label:hover {
             background-color: #666;
         }
-        input[type="radio"], input[type="checkbox"] {
+        .radio-label input[type="radio"] {
             margin-right: 10px;
+            flex-shrink: 0;
         }
+        /* ESTILOS PARA OUTROS ELEMENTOS DO FORMULÁRIO */
         input, select, textarea {
             width: 100%;
             padding: 12px;
@@ -185,11 +189,11 @@
             <form id="folgaForm">
                 <fieldset class="form-group" id="filialGroup">
                     <legend>Filial</legend>
-                    <label><input type="radio" name="filial" value="ARTUR"> ARTUR</label>
-                    <label><input type="radio" name="filial" value="FLORIANO"> FLORIANO</label>
-                    <label><input type="radio" name="filial" value="JOTA"> JOTA</label>
-                    <label><input type="radio" name="filial" value="MODA"> MODA</label>
-                    <label><input type="radio" name="filial" value="PONTO"> PONTO</label>
+                    <label class="radio-label"><input type="radio" name="filial" value="ARTUR"> ARTUR</label>
+                    <label class="radio-label"><input type="radio" name="filial" value="FLORIANO"> FLORIANO</label>
+                    <label class="radio-label"><input type="radio" name="filial" value="JOTA"> JOTA</label>
+                    <label class="radio-label"><input type="radio" name="filial" value="MODA"> MODA</label>
+                    <label class="radio-label"><input type="radio" name="filial" value="PONTO"> PONTO</label>
                 </fieldset>
 
                 <div class="form-group" id="funcionarioGroup">
@@ -206,9 +210,9 @@
 
                 <fieldset class="form-group" id="motivoGroup">
                     <legend>Motivo da Folga</legend>
-                    <label><input type="radio" name="motivo" value="DOMINGO"> DOMINGO</label>
-                    <label><input type="radio" name="motivo" value="FERIADO"> FERIADO</label>
-                    <label><input type="radio" name="motivo" value="OUTROS"> OUTROS</label>
+                    <label class="radio-label"><input type="radio" name="motivo" value="DOMINGO"> DOMINGO</label>
+                    <label class="radio-label"><input type="radio" name="motivo" value="FERIADO"> FERIADO</label>
+                    <label class="radio-label"><input type="radio" name="motivo" value="OUTROS"> OUTROS</label>
                 </fieldset>
 
                 <div class="form-group" id="motivoOutros">
