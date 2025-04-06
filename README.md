@@ -76,7 +76,7 @@
             margin-bottom: 5px;
             color: #ddd;
         }
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #666;
@@ -121,7 +121,7 @@
         <h1><i class="fas fa-tasks"></i> GERENCIAL HS</h1>
         
         <!-- Links principais -->
-        <a href="https://hsoperacoes.github.io/FOLGAS/" class="form-link" target="_blank">
+        <a href="#" class="form-link" onclick="showFolgaForm()">
             <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGAS
         </a>
         <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">
@@ -136,6 +136,67 @@
         <a href="https://forms.gle/Qp1yY1EAX1FLc7Wg9" class="form-link" target="_blank">
             <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
         </a>
+    </div>
+    
+    <!-- Container do formulário de folgas (inicialmente oculto) -->
+    <div class="container" id="folga-container" style="display: none;">
+        <a href="#" class="home-btn" onclick="showMainPage()">
+            <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
+        </a>
+        
+        <div class="form-container" id="folga-form">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #fff;">
+                <i class="far fa-calendar-alt"></i> Cadastro de Folgas
+            </h2>
+            
+            <form id="folgaForm" onsubmit="enviarFolgaForm(event)">
+                <div class="form-group">
+                    <label>Nome do Colaborador</label>
+                    <input type="text" name="colaborador" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Filial</label>
+                    <select name="filial" required>
+                        <option value="">Selecione uma filial</option>
+                        <option value="ARTUR">ARTUR</option>
+                        <option value="FLORIANO">FLORIANO</option>
+                        <option value="JOTA">JOTA</option>
+                        <option value="MODA">MODA</option>
+                        <option value="PONTO">PONTO</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Data da Folga</label>
+                    <input type="date" name="data_folga" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Motivo</label>
+                    <select name="motivo" required>
+                        <option value="">Selecione o motivo</option>
+                        <option value="Descanso">Descanso</option>
+                        <option value="Consulta Médica">Consulta Médica</option>
+                        <option value="Assuntos Pessoais">Assuntos Pessoais</option>
+                        <option value="Outros">Outros</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Observações (opcional)</label>
+                    <textarea name="observacoes" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit">SOLICITAR FOLGA</button>
+                </div>
+            </form>
+
+            <div id="folgaLoadingMessage" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i> Enviando solicitação...
+            </div>
+        </div>
     </div>
     
     <!-- Container do formulário de divergências (inicialmente oculto) -->
@@ -235,23 +296,34 @@
     </footer>
 
     <script>
-        // Mostrar formulário de divergências
-        function showDivergenciaForm() {
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('divergencia-container').style.display = 'block';
-            document.getElementById('divergencia-form').style.display = 'block';
-            
-            // Configura a data atual como padrão
-            document.getElementById('dataRecebimento').valueAsDate = new Date();
-            
-            // Rolagem suave para o topo
+        // Mostrar/ocultar páginas
+        function showMainPage() {
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('folga-container').style.display = 'none';
+            document.getElementById('divergencia-container').style.display = 'none';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
-        // Voltar para a página principal
-        function showMainPage() {
-            document.getElementById('main-container').style.display = 'block';
+        function showFolgaForm() {
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('folga-container').style.display = 'block';
             document.getElementById('divergencia-container').style.display = 'none';
+            
+            // Configura a data atual como padrão para a folga
+            const dataFolgaInput = document.querySelector('#folga-form input[name="data_folga"]');
+            dataFolgaInput.valueAsDate = new Date();
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function showDivergenciaForm() {
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('folga-container').style.display = 'none';
+            document.getElementById('divergencia-container').style.display = 'block';
+            
+            // Configura a data atual como padrão para recebimento
+            document.getElementById('dataRecebimento').valueAsDate = new Date();
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
@@ -261,7 +333,7 @@
             outrosDiv.style.display = this.value === 'OUTROS' ? 'block' : 'none';
         });
         
-        // Função de envio do formulário
+        // Função de envio do formulário de divergências
         let isSubmitting = false;
 
         function enviarFormulario(event) {
@@ -287,7 +359,6 @@
             .then(data => {
                 alert("SUA DIVERGÊNCIA FOI ENVIADA COM SUCESSO, AGRADECEMOS SEU APOIO");
                 document.getElementById("formulario").reset();
-                // Configura a data atual novamente após reset
                 document.getElementById('dataRecebimento').valueAsDate = new Date();
             })
             .catch(error => {
@@ -297,6 +368,49 @@
                 setTimeout(() => {
                     button.disabled = false;
                     button.innerHTML = 'ENVIAR DIVERGÊNCIA';
+                    isSubmitting = false;
+                    loadingMessage.style.display = "none";
+                }, 100);
+            });
+        }
+        
+        // Função de envio do formulário de folgas
+        function enviarFolgaForm(event) {
+            event.preventDefault();
+
+            if (isSubmitting) return;
+            isSubmitting = true;
+
+            const button = event.target.querySelector("button[type='submit']");
+            const loadingMessage = document.getElementById("folgaLoadingMessage");
+
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+            loadingMessage.style.display = "block";
+
+            var formData = new FormData(document.getElementById("folgaForm"));
+
+            // Substitua esta URL pela do seu Google Apps Script para folgas
+            fetch("SUA_URL_DO_GOOGLE_SCRIPT_PARA_FOLGAS", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert("SOLICITAÇÃO DE FOLGA ENVIADA COM SUCESSO!");
+                document.getElementById("folgaForm").reset();
+                
+                // Configura a data atual novamente após reset
+                const dataFolgaInput = document.querySelector('#folga-form input[name="data_folga"]');
+                dataFolgaInput.valueAsDate = new Date();
+            })
+            .catch(error => {
+                alert("Erro ao enviar a solicitação. Tente novamente.");
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    button.disabled = false;
+                    button.innerHTML = 'SOLICITAR FOLGA';
                     isSubmitting = false;
                     loadingMessage.style.display = "none";
                 }, 100);
