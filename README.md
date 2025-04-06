@@ -19,7 +19,7 @@
         }
         .container {
             width: 100%;
-            max-width: 800px;
+            max-width: 600px;
             margin: 0 auto;
             background-color: #333;
             padding: 20px;
@@ -63,83 +63,58 @@
         }
         .form-container {
             background-color: #444;
-            padding: 25px;
+            padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
-            display: none; /* Inicialmente oculto */
+            display: none;
         }
         .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group legend {
-            font-size: 16px;
-            font-weight: bold;
-            color: #ddd;
-            margin-bottom: 12px;
-            display: block;
+            margin-bottom: 15px;
         }
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             color: #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #555;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        label:hover {
-            background-color: #666;
-        }
-        input[type="radio"], input[type="checkbox"] {
-            margin-right: 10px;
         }
         input, select, textarea {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border: 1px solid #666;
             border-radius: 4px;
             background-color: #555;
             color: white;
-            font-size: 14px;
-        }
-        select {
-            height: 46px;
         }
         button[type="submit"] {
-            background-color: #673ab7;
+            background-color: #1a73e8;
             color: white;
             border: none;
-            padding: 14px;
+            padding: 12px;
             border-radius: 4px;
             width: 100%;
             cursor: pointer;
             font-weight: bold;
-            font-size: 16px;
             transition: background-color 0.3s;
-            margin-top: 20px;
         }
         button[type="submit"]:hover {
-            background-color: #5e35b1;
+            background-color: #1765c0;
         }
         .loading-message {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 10px;
             color: #4CAF50;
             display: none;
         }
         footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 20px;
             font-size: 14px;
             color: #fff;
             background-color: #333;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
         }
         #motivoOutros {
             display: none;
-            margin-top: 15px;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -148,8 +123,7 @@
     <div class="container" id="main-container">
         <h1><i class="fas fa-tasks"></i> GERENCIAL HS</h1>
         
-        <!-- Links principais -->
-        <a href="#" class="form-link" onclick="showFolgaForm()">
+        <a href="#" id="folgaLink" class="form-link">
             <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGAS
         </a>
         <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">
@@ -158,7 +132,7 @@
         <a href="https://forms.gle/Wy9axrgLnoC5ymBk6" class="form-link" target="_blank">
             <i class="fas fa-shopping-bag"></i> CONTAGEM DE SACOLA
         </a>
-        <a href="#" class="form-link" onclick="showDivergenciaForm()">
+        <a href="#" id="divergenciaLink" class="form-link">
             <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
         </a>
         <a href="https://forms.gle/Qp1yY1EAX1FLc7Wg9" class="form-link" target="_blank">
@@ -166,26 +140,25 @@
         </a>
     </div>
     
-    <!-- Container do formulário de folgas (inicialmente oculto) -->
     <div class="container" id="folga-container" style="display: none;">
-        <a href="#" class="home-btn" onclick="showMainPage()">
+        <a href="#" id="homeBtn1" class="home-btn">
             <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
         </a>
         
         <div class="form-container" id="folga-form">
-            <h2 style="text-align: center; margin-bottom: 25px; color: #fff;">
-                <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGA FUNCIONÁRIOS
+            <h2 style="text-align: center; margin-bottom: 20px; color: #fff;">
+                <i class="far fa-calendar-alt"></i> Cadastro de Folgas
             </h2>
             
             <form id="folgaForm">
-                <fieldset class="form-group" id="filialGroup">
+                <div class="form-group" id="filialGroup">
                     <legend>Filial</legend>
                     <label><input type="radio" name="filial" value="ARTUR"> ARTUR</label>
                     <label><input type="radio" name="filial" value="FLORIANO"> FLORIANO</label>
                     <label><input type="radio" name="filial" value="JOTA"> JOTA</label>
                     <label><input type="radio" name="filial" value="MODA"> MODA</label>
                     <label><input type="radio" name="filial" value="PONTO"> PONTO</label>
-                </fieldset>
+                </div>
 
                 <div class="form-group" id="funcionarioGroup">
                     <legend>Funcionário</legend>
@@ -199,12 +172,12 @@
                     <input type="date" id="dataTrabalho" name="dataTrabalho" required>
                 </div>
 
-                <fieldset class="form-group" id="motivoGroup">
+                <div class="form-group" id="motivoGroup">
                     <legend>Motivo da Folga</legend>
                     <label><input type="radio" name="motivo" value="DOMINGO"> DOMINGO</label>
                     <label><input type="radio" name="motivo" value="FERIADO"> FERIADO</label>
                     <label><input type="radio" name="motivo" value="OUTROS"> OUTROS</label>
-                </fieldset>
+                </div>
 
                 <div class="form-group" id="motivoOutros">
                     <legend>Especificar o Motivo</legend>
@@ -225,9 +198,8 @@
         </div>
     </div>
     
-    <!-- Container do formulário de divergências (inicialmente oculto) -->
     <div class="container" id="divergencia-container" style="display: none;">
-        <a href="#" class="home-btn" onclick="showMainPage()">
+        <a href="#" id="homeBtn2" class="home-btn">
             <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
         </a>
         
@@ -236,8 +208,8 @@
                 <i class="fas fa-file-invoice-dollar"></i> Divergências em Notas Fiscais
             </h2>
             
-            <form id="formulario" onsubmit="enviarFormulario(event)">
-                <!-- Seu formulário de divergências existente aqui -->
+            <form id="formulario">
+                <!-- Formulário de divergências aqui -->
             </form>
         </div>
     </div>
@@ -247,7 +219,34 @@
     </footer>
 
     <script>
-        // Dados dos funcionários por filial
+        // Funções para mostrar/ocultar abas
+        function showMainPage(e) {
+            if(e) e.preventDefault();
+            document.getElementById('main-container').style.display = 'block';
+            document.getElementById('folga-container').style.display = 'none';
+            document.getElementById('divergencia-container').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function showFolgaForm(e) {
+            e.preventDefault();
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('folga-container').style.display = 'block';
+            document.getElementById('divergencia-container').style.display = 'none';
+            document.getElementById('dataTrabalho').valueAsDate = new Date();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function showDivergenciaForm(e) {
+            e.preventDefault();
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('folga-container').style.display = 'none';
+            document.getElementById('divergencia-container').style.display = 'block';
+            document.getElementById('dataRecebimento').valueAsDate = new Date();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Dados dos funcionários
         const funcionariosPorFilial = {
             "ARTUR": ["FERNANDA", "LUCILENE"],
             "FLORIANO": ["FERNANDA", "MEIRE", "SARA", "THACIANNE"],
@@ -256,110 +255,93 @@
             "PONTO": ["DANIELA", "DEBORA", "ISADORA", "PAULA", "PRISCILA", "SANDY", "SÔNIA"]
         };
 
-        // Mostrar/ocultar páginas
-        function showMainPage() {
-            document.getElementById('main-container').style.display = 'block';
-            document.getElementById('folga-container').style.display = 'none';
-            document.getElementById('divergencia-container').style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function showFolgaForm() {
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('folga-container').style.display = 'block';
-            document.getElementById('divergencia-container').style.display = 'none';
+        // Configuração inicial quando a página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            // Atribui eventos aos links
+            document.getElementById('folgaLink').addEventListener('click', showFolgaForm);
+            document.getElementById('divergenciaLink').addEventListener('click', showDivergenciaForm);
+            document.getElementById('homeBtn1').addEventListener('click', showMainPage);
+            document.getElementById('homeBtn2').addEventListener('click', showMainPage);
             
-            // Configura a data atual como padrão para o dia trabalhado
-            document.getElementById('dataTrabalho').valueAsDate = new Date();
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function showDivergenciaForm() {
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('folga-container').style.display = 'none';
-            document.getElementById('divergencia-container').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Carregar funcionários quando selecionar filial
-        document.getElementById('filialGroup').addEventListener('change', function() {
-            const filialSelecionada = document.querySelector('input[name="filial"]:checked');
-            const funcionarioSelect = document.getElementById('funcionario');
-            
-            funcionarioSelect.innerHTML = '<option value="">Selecione um funcionário</option>';
-            
-            if (filialSelecionada) {
-                funcionariosPorFilial[filialSelecionada.value].forEach(function(funcionario) {
-                    const option = document.createElement('option');
-                    option.value = funcionario;
-                    option.textContent = funcionario;
-                    funcionarioSelect.appendChild(option);
-                });
-            }
-        });
-
-        // Mostrar campo "Outros" quando selecionado e validar datas
-        document.querySelectorAll('input[name="motivo"]').forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                const dataTrabalhoInput = document.getElementById('dataTrabalho');
-                const motivoOutrosField = document.getElementById('motivoOutros');
-                const dataFolgaInput = document.getElementById('dataFolga');
-
-                if (!dataTrabalhoInput.value) {
-                    alert('Selecione primeiro a Data de Trabalho!');
-                    this.checked = false;
-                    return;
+            // Carregar funcionários quando selecionar filial
+            document.getElementById('filialGroup').addEventListener('change', function() {
+                const filialSelecionada = document.querySelector('input[name="filial"]:checked');
+                const funcionarioSelect = document.getElementById('funcionario');
+                
+                funcionarioSelect.innerHTML = '<option value="">Selecione um funcionário</option>';
+                
+                if (filialSelecionada) {
+                    funcionariosPorFilial[filialSelecionada.value].forEach(function(funcionario) {
+                        const option = document.createElement('option');
+                        option.value = funcionario;
+                        option.textContent = funcionario;
+                        funcionarioSelect.appendChild(option);
+                    });
                 }
-
-                const dataTrabalho = new Date(dataTrabalhoInput.value);
-                const maxDate = new Date(dataTrabalho);
-
-                if (this.value === 'DOMINGO') {
-                    maxDate.setDate(dataTrabalho.getDate() + 7);
-                } else if (this.value === 'FERIADO') {
-                    maxDate.setDate(dataTrabalho.getDate() + 30);
-                }
-
-                dataFolgaInput.min = dataTrabalho.toISOString().split('T')[0];
-                dataFolgaInput.max = maxDate.toISOString().split('T')[0];
-
-                motivoOutrosField.style.display = this.value === 'OUTROS' ? 'block' : 'none';
             });
-        });
 
-        // Envio do formulário de folgas
-        document.getElementById('folgaForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const button = this.querySelector('button[type="submit"]');
-            const loadingMessage = document.getElementById('folgaLoadingMessage');
-            
-            button.disabled = true;
-            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
-            loadingMessage.style.display = 'block';
-            
-            const formData = new FormData(this);
-            
-            fetch('https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert('Folga cadastrada com sucesso!');
-                this.reset();
-                document.getElementById('funcionario').innerHTML = '<option value="">Selecione a filial primeiro</option>';
-                document.getElementById('motivoOutros').style.display = 'none';
-                document.getElementById('dataTrabalho').valueAsDate = new Date();
-            })
-            .catch(error => {
-                alert('Erro ao enviar os dados!');
-            })
-            .finally(() => {
-                button.disabled = false;
-                button.innerHTML = 'ENVIAR SOLICITAÇÃO';
-                loadingMessage.style.display = 'none';
+            // Mostrar campo "Outros" quando selecionado e validar datas
+            document.querySelectorAll('input[name="motivo"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    const dataTrabalhoInput = document.getElementById('dataTrabalho');
+                    const motivoOutrosField = document.getElementById('motivoOutros');
+                    const dataFolgaInput = document.getElementById('dataFolga');
+
+                    if (!dataTrabalhoInput.value) {
+                        alert('Selecione primeiro a Data de Trabalho!');
+                        this.checked = false;
+                        return;
+                    }
+
+                    const dataTrabalho = new Date(dataTrabalhoInput.value);
+                    const maxDate = new Date(dataTrabalho);
+
+                    if (this.value === 'DOMINGO') {
+                        maxDate.setDate(dataTrabalho.getDate() + 7);
+                    } else if (this.value === 'FERIADO') {
+                        maxDate.setDate(dataTrabalho.getDate() + 30);
+                    }
+
+                    dataFolgaInput.min = dataTrabalho.toISOString().split('T')[0];
+                    dataFolgaInput.max = maxDate.toISOString().split('T')[0];
+
+                    motivoOutrosField.style.display = this.value === 'OUTROS' ? 'block' : 'none';
+                });
+            });
+
+            // Envio do formulário de folgas
+            document.getElementById('folgaForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const button = this.querySelector('button[type="submit"]');
+                const loadingMessage = document.getElementById('folgaLoadingMessage');
+                
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+                loadingMessage.style.display = 'block';
+                
+                const formData = new FormData(this);
+                
+                fetch('https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                    alert('Folga cadastrada com sucesso!');
+                    this.reset();
+                    document.getElementById('funcionario').innerHTML = '<option value="">Selecione a filial primeiro</option>';
+                    document.getElementById('motivoOutros').style.display = 'none';
+                    document.getElementById('dataTrabalho').valueAsDate = new Date();
+                })
+                .catch(error => {
+                    alert('Erro ao enviar os dados!');
+                })
+                .finally(() => {
+                    button.disabled = false;
+                    button.innerHTML = 'ENVIAR SOLICITAÇÃO';
+                    loadingMessage.style.display = 'none';
+                });
             });
         });
     </script>
