@@ -19,7 +19,7 @@
         }
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background-color: #333;
             padding: 20px;
@@ -63,67 +63,98 @@
         }
         .form-container {
             background-color: #444;
-            padding: 20px;
+            padding: 25px;
             border-radius: 8px;
             margin-top: 20px;
+        }
+        [data-page] {
             display: none;
         }
+        [data-page].active {
+            display: block;
+        }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .form-group legend {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ddd;
+            margin-bottom: 12px;
+            display: block;
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #555;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        label:hover {
+            background-color: #666;
+        }
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 10px;
         }
         input, select, textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #666;
             border-radius: 4px;
             background-color: #555;
             color: white;
+            font-size: 14px;
+        }
+        select {
+            height: 46px;
         }
         button[type="submit"] {
-            background-color: #1a73e8;
+            background-color: #673ab7;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 4px;
             width: 100%;
             cursor: pointer;
             font-weight: bold;
+            font-size: 16px;
             transition: background-color 0.3s;
+            margin-top: 20px;
         }
         button[type="submit"]:hover {
-            background-color: #1765c0;
+            background-color: #5e35b1;
         }
         .loading-message {
             text-align: center;
-            margin-top: 10px;
+            margin-top: 15px;
             color: #4CAF50;
             display: none;
         }
         footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 30px;
             font-size: 14px;
             color: #fff;
             background-color: #333;
-            padding: 10px;
+            padding: 15px;
             border-radius: 5px;
         }
         #motivoOutros {
             display: none;
+            margin-top: 15px;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="container" id="main-container">
+    <!-- Página Principal -->
+    <div class="container active" data-page="main">
         <h1><i class="fas fa-tasks"></i> GERENCIAL HS</h1>
         
-        <a href="#" id="folgaLink" class="form-link">
+        <a href="#" class="form-link" data-target="folga">
             <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGAS
         </a>
         <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">
@@ -132,7 +163,7 @@
         <a href="https://forms.gle/Wy9axrgLnoC5ymBk6" class="form-link" target="_blank">
             <i class="fas fa-shopping-bag"></i> CONTAGEM DE SACOLA
         </a>
-        <a href="#" id="divergenciaLink" class="form-link">
+        <a href="#" class="form-link" data-target="divergencia">
             <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
         </a>
         <a href="https://forms.gle/Qp1yY1EAX1FLc7Wg9" class="form-link" target="_blank">
@@ -140,25 +171,26 @@
         </a>
     </div>
     
-    <div class="container" id="folga-container" style="display: none;">
-        <a href="#" id="homeBtn1" class="home-btn">
+    <!-- Página de Folgas -->
+    <div class="container" data-page="folga">
+        <a href="#" class="home-btn" data-target="main">
             <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
         </a>
         
-        <div class="form-container" id="folga-form">
-            <h2 style="text-align: center; margin-bottom: 20px; color: #fff;">
-                <i class="far fa-calendar-alt"></i> Cadastro de Folgas
+        <div class="form-container">
+            <h2 style="text-align: center; margin-bottom: 25px; color: #fff;">
+                <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGA FUNCIONÁRIOS
             </h2>
             
             <form id="folgaForm">
-                <div class="form-group" id="filialGroup">
+                <fieldset class="form-group" id="filialGroup">
                     <legend>Filial</legend>
                     <label><input type="radio" name="filial" value="ARTUR"> ARTUR</label>
                     <label><input type="radio" name="filial" value="FLORIANO"> FLORIANO</label>
                     <label><input type="radio" name="filial" value="JOTA"> JOTA</label>
                     <label><input type="radio" name="filial" value="MODA"> MODA</label>
                     <label><input type="radio" name="filial" value="PONTO"> PONTO</label>
-                </div>
+                </fieldset>
 
                 <div class="form-group" id="funcionarioGroup">
                     <legend>Funcionário</legend>
@@ -172,12 +204,12 @@
                     <input type="date" id="dataTrabalho" name="dataTrabalho" required>
                 </div>
 
-                <div class="form-group" id="motivoGroup">
+                <fieldset class="form-group" id="motivoGroup">
                     <legend>Motivo da Folga</legend>
                     <label><input type="radio" name="motivo" value="DOMINGO"> DOMINGO</label>
                     <label><input type="radio" name="motivo" value="FERIADO"> FERIADO</label>
                     <label><input type="radio" name="motivo" value="OUTROS"> OUTROS</label>
-                </div>
+                </fieldset>
 
                 <div class="form-group" id="motivoOutros">
                     <legend>Especificar o Motivo</legend>
@@ -198,19 +230,93 @@
         </div>
     </div>
     
-    <div class="container" id="divergencia-container" style="display: none;">
-        <a href="#" id="homeBtn2" class="home-btn">
+    <!-- Página de Divergências -->
+    <div class="container" data-page="divergencia">
+        <a href="#" class="home-btn" data-target="main">
             <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
         </a>
         
-        <div class="form-container" id="divergencia-form">
+        <div class="form-container">
             <h2 style="text-align: center; margin-bottom: 20px; color: #fff;">
                 <i class="fas fa-file-invoice-dollar"></i> Divergências em Notas Fiscais
             </h2>
             
-            <form id="formulario">
-                <!-- Formulário de divergências aqui -->
+            <form id="divergenciaForm">
+                <div class="form-group">
+                    <legend>Filial</legend>
+                    <select name="filial" required>
+                        <option value="">Selecione uma filial</option>
+                        <option value="ARTUR">ARTUR</option>
+                        <option value="FLORIANO">FLORIANO</option>
+                        <option value="JOTA">JOTA</option>
+                        <option value="MODA">MODA</option>
+                        <option value="PONTO">PONTO</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <legend>Transportadora</legend>
+                    <select name="transportadora" id="transportadora" required>
+                        <option value="BRASPRESS">BRASPRESS</option>
+                        <option value="OUTROS">OUTROS</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="outrosTransportadora" style="display: none;">
+                    <legend>Qual é a Transportadora?</legend>
+                    <input type="text" id="outraTransportadora" name="outraTransportadora">
+                </div>
+
+                <div class="form-group">
+                    <legend>Data de Recebimento</legend>
+                    <input type="date" id="dataRecebimento" name="dataRecebimento" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Número da Nota Fiscal</legend>
+                    <input type="text" id="notaFiscal" name="notaFiscal" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Série da Nota Fiscal</legend>
+                    <input type="text" id="serieNota" name="serieNota" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Referência</legend>
+                    <input type="text" id="referencia" name="referencia" maxlength="4" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Cor</legend>
+                    <input type="text" id="cor" name="cor" maxlength="6" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Tamanho</legend>
+                    <input type="text" id="tamanho" name="tamanho" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Quantidade</legend>
+                    <input type="number" id="quantidade" name="quantidade" required>
+                </div>
+
+                <div class="form-group">
+                    <legend>Divergência</legend>
+                    <select name="divergencia" required>
+                        <option value="">Selecione uma opção</option>
+                        <option value="MERCADORIA PASSANDO">MERCADORIA PASSANDO</option>
+                        <option value="MERCADORIA FALTANDO">MERCADORIA FALTANDO</option>
+                    </select>
+                </div>
+
+                <button type="submit">ENVIAR DIVERGÊNCIA</button>
             </form>
+
+            <div id="divergenciaLoadingMessage" class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i> Enviando... Por favor, aguarde.
+            </div>
         </div>
     </div>
     
@@ -219,50 +325,50 @@
     </footer>
 
     <script>
-        // Funções para mostrar/ocultar abas
-        function showMainPage(e) {
-            if(e) e.preventDefault();
-            document.getElementById('main-container').style.display = 'block';
-            document.getElementById('folga-container').style.display = 'none';
-            document.getElementById('divergencia-container').style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function showFolgaForm(e) {
-            e.preventDefault();
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('folga-container').style.display = 'block';
-            document.getElementById('divergencia-container').style.display = 'none';
-            document.getElementById('dataTrabalho').valueAsDate = new Date();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        function showDivergenciaForm(e) {
-            e.preventDefault();
-            document.getElementById('main-container').style.display = 'none';
-            document.getElementById('folga-container').style.display = 'none';
-            document.getElementById('divergencia-container').style.display = 'block';
-            document.getElementById('dataRecebimento').valueAsDate = new Date();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Dados dos funcionários
-        const funcionariosPorFilial = {
-            "ARTUR": ["FERNANDA", "LUCILENE"],
-            "FLORIANO": ["FERNANDA", "MEIRE", "SARA", "THACIANNE"],
-            "JOTA": ["BRUNO", "CARINA", "DENISE", "FABIOLA", "JÉSSICA", "LOUISE", "NATALIA", "PRISCILA", "RAYSSA", "VERA"],
-            "MODA": ["ANA CLARA", "DAIANE", "JÉSSICA", "JÔSE CLAIR", "NAISE", "MARIA"],
-            "PONTO": ["DANIELA", "DEBORA", "ISADORA", "PAULA", "PRISCILA", "SANDY", "SÔNIA"]
-        };
-
-        // Configuração inicial quando a página carrega
+        // Sistema de navegação
         document.addEventListener('DOMContentLoaded', function() {
-            // Atribui eventos aos links
-            document.getElementById('folgaLink').addEventListener('click', showFolgaForm);
-            document.getElementById('divergenciaLink').addEventListener('click', showDivergenciaForm);
-            document.getElementById('homeBtn1').addEventListener('click', showMainPage);
-            document.getElementById('homeBtn2').addEventListener('click', showMainPage);
+            // Mostrar página principal inicialmente
+            showPage('main');
             
+            // Configurar eventos de navegação
+            document.querySelectorAll('[data-target]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showPage(this.getAttribute('data-target'));
+                });
+            });
+            
+            function showPage(pageId) {
+                // Esconder todas as páginas
+                document.querySelectorAll('[data-page]').forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Mostrar a página solicitada
+                const page = document.querySelector(`[data-page="${pageId}"]`);
+                if (page) {
+                    page.classList.add('active');
+                    
+                    // Configurar datas quando a página for mostrada
+                    if (pageId === 'folga') {
+                        document.getElementById('dataTrabalho').valueAsDate = new Date();
+                    } else if (pageId === 'divergencia') {
+                        document.getElementById('dataRecebimento').valueAsDate = new Date();
+                    }
+                }
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            // Dados dos funcionários por filial
+            const funcionariosPorFilial = {
+                "ARTUR": ["FERNANDA", "LUCILENE"],
+                "FLORIANO": ["FERNANDA", "MEIRE", "SARA", "THACIANNE"],
+                "JOTA": ["BRUNO", "CARINA", "DENISE", "FABIOLA", "JÉSSICA", "LOUISE", "NATALIA", "PRISCILA", "RAYSSA", "VERA"],
+                "MODA": ["ANA CLARA", "DAIANE", "JÉSSICA", "JÔSE CLAIR", "NAISE", "MARIA"],
+                "PONTO": ["DANIELA", "DEBORA", "ISADORA", "PAULA", "PRISCILA", "SANDY", "SÔNIA"]
+            };
+
             // Carregar funcionários quando selecionar filial
             document.getElementById('filialGroup').addEventListener('change', function() {
                 const filialSelecionada = document.querySelector('input[name="filial"]:checked');
@@ -280,8 +386,8 @@
                 }
             });
 
-            // Mostrar campo "Outros" quando selecionado e validar datas
-            document.querySelectorAll('input[name="motivo"]').forEach(function(radio) {
+            // Mostrar campo "Outros" quando selecionado e validar datas (Folgas)
+            document.querySelectorAll('#motivoGroup input[name="motivo"]').forEach(function(radio) {
                 radio.addEventListener('change', function() {
                     const dataTrabalhoInput = document.getElementById('dataTrabalho');
                     const motivoOutrosField = document.getElementById('motivoOutros');
@@ -307,6 +413,12 @@
 
                     motivoOutrosField.style.display = this.value === 'OUTROS' ? 'block' : 'none';
                 });
+            });
+
+            // Mostrar/ocultar campo de outra transportadora (Divergências)
+            document.getElementById('transportadora').addEventListener('change', function() {
+                document.getElementById('outrosTransportadora').style.display = 
+                    this.value === 'OUTROS' ? 'block' : 'none';
             });
 
             // Envio do formulário de folgas
@@ -340,6 +452,40 @@
                 .finally(() => {
                     button.disabled = false;
                     button.innerHTML = 'ENVIAR SOLICITAÇÃO';
+                    loadingMessage.style.display = 'none';
+                });
+            });
+
+            // Envio do formulário de divergências
+            document.getElementById('divergenciaForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const button = this.querySelector('button[type="submit"]');
+                const loadingMessage = document.getElementById('divergenciaLoadingMessage');
+                
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+                loadingMessage.style.display = 'block';
+                
+                const formData = new FormData(this);
+                
+                fetch('https://script.google.com/macros/s/AKfycbw5xq6i5Qoc0s3f-ZaQ6FCZdsjXrC_my8d0tmgr756hWZQqT9Olu9DjsGOYwTlvnBQA/exec', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Divergência enviada com sucesso!');
+                    this.reset();
+                    document.getElementById('dataRecebimento').valueAsDate = new Date();
+                    document.getElementById('outrosTransportadora').style.display = 'none';
+                })
+                .catch(error => {
+                    alert('Erro ao enviar os dados!');
+                })
+                .finally(() => {
+                    button.disabled = false;
+                    button.innerHTML = 'ENVIAR DIVERGÊNCIA';
                     loadingMessage.style.display = 'none';
                 });
             });
