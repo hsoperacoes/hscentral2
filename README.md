@@ -175,7 +175,7 @@
         </a>
     </div>
     
-    <!-- Página de Folgas -->
+    <!-- Página de Folgas (NOVA VERSÃO) -->
     <div class="container" data-page="folga">
         <a href="#" class="home-btn" data-target="main">
             <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
