@@ -83,10 +83,9 @@
             margin-bottom: 12px;
             display: block;
         }
-        /* ESTILO ESPECÍFICO PARA RADIO BUTTONS ALINHADOS À ESQUERDA */
+        /* ESTILO MODIFICADO PARA RADIO BUTTONS ALINHADOS À EXTREMA ESQUERDA */
         .radio-label {
-            display: flex;
-            align-items: center;
+            display: block;
             text-align: left;
             padding: 10px;
             border-radius: 4px;
@@ -100,7 +99,7 @@
         }
         .radio-label input[type="radio"] {
             margin-right: 10px;
-            flex-shrink: 0;
+            float: left;
         }
         /* ESTILOS PARA INPUTS E TEXTAREA */
         input, textarea {
