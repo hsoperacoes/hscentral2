@@ -386,7 +386,7 @@
     </div>
     
     <footer>
-        HS Operações &copy; 2023 - Todos os direitos reservados
+        HS Operações &copy; 2025 - Todos os direitos reservados
     </footer>
 
     <script>
