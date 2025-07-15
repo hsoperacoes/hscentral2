@@ -7,44 +7,57 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
   <style>
-    :root {
-      --bg-color: #f8f9fa;
-      --card-color: #fff;
-      --text-color: #202124;
-      --input-bg: #fff;
-      --border-color: #dadce0;
-      --highlight-color: #4CAF50;
-      --secondary-color: #1a73e8;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
       font-family: Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: #000;
+      color: #fff;
       margin: 0;
       padding: 0;
       min-height: 100vh;
-    }
-
-    .section {
-      display: none;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .section.active {
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* Estilos para a página HOME */
+    .section {
+      display: none;
+      min-height: 100vh;
+      width: 100%;
+      padding: 20px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .section.active {
+      display: flex;
+    }
+
+    /* Botão de voltar - sempre no canto superior esquerdo */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .back-button:hover {
+      background-color: #45a049;
+    }
+
+    .back-button.show {
+      display: block;
+    }
+
+    /* Estilos para a página HOME - centralizada */
     .home-container {
       max-width: 700px;
       margin: 0 auto;
@@ -66,7 +79,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--highlight-color);
+      background-color: #4CAF50;
       color: white;
       padding: 15px;
       margin: 10px 0;
@@ -87,38 +100,25 @@
       margin-right: 10px;
     }
 
-    /* Botão de voltar */
-    .back-button {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background-color: var(--highlight-color);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      z-index: 1000;
-      display: none;
-    }
-
-    .back-button:hover {
-      background-color: #45a049;
-    }
-
-    .back-button.show {
-      display: block;
-    }
-
-    /* Estilos para formulários - padrão transferência */
+    /* Estilos para formulários - centralizados e com fundo escuro */
     .form-container {
-      background: white;
-      padding: 24px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
       max-width: 600px;
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      color: white;
+      margin: 0 auto;
+    }
+
+    .form-container h1, .form-container h2 {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
@@ -126,13 +126,13 @@
       font-weight: 600;
       display: block;
       margin-bottom: 5px;
-      color: #5f6368;
+      color: #ccc;
     }
 
     .question-title {
       font-size: 16px;
       font-weight: bold;
-      color: #333;
+      color: white;
       margin-bottom: 5px;
       display: block;
     }
@@ -141,21 +141,21 @@
       width: 100%;
       padding: 12px;
       font-size: 14px;
-      border: 1px solid var(--border-color);
+      border: 1px solid #444;
       border-radius: 4px;
-      background-color: var(--input-bg);
-      color: var(--text-color);
+      background-color: #2a2a2a;
+      color: white;
       box-sizing: border-box;
     }
 
     input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: var(--secondary-color);
-      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+      border-color: #673ab7;
+      box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.2);
     }
 
     button {
-      background-color: var(--secondary-color);
+      background-color: #673ab7;
       color: white;
       border: none;
       padding: 12px 20px;
@@ -167,42 +167,191 @@
     }
 
     button:hover {
-      background-color: #1765c1;
+      background-color: #5e35b1;
     }
 
-    .hidden {
-      display: none;
-    }
-
-    /* Estilos específicos para cada seção */
-    .container {
-      max-width: 600px;
-      margin: 20px auto;
-      background-color: var(--card-color);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .result, .history {
+    .submit-buttons {
+      display: flex;
+      justify-content: space-between;
       margin-top: 20px;
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 4px;
-      border: 1px solid #e8eaed;
+      gap: 10px;
     }
 
-    .error {
-      color: #d93025;
-      margin-top: 10px;
+    .submit-button,
+    .clear-button {
+      padding: 12px 20px;
       font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .submit-button {
+      background-color: #673ab7;
+      color: white;
+    }
+
+    .clear-button {
+      background-color: #5f6368;
+      color: white;
+    }
+
+    .submit-button:hover {
+      background-color: #5e35b1;
+    }
+
+    .clear-button:hover {
+      background-color: #3c4043;
+    }
+
+    /* Estilos para gerador de códigos */
+    .gerador-section .form-container {
+      background-color: #1e1e1e;
+      color: white;
+      max-width: 800px;
+    }
+
+    .gerador-section .input-area, .gerador-section .output-area {
+      background: #1e1e1e;
+      color: white;
+    }
+
+    .gerador-section .input-area textarea {
+      background-color: #2a2a2a;
+      color: white;
+      border-color: #444;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .controls button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .gerador-section .controls button:nth-child(1) { background-color: #4CAF50; }
+    .gerador-section .controls button:nth-child(1):hover { background-color: #45a049; }
+    .gerador-section .controls button:nth-child(2) { background-color: #f44336; }
+    .gerador-section .controls button:nth-child(2):hover { background-color: #d32f2f; }
+    .gerador-section .controls button:nth-child(3) { background-color: #ff9800; }
+    .gerador-section .controls button:nth-child(3):hover { background-color: #e68a00; }
+    .gerador-section .controls button:nth-child(4) { background-color: #2196F3; }
+    .gerador-section .controls button:nth-child(4):hover { background-color: #0b7dda; }
+
+    .gerador-section h1, .gerador-section h2 {
+      color: white;
+    }
+
+    .gerador-section .example-title {
+      color: #ccc;
+    }
+
+    .gerador-section .barcode-count {
+      color: white;
+    }
+
+    .barcode-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .barcode-item {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    svg text {
+      fill: white !important;
+    }
+
+    /* Mensagens de sucesso e erro */
+    #success-message, #error-message {
+      display: none;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    #success-message {
+      background-color: #e8f5e8;
+      color: #137333;
+      border: 1px solid #ceead6;
+    }
+
+    #error-message {
+      background-color: #fce8e6;
+      color: #d93025;
+      border: 1px solid #f9dedc;
     }
 
     .loading {
       text-align: center;
       font-style: italic;
       margin-top: 10px;
-      color: var(--secondary-color);
+      color: #1a73e8;
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 1000;
+    }
+
+    .spinner {
+      border: 4px solid transparent;
+      border-top: 4px solid #fff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .barcode-count {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .count-number {
+      color: #ea4335;
+      font-weight: bold;
+    }
+
+    .required-star {
+      color: #ea4335;
+    }
+
+    .hidden {
+      display: none;
     }
 
     .logout {
@@ -247,216 +396,16 @@
       height: auto !important;
     }
 
-    /* Estilos para gerador de códigos de barras */
-    .input-area, .output-area {
-      margin-bottom: 20px;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .barcode-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .barcode-item {
-      text-align: center;
-      margin-bottom: 20px;
-      page-break-inside: avoid;
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      border: 1px solid #e8eaed;
-    }
-
-    svg {
-      background: white;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .example-title {
-      font-style: italic;
-      color: #5f6368;
-      margin-bottom: 10px;
-    }
-
-    /* Estilos para transferência */
-    .submit-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-
-    .submit-button,
-    .clear-button {
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .submit-button {
-      background-color: var(--secondary-color);
-      color: white;
-    }
-
-    .clear-button {
-      background-color: #5f6368;
-      color: white;
-    }
-
-    .submit-button:hover {
-      background-color: #1765c1;
-    }
-
-    .clear-button:hover {
-      background-color: #3c4043;
-    }
-
-    #success-message, #error-message {
-      display: none;
-      padding: 12px;
-      margin-top: 20px;
-      border-radius: 4px;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    #success-message {
-      background-color: #e8f5e8;
-      color: #137333;
-      border: 1px solid #ceead6;
-    }
-
-    #error-message {
-      background-color: #fce8e6;
-      color: #d93025;
-      border: 1px solid #f9dedc;
-    }
-
-    .loading-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      color: white;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 1000;
-    }
-
-    .spinner {
-      border: 4px solid transparent;
-      border-top: 4px solid #fff;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 2s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .barcode-count {
-      font-size: 16px;
-      margin-top: 10px;
-      font-weight: bold;
-      color: var(--text-color);
-    }
-
-    .count-number {
-      color: #ea4335;
-      font-weight: bold;
-    }
-
-    .required-star {
-      color: #ea4335;
-    }
-
     footer {
       text-align: center;
       font-size: 14px;
-      color: #5f6368;
+      color: #ccc;
       background-color: #2c2c2c;
       padding: 15px;
       border-radius: 6px;
       margin: 20px auto 0 auto;
       max-width: 700px;
     }
-
-    h1, h2, h3 {
-      text-align: center;
-      color: var(--text-color);
-      margin-bottom: 20px;
-    }
-
-    /* Estilos específicos para seções com fundo escuro */
-    #nf .container {
-      background-color: #1e1e1e;
-      color: white;
-    }
-
-    #nf input {
-      background-color: #2a2a2a;
-      color: white;
-      border-color: #444;
-    }
-
-    #nf button {
-      background-color: #673ab7;
-    }
-
-    #nf button:hover {
-      background-color: #5e35b1;
-    }
-
-    #nf .result, #nf .history {
-      background-color: #2e2e2e;
-      border-color: #444;
-    }
-
-    /* Melhorias no gerador de códigos */
-    #gerador {
-      background-color: #f5f5f5;
-    }
-
-    #gerador .input-area textarea {
-      font-family: 'Courier New', monospace;
-      resize: vertical;
-    }
-
-    #gerador button {
-      margin-right: 10px;
-      margin-bottom: 10px;
-    }
-
-    #gerador button:nth-child(1) { background-color: #4CAF50; }
-    #gerador button:nth-child(1):hover { background-color: #45a049; }
-    #gerador button:nth-child(2) { background-color: #f44336; }
-    #gerador button:nth-child(2):hover { background-color: #d32f2f; }
-    #gerador button:nth-child(3) { background-color: #ff9800; }
-    #gerador button:nth-child(3):hover { background-color: #e68a00; }
-    #gerador button:nth-child(4) { background-color: #2196F3; }
-    #gerador button:nth-child(4):hover { background-color: #0b7dda; }
 
     @media print {
       .back-button,
@@ -504,7 +453,7 @@
 
     @media (max-width: 768px) {
       .form-container {
-        margin: 10px;
+        margin: 20px 10px;
         padding: 20px;
       }
       
@@ -520,6 +469,11 @@
       .controls button {
         margin: 5px 0;
       }
+
+      .home-container {
+        margin: 20px 10px;
+        padding: 30px 20px;
+      }
     }
   </style>
 </head>
@@ -532,33 +486,35 @@
 
   <!-- SEÇÃO HOME -->
   <div id="home" class="section active">
-    <div class="home-container">
-      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDE1MCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiBmaWxsPSIjNENBRjUwIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkhTPC90ZXh0Pgo8L3N2Zz4K" alt="Logo HS" class="logo-topo" />
+    <div>
+      <div class="home-container">
+        <img src="logo.png" alt="Logo HS" class="logo-topo" />
 
-      <button class="form-link" onclick="mostrarSecao('folgas')">
-        <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
-      </button>
-      <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">
-        <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
-      </a>
-      <a href="https://forms.gle/Wy9axrgLnoC5ymBk6" class="form-link" target="_blank">
-        <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
-      </a>
-      <button class="form-link" onclick="mostrarSecao('divergencia')">
-        <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
-      </button>
-      <button class="form-link" onclick="mostrarSecao('transferencia')">
-        <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
-      </button>
-      <button class="form-link" onclick="mostrarSecao('gerador')">
-        <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
-      </button>
-      <button class="form-link" onclick="mostrarSecao('nf')">
-        <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
-      </button>
+        <button class="form-link" onclick="mostrarSecao('folgas')">
+          <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
+        </button>
+        <button class="form-link" onclick="window.open('https://forms.gle/wXWsukfKS2w7yKuX8', '_blank')">
+          <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
+        </button>
+        <button class="form-link" onclick="window.open('https://forms.gle/Wy9axrgLnoC5ymBk6', '_blank')">
+          <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
+        </button>
+        <button class="form-link" onclick="mostrarSecao('divergencia')">
+          <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
+        </button>
+        <button class="form-link" onclick="mostrarSecao('transferencia')">
+          <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
+        </button>
+        <button class="form-link" onclick="mostrarSecao('gerador')">
+          <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
+        </button>
+        <button class="form-link" onclick="mostrarSecao('nf')">
+          <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
+        </button>
+      </div>
+
+      <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
     </div>
-
-    <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
   </div>
 
   <!-- SEÇÃO CADASTRO DE FOLGAS -->
@@ -770,17 +726,13 @@
   </div>
 
   <!-- SEÇÃO GERADOR DE CÓDIGOS DE BARRAS -->
-  <div id="gerador" class="section">
-    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+  <div id="gerador" class="section gerador-section">
+    <div class="form-container">
       <h1>Gerador de Códigos de Barras em Lote - EAN13</h1>
 
       <div class="input-area">
         <h2>Cole seus códigos (um por linha):</h2>
-        <textarea id="codigos-barras" placeholder="Cole aqui vários códigos EAN13, um por linha
-Exemplo:
-7891000315507
-7891910000197
-7891234567890" style="width: 100%; height: 150px; padding: 10px; font-family: 'Courier New', monospace; border: 1px solid #dadce0; border-radius: 4px; resize: vertical; background-color: #fff; color: #202124;"></textarea>
+        <textarea id="codigos-barras" placeholder="Cole aqui vários códigos EAN13, um por linha&#10;Exemplo:&#10;7891000315507&#10;7891910000197&#10;7891234567890"></textarea>
 
         <div class="controls">
           <button onclick="gerarTodosBarras()">Gerar Códigos</button>
@@ -801,36 +753,38 @@ Exemplo:
 
   <!-- SEÇÃO RECEBIMENTO DE NOTA FISCAL -->
   <div id="nf" class="section">
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNENBRjUwIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkhTPC90ZXh0Pgo8L3N2Zz4K" alt="Logo" class="logo">
-    
-    <div id="login-nf" class="container">
-      <h2>Login da Filial</h2>
-      <label for="codigo-nf">Código da Filial</label>
-      <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
-      <button onclick="entrarNF()">Entrar</button>
-    </div>
-
-    <div id="principal-nf" class="container hidden">
-      <div class="logout">
-        <button onclick="sairNF()">Sair</button>
-      </div>
-      <h2>Consulta de Nota Fiscal</h2>
-      <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
-      <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
-      <button onclick="consultarNotaNF()">Consultar</button>
-      <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
-      <div id="reader-nf" class="hidden">
-        <div id="interactive-nf" class="viewport"></div>
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      
+      <div id="login-nf">
+        <h2>Login da Filial</h2>
+        <label for="codigo-nf">Código da Filial</label>
+        <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
+        <button onclick="entrarNF()">Entrar</button>
       </div>
 
-      <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
-      <div id="resultado-nf" class="result hidden"></div>
-      <div id="erro-nf" class="error"></div>
+      <div id="principal-nf" class="hidden">
+        <div class="logout">
+          <button onclick="sairNF()">Sair</button>
+        </div>
+        <h2>Consulta de Nota Fiscal</h2>
+        <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
+        <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
+        <button onclick="consultarNotaNF()">Consultar</button>
+        <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
+        <div id="reader-nf" class="hidden">
+          <div id="interactive-nf" class="viewport"></div>
+        </div>
 
-      <div class="history">
-        <h3>Histórico da Filial</h3>
-        <ul id="historicoLista-nf"></ul>
-        <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
+        <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
+        <div id="resultado-nf" class="result hidden"></div>
+        <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
+
+        <div class="history">
+          <h3>Histórico da Filial</h3>
+          <ul id="historicoLista-nf"></ul>
+          <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
+        </div>
       </div>
     </div>
   </div>
@@ -839,7 +793,7 @@ Exemplo:
     // Função para mostrar seções
     function mostrarSecao(secaoId) {
       // Esconder todas as seções
-      const secoes = document.querySelectorAll('.section');
+      const secoes = document.querySelectorAll(".section");
       secoes.forEach(secao => secao.classList.remove('active'));
       
       // Mostrar a seção selecionada
@@ -852,7 +806,7 @@ Exemplo:
     // Função para voltar à home
     function voltarHome() {
       // Esconder todas as seções
-      const secoes = document.querySelectorAll('.section');
+      const secoes = document.querySelectorAll(".section");
       secoes.forEach(secao => secao.classList.remove('active'));
       
       // Mostrar a home
@@ -862,7 +816,7 @@ Exemplo:
       document.getElementById('backButton').classList.remove('show');
     }
 
-    // SCRIPTS PARA CADASTRO DE FOLGAS - VERSÃO MELHORADA
+    // SCRIPTS PARA CADASTRO DE FOLGAS
     const funcionariosPorFilial = {
       "ARTUR": ["FERNANDA", "ISABELLA", "LUCILENE"],
       "FLORIANO": ["FERNANDA", "MEIRE", "SARA", "THACIANNE"],
@@ -1187,7 +1141,7 @@ Exemplo:
       text.setAttribute("text-anchor", "middle");
       text.setAttribute("font-size", fontSize);
       text.setAttribute("font-family", "monospace");
-      text.setAttribute("fill", "black");
+      text.setAttribute("fill", "white");
       text.textContent = code;
       svg.appendChild(text);
 
