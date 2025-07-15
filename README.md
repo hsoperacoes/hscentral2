@@ -90,6 +90,7 @@
       cursor: pointer;
       border: none;
       width: 100%;
+      box-sizing: border-box;
     }
 
     .form-link:hover {
