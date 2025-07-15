@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
@@ -58,7 +59,7 @@
 
     /* Estilos para a página HOME - centralizada */
     .home-container {
-      max-width: 900px;
+      max-width: 700px;
       margin: 0 auto;
       background-color: #2c2c2c;
       padding: 40px 30px;
@@ -404,7 +405,7 @@
       padding: 15px;
       border-radius: 6px;
       margin: 20px auto 0 auto;
-      max-width: 900px;
+      max-width: 700px;
     }
 
     @media print {
@@ -468,11 +469,6 @@
       
       .controls button {
         margin: 5px 0;
-      }
-
-      .home-container {
-        margin: 20px 10px;
-        padding: 30px 20px;
       }
     }
   </style>
