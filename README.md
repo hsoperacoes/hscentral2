@@ -59,7 +59,7 @@
 
     /* Estilos para a página HOME - centralizada */
     .home-container {
-      max-width: 700px;
+      max-width: 900px;
       margin: 0 auto;
       background-color: #2c2c2c;
       padding: 40px 30px;
@@ -405,7 +405,7 @@
       padding: 15px;
       border-radius: 6px;
       margin: 20px auto 0 auto;
-      max-width: 700px;
+      max-width: 900px;
     }
 
     @media print {
