@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -10,16 +8,13 @@
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
   <style>
     body {
-  font-family: Arial, sans-serif;
-  background-color: #000;
-  color: #fff;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
 
     .section {
       display: none;
@@ -60,22 +55,22 @@
     }
 
     /* Estilos para a página HOME - centralizada */
-    .container {
-  max-width: 700px;
-  width: 100%;
-  background-color: #2c2c2c;
-  padding: 40px 30px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  margin: 30px auto 10px;
-}
+    .home-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: #2c2c2c;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      text-align: center;
+      color: #fff;
+    }
 
     .logo-topo {
-  width: 100px;
-  height: auto;
-  display: block;
-  margin: 0 auto 20px;
-}
+      width: 150px;
+      height: auto;
+      margin-bottom: 30px;
+    }
 
     .form-link {
       display: flex;
@@ -485,7 +480,7 @@
   <!-- SEÇÃO HOME -->
   <div id="home" class="section active">
     <div>
-      <div class="container">
+      <div class="home-container">
         <img src="logo.png" alt="Logo HS" class="logo-topo" />
 
         <button class="form-link" onclick="mostrarSecao('folgas')">
