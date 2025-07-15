@@ -7,26 +7,61 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background-color: #000;
       color: #fff;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
-    }
-
-    .section {
-      display: none;
-      min-height: 100vh;
-      width: 100%;
-      padding: 20px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .section.active {
       display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .logo-topo {
+      width: 100px;
+      height: auto;
+      margin: 30px 0 10px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background-color: #2c2c2c;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+    }
+
+    .form-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 6px;
+      font-size: 16px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+    }
+
+    .form-link:hover {
+      background-color: #45a049;
+    }
+
+    .form-link i {
+      margin-right: 10px;
     }
 
     /* Botão de voltar - sempre no canto superior esquerdo */
@@ -52,50 +87,6 @@
 
     .back-button.show {
       display: block;
-    }
-
-    /* Estilos para a página HOME - centralizada */
-    .home-container {
-      max-width: 700px;
-      margin: 0 auto;
-      background-color: #2c2c2c;
-      padding: 40px 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-      text-align: center;
-      color: #fff;
-    }
-
-    .logo-topo {
-      width: 150px;
-      height: auto;
-      margin-bottom: 30px;
-    }
-
-    .form-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #4CAF50;
-      color: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 6px;
-      font-size: 16px;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-      cursor: pointer;
-      border: none;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .form-link:hover {
-      background-color: #45a049;
-    }
-
-    .form-link i {
-      margin-right: 10px;
     }
 
     /* Estilos para formulários - centralizados e com fundo escuro */
@@ -401,8 +392,22 @@
       background-color: #2c2c2c;
       padding: 15px;
       border-radius: 6px;
-      margin: 20px auto 0 auto;
-      max-width: 700px;
+      margin: 20px auto;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .section {
+      display: none;
+      width: 100%;
+      padding: 20px;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .section.active {
+      display: flex;
     }
 
     @media print {
@@ -467,6 +472,10 @@
       .controls button {
         margin: 5px 0;
       }
+      
+      .container {
+        padding: 20px 15px;
+      }
     }
   </style>
 </head>
@@ -479,34 +488,30 @@
 
   <!-- SEÇÃO HOME -->
   <div id="home" class="section active">
-    <div>
-      <div class="home-container">
-        <img src="logo.png" alt="Logo HS" class="logo-topo" />
-
-        <button class="form-link" onclick="mostrarSecao('folgas')">
-          <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
-        </button>
-        <button class="form-link" onclick="window.open('https://forms.gle/wXWsukfKS2w7yKuX8', '_blank')">
-          <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
-        </button>
-        <button class="form-link" onclick="window.open('https://forms.gle/Wy9axrgLnoC5ymBk6', '_blank')">
-          <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
-        </button>
-        <button class="form-link" onclick="mostrarSecao('divergencia')">
-          <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
-        </button>
-        <button class="form-link" onclick="mostrarSecao('transferencia')">
-          <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
-        </button>
-        <button class="form-link" onclick="mostrarSecao('gerador')">
-          <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
-        </button>
-        <button class="form-link" onclick="mostrarSecao('nf')">
-          <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
-        </button>
-      </div>
-
-      <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+    <img src="logo.png" alt="Logo HS" class="logo-topo" />
+    
+    <div class="container">
+      <button class="form-link" onclick="mostrarSecao('folgas')">
+        <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
+      </button>
+      <button class="form-link" onclick="window.open('https://forms.gle/wXWsukfKS2w7yKuX8', '_blank')">
+        <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
+      </button>
+      <button class="form-link" onclick="window.open('https://forms.gle/Wy9axrgLnoC5ymBk6', '_blank')">
+        <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
+      </button>
+      <button class="form-link" onclick="mostrarSecao('divergencia')">
+        <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('transferencia')">
+        <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('gerador')">
+        <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('nf')">
+        <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
+      </button>
     </div>
   </div>
 
@@ -782,6 +787,8 @@
     </div>
   </div>
 
+  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+
   <script>
     // Função para mostrar seções
     function mostrarSecao(secaoId) {
@@ -794,6 +801,9 @@
       
       // Mostrar botão de voltar
       document.getElementById('backButton').classList.add('show');
+      
+      // Rolagem suave para o topo da seção
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Função para voltar à home
@@ -807,6 +817,9 @@
       
       // Esconder botão de voltar
       document.getElementById('backButton').classList.remove('show');
+      
+      // Rolagem suave para o topo
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // SCRIPTS PARA CADASTRO DE FOLGAS
@@ -1339,7 +1352,5 @@
       }
     });
   </script>
-
 </body>
 </html>
-
