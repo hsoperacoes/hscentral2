@@ -1,562 +1,1398 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GERENCIAL HS</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 30px;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #333;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .form-link {
-            display: block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            margin: 10px 0;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        .form-link:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-        }
-        .form-link i {
-            margin-right: 10px;
-        }
-        .home-btn {
-            display: block;
-            background-color: #1a73e8;
-            color: white;
-            padding: 15px;
-            text-align: center;
-            margin: 20px 0 10px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        .home-btn:hover {
-            background-color: #1765c0;
-            transform: translateY(-2px);
-        }
-        .form-container {
-            background-color: #444;
-            padding: 25px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        [data-page] {
-            display: none;
-        }
-        [data-page].active {
-            display: block;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group legend {
-            font-size: 16px;
-            font-weight: bold;
-            color: #ddd;
-            margin-bottom: 12px;
-            display: block;
-        }
-        /* ESTILO MODIFICADO PARA RADIO BUTTONS ALINHADOS À EXTREMA ESQUERDA */
-        .radio-label {
-            display: block;
-            text-align: left;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #555;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            position: relative;
-        }
-        .radio-label:hover {
-            background-color: #666;
-        }
-        .radio-label input[type="radio"] {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            margin: 0;
-        }
-        .radio-label span {
-            padding-left: 30px; /* Espaço para o radio button */
-            display: block;
-        }
-        /* ESTILOS PARA INPUTS E TEXTAREA */
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #666;
-            border-radius: 4px;
-            background-color: #555;
-            color: white;
-            font-size: 14px;
-        }
-        /* ESTILO ESPECÍFICO PARA SELECT (DROPDOWN) - CORRIGIDO */
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #666;
-            border-radius: 4px;
-            background-color: #555;
-            color: white;
-            font-size: 14px;
-            height: auto;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        select:focus {
-            outline: none;
-            border-color: #673ab7;
-            box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.2);
-        }
-        select option {
-            background: #555;
-            color: white;
-            padding: 10px;
-        }
-        button[type="submit"] {
-            background-color: #673ab7;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 4px;
-            width: 100%;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            margin-top: 20px;
-        }
-        button[type="submit"]:hover {
-            background-color: #5e35b1;
-        }
-        .loading-message {
-            text-align: center;
-            margin-top: 15px;
-            color: #4CAF50;
-            display: none;
-        }
-        footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 14px;
-            color: #fff;
-            background-color: #333;
-            padding: 15px;
-            border-radius: 5px;
-        }
-        #motivoOutros {
-            display: none;
-            margin-top: 15px;
-        }
-        #outrosTransportadora {
-            display: none;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GERENCIAL HS - Sistema Unificado</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #f8f9fa;
+      --card-color: #fff;
+      --text-color: #202124;
+      --input-bg: #fff;
+      --border-color: #dadce0;
+      --highlight-color: #4CAF50;
+      --secondary-color: #1a73e8;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .section {
+      display: none;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .section.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Estilos para a página HOME */
+    .home-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: #2c2c2c;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      text-align: center;
+      color: #fff;
+    }
+
+    .logo-topo {
+      width: 150px;
+      height: auto;
+      margin-bottom: 30px;
+    }
+
+    .form-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--highlight-color);
+      color: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 6px;
+      font-size: 16px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+    }
+
+    .form-link:hover {
+      background-color: #45a049;
+    }
+
+    .form-link i {
+      margin-right: 10px;
+    }
+
+    /* Botão de voltar */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: var(--highlight-color);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+    }
+
+    .back-button:hover {
+      background-color: #45a049;
+    }
+
+    .back-button.show {
+      display: block;
+    }
+
+    /* Estilos para formulários - padrão transferência */
+    .form-container {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+      color: #5f6368;
+    }
+
+    .question-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      font-size: 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+
+    button {
+      background-color: var(--secondary-color);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #1765c1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Estilos específicos para cada seção */
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: var(--card-color);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .result, .history {
+      margin-top: 20px;
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      border: 1px solid #e8eaed;
+    }
+
+    .error {
+      color: #d93025;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      font-style: italic;
+      margin-top: 10px;
+      color: var(--secondary-color);
+    }
+
+    .logout {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .logout button {
+      padding: 8px 16px;
+      background-color: #5f6368;
+      font-size: 14px;
+    }
+
+    .history button {
+      background-color: #ea4335;
+      margin-top: 15px;
+    }
+
+    .logo {
+      display: block;
+      margin: 20px auto 10px;
+      max-width: 80px;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 350px;
+      height: 240px;
+      margin: 10px auto;
+      position: relative;
+    }
+
+    #interactive.viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas, video {
+      max-width: 100%;
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Estilos para gerador de códigos de barras */
+    .input-area, .output-area {
+      margin-bottom: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .barcode-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .barcode-item {
+      text-align: center;
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid #e8eaed;
+    }
+
+    svg {
+      background: white;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .example-title {
+      font-style: italic;
+      color: #5f6368;
+      margin-bottom: 10px;
+    }
+
+    /* Estilos para transferência */
+    .submit-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .submit-button,
+    .clear-button {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .submit-button {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    .clear-button {
+      background-color: #5f6368;
+      color: white;
+    }
+
+    .submit-button:hover {
+      background-color: #1765c1;
+    }
+
+    .clear-button:hover {
+      background-color: #3c4043;
+    }
+
+    #success-message, #error-message {
+      display: none;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    #success-message {
+      background-color: #e8f5e8;
+      color: #137333;
+      border: 1px solid #ceead6;
+    }
+
+    #error-message {
+      background-color: #fce8e6;
+      color: #d93025;
+      border: 1px solid #f9dedc;
+    }
+
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 1000;
+    }
+
+    .spinner {
+      border: 4px solid transparent;
+      border-top: 4px solid #fff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .barcode-count {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: var(--text-color);
+    }
+
+    .count-number {
+      color: #ea4335;
+      font-weight: bold;
+    }
+
+    .required-star {
+      color: #ea4335;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 14px;
+      color: #5f6368;
+      background-color: #2c2c2c;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px auto 0 auto;
+      max-width: 700px;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: var(--text-color);
+      margin-bottom: 20px;
+    }
+
+    /* Estilos específicos para seções com fundo escuro */
+    #nf .container {
+      background-color: #1e1e1e;
+      color: white;
+    }
+
+    #nf input {
+      background-color: #2a2a2a;
+      color: white;
+      border-color: #444;
+    }
+
+    #nf button {
+      background-color: #673ab7;
+    }
+
+    #nf button:hover {
+      background-color: #5e35b1;
+    }
+
+    #nf .result, #nf .history {
+      background-color: #2e2e2e;
+      border-color: #444;
+    }
+
+    /* Melhorias no gerador de códigos */
+    #gerador {
+      background-color: #f5f5f5;
+    }
+
+    #gerador .input-area textarea {
+      font-family: 'Courier New', monospace;
+      resize: vertical;
+    }
+
+    #gerador button {
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+
+    #gerador button:nth-child(1) { background-color: #4CAF50; }
+    #gerador button:nth-child(1):hover { background-color: #45a049; }
+    #gerador button:nth-child(2) { background-color: #f44336; }
+    #gerador button:nth-child(2):hover { background-color: #d32f2f; }
+    #gerador button:nth-child(3) { background-color: #ff9800; }
+    #gerador button:nth-child(3):hover { background-color: #e68a00; }
+    #gerador button:nth-child(4) { background-color: #2196F3; }
+    #gerador button:nth-child(4):hover { background-color: #0b7dda; }
+
+    @media print {
+      .back-button,
+      .input-area,
+      .no-print,
+      button,
+      .controls,
+      .example-title {
+        display: none !important;
+      }
+
+      .output-area {
+        width: 100%;
+        background: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .barcode-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 0;
+      }
+
+      .barcode-item {
+        margin: 0;
+        padding: 5px;
+        box-shadow: none;
+        background: none;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      svg {
+        background: none;
+      }
+
+      svg text {
+        fill: black !important;
+        font-size: 14px !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        margin: 10px;
+        padding: 20px;
+      }
+      
+      .submit-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+      
+      .controls button {
+        margin: 5px 0;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Página Principal -->
-    <div class="container active" data-page="main">
-        <h1><i class="fas fa-tasks"></i> GERENCIAL HS</h1>
-        
-        <a href="#" class="form-link" data-target="folga">
-            <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGAS
-        </a>
-        <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">
-            <i class="far fa-calendar-times"></i> CADASTRO DE FALTA
-        </a>
-        <a href="https://forms.gle/Wy9axrgLnoC5ymBk6" class="form-link" target="_blank">
-            <i class="fas fa-shopping-bag"></i> CONTAGEM DE SACOLA
-        </a>
-        <a href="#" class="form-link" data-target="divergencia">
-            <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
-        </a>
-        <a href="https://forms.gle/Qp1yY1EAX1FLc7Wg9" class="form-link" target="_blank">
-            <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
-        </a>
+
+  <!-- Botão de voltar -->
+  <button class="back-button" id="backButton" onclick="voltarHome()">
+    <i class="fas fa-arrow-left"></i> Voltar à Home
+  </button>
+
+  <!-- SEÇÃO HOME -->
+  <div id="home" class="section active">
+    <div class="home-container">
+      <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDE1MCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTAwIiBmaWxsPSIjNENBRjUwIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkhTPC90ZXh0Pgo8L3N2Zz4K" alt="Logo HS" class="logo-topo" />
+
+      <button class="form-link" onclick="mostrarSecao('folgas')">
+        <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
+      </button>
+      <a href="https://forms.gle/wXWsukfKS2w7yKuX8" class="form-link" target="_blank">
+        <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
+      </a>
+      <a href="https://forms.gle/Wy9axrgLnoC5ymBk6" class="form-link" target="_blank">
+        <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
+      </a>
+      <button class="form-link" onclick="mostrarSecao('divergencia')">
+        <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('transferencia')">
+        <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('gerador')">
+        <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('nf')">
+        <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
+      </button>
     </div>
-    
-    <!-- Página de Folgas -->
-    <div class="container" data-page="folga">
-        <a href="#" class="home-btn" data-target="main">
-            <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
-        </a>
-        
-        <div class="form-container">
-            <h2 style="text-align: center; margin-bottom: 25px; color: #fff;">
-                <i class="far fa-calendar-alt"></i> CADASTRO DE FOLGA FUNCIONÁRIOS
-            </h2>
-            
-            <form id="folgaForm">
-                <fieldset class="form-group" id="filialGroup">
-                    <legend>Filial</legend>
-                    <label class="radio-label">
-                        <input type="radio" name="filial" value="ARTUR">
-                        <span>ARTUR</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="filial" value="FLORIANO">
-                        <span>FLORIANO</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="filial" value="JOTA">
-                        <span>JOTA</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="filial" value="MODA">
-                        <span>MODA</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="filial" value="PONTO">
-                        <span>PONTO</span>
-                    </label>
-                </fieldset>
 
-                <div class="form-group" id="funcionarioGroup">
-                    <legend>Funcionário</legend>
-                    <select id="funcionario" name="funcionario" required>
-                        <option value="">Selecione a filial primeiro</option>
-                    </select>
-                </div>
+    <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+  </div>
 
-                <div class="form-group">
-                    <legend>DIA TRABALHADO</legend>
-                    <input type="date" id="dataTrabalho" name="dataTrabalho" required>
-                </div>
-
-                <fieldset class="form-group" id="motivoGroup">
-                    <legend>Motivo da Folga</legend>
-                    <label class="radio-label">
-                        <input type="radio" name="motivo" value="DOMINGO">
-                        <span>DOMINGO</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="motivo" value="FERIADO">
-                        <span>FERIADO</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="motivo" value="OUTROS">
-                        <span>OUTROS</span>
-                    </label>
-                </fieldset>
-
-                <div class="form-group" id="motivoOutros">
-                    <legend>Especificar o Motivo</legend>
-                    <input type="text" name="outrosMotivo" placeholder="Escreva o motivo">
-                </div>
-
-                <div class="form-group">
-                    <legend>Data da Folga</legend>
-                    <input type="date" id="dataFolga" name="dataFolga" required>
-                </div>
-
-                <button type="submit">ENVIAR SOLICITAÇÃO</button>
-            </form>
-
-            <div id="folgaLoadingMessage" class="loading-message">
-                <i class="fas fa-spinner fa-spin"></i> Enviando solicitação...
-            </div>
+  <!-- SEÇÃO CADASTRO DE FOLGAS -->
+  <div id="folgas" class="section">
+    <div class="form-container">
+      <h2>Cadastro de Folga Funcionários</h2>
+      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
+        <div class="form-group">
+          <label for="filial-folgas">Filial</label>
+          <select id="filial-folgas" name="filial" required onchange="atualizarFuncionarios()">
+            <option value="">Selecione uma filial</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+          </select>
         </div>
-    </div>
-    
-    <!-- Página de Divergências -->
-    <div class="container" data-page="divergencia">
-        <a href="#" class="home-btn" data-target="main">
-            <i class="fas fa-home"></i> VOLTAR PARA PÁGINA INICIAL
-        </a>
-        
-        <div class="form-container">
-            <h2 style="text-align: center; margin-bottom: 20px; color: #fff;">
-                <i class="fas fa-file-invoice-dollar"></i> Divergências em Notas Fiscais
-            </h2>
-            
-            <form id="divergenciaForm">
-                <div class="form-group">
-                    <legend>Filial</legend>
-                    <select name="filial" required>
-                        <option value="">Selecione uma filial</option>
-                        <option value="ARTUR">ARTUR</option>
-                        <option value="FLORIANO">FLORIANO</option>
-                        <option value="JOTA">JOTA</option>
-                        <option value="MODA">MODA</option>
-                        <option value="PONTO">PONTO</option>
-                    </select>
-                </div>
 
-                <div class="form-group">
-                    <legend>Transportadora</legend>
-                    <select name="transportadora" id="transportadora" required>
-                        <option value="BRASPRESS">BRASPRESS</option>
-                        <option value="OUTROS">OUTROS</option>
-                    </select>
-                </div>
-
-                <div class="form-group" id="outrosTransportadora">
-                    <legend>Qual é a Transportadora?</legend>
-                    <input type="text" id="outraTransportadora" name="outraTransportadora">
-                </div>
-
-                <div class="form-group">
-                    <legend>Data de Recebimento</legend>
-                    <input type="date" id="dataRecebimento" name="dataRecebimento" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Número da Nota Fiscal</legend>
-                    <input type="text" id="notaFiscal" name="notaFiscal" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Série da Nota Fiscal</legend>
-                    <input type="text" id="serieNota" name="serieNota" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Referência</legend>
-                    <input type="text" id="referencia" name="referencia" maxlength="4" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Cor</legend>
-                    <input type="text" id="cor" name="cor" maxlength="6" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Tamanho</legend>
-                    <input type="text" id="tamanho" name="tamanho" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Quantidade</legend>
-                    <input type="number" id="quantidade" name="quantidade" required>
-                </div>
-
-                <div class="form-group">
-                    <legend>Divergência</legend>
-                    <select name="divergencia" required>
-                        <option value="">Selecione uma opção</option>
-                        <option value="MERCADORIA PASSANDO">MERCADORIA PASSANDO</option>
-                        <option value="MERCADORIA FALTANDO">MERCADORIA FALTANDO</option>
-                    </select>
-                </div>
-
-                <button type="submit">ENVIAR DIVERGÊNCIA</button>
-            </form>
-
-            <div id="divergenciaLoadingMessage" class="loading-message">
-                <i class="fas fa-spinner fa-spin"></i> Enviando... Por favor, aguarde.
-            </div>
+        <div class="form-group">
+          <label for="funcionario-folgas">Funcionário</label>
+          <select id="funcionario-folgas" name="funcionario" required>
+            <option value="">Selecione a filial primeiro</option>
+          </select>
         </div>
+
+        <div class="form-group">
+          <label for="dataTrabalho-folgas">Dia Trabalhado</label>
+          <input type="date" id="dataTrabalho-folgas" name="dataTrabalho" required>
+        </div>
+
+        <div class="form-group">
+          <label for="motivo-folgas">Motivo da Folga</label>
+          <select id="motivo-folgas" name="motivo" required>
+            <option value="">Selecione um motivo</option>
+            <option value="DOMINGO">DOMINGO</option>
+            <option value="FERIADO">FERIADO</option>
+            <option value="OUTROS">OUTROS</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="motivoOutros-folgas" style="display: none;">
+          <label for="outrosMotivo-folgas">Especificar o Motivo</label>
+          <input type="text" id="outrosMotivo-folgas" name="outrosMotivo" placeholder="Escreva o motivo">
+        </div>
+
+        <div class="form-group">
+          <label for="dataFolga-folgas">Data da Folga</label>
+          <input type="date" id="dataFolga-folgas" name="dataFolga" required>
+        </div>
+
+        <button type="submit">Enviar</button>
+      </form>
     </div>
+  </div>
+
+  <!-- SEÇÃO DIVERGÊNCIA DE NOTAS FISCAIS -->
+  <div id="divergencia" class="section">
+    <div class="form-container">
+      <h2>Divergências em Notas Fiscais</h2>
+      <form id="formulario-divergencia" onsubmit="enviarFormularioDivergencia(event)">
+        <div class="form-group">
+          <label>Filial</label>
+          <select name="filial" required>
+            <option value="">Selecione uma filial</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Transportadora</label>
+          <select name="transportadora" id="transportadora-div" required>
+            <option value="BRASPRESS">BRASPRESS</option>
+            <option value="OUTROS">OUTROS</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="outrosTransportadoraDiv" style="display: none;">
+          <label for="outraTransportadoraDiv">Qual é a Transportadora?</label>
+          <input type="text" id="outraTransportadoraDiv" name="outraTransportadora">
+        </div>
+
+        <div class="form-group">
+          <label for="dataRecebimentoDiv">Data de Recebimento</label>
+          <input type="date" id="dataRecebimentoDiv" name="dataRecebimento" required>
+        </div>
+
+        <div class="form-group">
+          <label for="notaFiscalDiv">Número da Nota Fiscal</label>
+          <input type="text" id="notaFiscalDiv" name="notaFiscal" required>
+        </div>
+
+        <div class="form-group">
+          <label for="serieNotaDiv">Série da Nota Fiscal</label>
+          <input type="text" id="serieNotaDiv" name="serieNota" required>
+        </div>
+
+        <div class="form-group">
+          <label for="referenciaDiv">Referência</label>
+          <input type="text" id="referenciaDiv" name="referencia" maxlength="4" required>
+        </div>
+
+        <div class="form-group">
+          <label for="corDiv">Cor</label>
+          <input type="text" id="corDiv" name="cor" maxlength="6" required>
+        </div>
+
+        <div class="form-group">
+          <label for="tamanhoDiv">Tamanho</label>
+          <input type="text" id="tamanhoDiv" name="tamanho" maxlength="3" required>
+        </div>
+
+        <div class="form-group">
+          <label for="quantidadeDiv">Quantidade</label>
+          <input type="number" id="quantidadeDiv" name="quantidade" required>
+        </div>
+
+        <div class="form-group">
+          <label>Divergência</label>
+          <select name="divergencia" required>
+            <option value="">Selecione uma opção</option>
+            <option value="MERCADORIA PASSANDO">MERCADORIA PASSANDO</option>
+            <option value="MERCADORIA FALTANDO">MERCADORIA FALTANDO</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Enviar</button>
+        </div>
+      </form>
+
+      <div id="loadingMessageDiv" class="loading" style="display: none;">
+        Enviando... Por favor, aguarde.
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO TRANSFERÊNCIA ENTRE LOJAS -->
+  <div id="transferencia" class="section">
+    <div class="form-container">
+      <h1>TRANSFERÊNCIA ENTRE LOJAS</h1>
+
+      <form id="transfer-form">
+        <div class="form-group">
+          <div class="question-title">Email da filial de origem:(Preenchimento automatico) <span class="required-star">*</span></div>
+          <input type="email" name="email" id="email-trans" required readonly>
+        </div>
+
+        <div class="form-group">
+          <div class="question-title">FILIAL ORIGEM <span class="required-star">*</span></div>
+          <select name="filialOrigem" id="filial-origem" required onchange="atualizarEmailTrans()">
+            <option value="" disabled selected>Selecione</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+            <option value="JA">JA</option>
+            <option value="JE">JE</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="question-title">FILIAL DESTINO <span class="required-star">*</span></div>
+          <select name="filialDestino" id="filial-destino" required>
+            <option value="" disabled selected>Selecione</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+            <option value="JA">JA</option>
+            <option value="JE">JE</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="question-title">MERCADORIAS QUE ESTÃO SAINDO <span class="required-star">*</span></div>
+          <textarea name="mercadorias" id="mercadorias-trans" required placeholder="Inclua aqui os códigos de barras." oninput="contarLinhasTrans()"></textarea>
+        </div>
+
+        <div id="barcode-count-trans" class="barcode-count">Total de itens: <span id="total-itens-trans" class="count-number">0</span></div>
+
+        <div id="success-message-trans" style="display: none; background-color: #e8f5e8; color: #137333; padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; border: 1px solid #ceead6;">Transferência enviada com sucesso!</div>
+        <div id="error-message-trans" style="display: none; background-color: #fce8e6; color: #d93025; padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; border: 1px solid #f9dedc;"></div>
+
+        <div class="submit-buttons">
+          <button type="reset" class="clear-button">Limpar formulário</button>
+          <button type="submit" class="submit-button" id="submit-button-trans">Enviar</button>
+        </div>
+      </form>
+
+      <div id="numero-transferencia" style="display: none; margin-top: 20px; font-size: 18px; text-align: center;">
+        Número da transferência: <strong id="transfer-id"></strong>
+      </div>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay-trans">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>Processando sua transferência...</h3>
+        <p>Aguarde enquanto enviamos os dados.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO GERADOR DE CÓDIGOS DE BARRAS -->
+  <div id="gerador" class="section">
+    <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+      <h1>Gerador de Códigos de Barras em Lote - EAN13</h1>
+
+      <div class="input-area">
+        <h2>Cole seus códigos (um por linha):</h2>
+        <textarea id="codigos-barras" placeholder="Cole aqui vários códigos EAN13, um por linha
+Exemplo:
+7891000315507
+7891910000197
+7891234567890" style="width: 100%; height: 150px; padding: 10px; font-family: 'Courier New', monospace; border: 1px solid #dadce0; border-radius: 4px; resize: vertical; background-color: #fff; color: #202124;"></textarea>
+
+        <div class="controls">
+          <button onclick="gerarTodosBarras()">Gerar Códigos</button>
+          <button onclick="limparTudoBarras()">Limpar Tudo</button>
+          <button onclick="copiarCodigosBarras()">Copiar Códigos</button>
+          <button onclick="window.print()">Imprimir Códigos</button>
+        </div>
+
+        <div class="example-title">Exemplos (não são apagados ao limpar):</div>
+      </div>
+
+      <div class="output-area">
+        <h2>Códigos Gerados:</h2>
+        <div id="barcodes" class="barcode-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEÇÃO RECEBIMENTO DE NOTA FISCAL -->
+  <div id="nf" class="section">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNENBRjUwIi8+Cjx0ZXh0IHg9IjQwIiB5PSI0NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkhTPC90ZXh0Pgo8L3N2Zz4K" alt="Logo" class="logo">
     
-    <footer>
-        HS Operações &copy; 2025 - Todos os direitos reservados
-    </footer>
+    <div id="login-nf" class="container">
+      <h2>Login da Filial</h2>
+      <label for="codigo-nf">Código da Filial</label>
+      <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
+      <button onclick="entrarNF()">Entrar</button>
+    </div>
 
-    <script>
-        // Sistema de navegação
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mostrar página principal inicialmente
-            showPage('main');
-            
-            // Configurar eventos de navegação
-            document.querySelectorAll('[data-target]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showPage(this.getAttribute('data-target'));
-                });
-            });
-            
-            function showPage(pageId) {
-                // Esconder todas as páginas
-                document.querySelectorAll('[data-page]').forEach(page => {
-                    page.classList.remove('active');
-                });
-                
-                // Mostrar a página solicitada
-                const page = document.querySelector(`[data-page="${pageId}"]`);
-                if (page) {
-                    page.classList.add('active');
-                    
-                    // Configurar datas quando a página for mostrada
-                    if (pageId === 'folga') {
-                        document.getElementById('dataTrabalho').valueAsDate = new Date();
-                        document.getElementById('motivoOutros').style.display = 'none';
-                    } else if (pageId === 'divergencia') {
-                        document.getElementById('dataRecebimento').valueAsDate = new Date();
-                        document.getElementById('outrosTransportadora').style.display = 'none';
-                    }
-                }
-                
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-            
-            // Dados dos funcionários por filial
-            const funcionariosPorFilial = {
-                "ARTUR": ["FERNANDA", "LUCILENE"],
-                "FLORIANO": ["FERNANDA", "MEIRE", "SARA", "THACIANNE"],
-                "JOTA": ["BRUNO", "CARINA", "DENISE", "FABIOLA", "JÉSSICA", "LOUISE", "NATALIA", "PRISCILA", "RAYSSA", "VERA"],
-                "MODA": ["ANA CLARA", "DAIANE", "JÉSSICA", "JÔSE CLAIR", "NAISE", "MARIA"],
-                "PONTO": ["DANIELA", "DEBORA", "ISADORA", "PAULA", "PRISCILA", "SANDY", "SÔNIA"]
-            };
+    <div id="principal-nf" class="container hidden">
+      <div class="logout">
+        <button onclick="sairNF()">Sair</button>
+      </div>
+      <h2>Consulta de Nota Fiscal</h2>
+      <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
+      <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
+      <button onclick="consultarNotaNF()">Consultar</button>
+      <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
+      <div id="reader-nf" class="hidden">
+        <div id="interactive-nf" class="viewport"></div>
+      </div>
 
-            // Carregar funcionários quando selecionar filial
-            document.getElementById('filialGroup').addEventListener('change', function() {
-                const filialSelecionada = document.querySelector('input[name="filial"]:checked');
-                const funcionarioSelect = document.getElementById('funcionario');
-                
-                funcionarioSelect.innerHTML = '<option value="">Selecione um funcionário</option>';
-                
-                if (filialSelecionada) {
-                    funcionariosPorFilial[filialSelecionada.value].forEach(function(funcionario) {
-                        const option = document.createElement('option');
-                        option.value = funcionario;
-                        option.textContent = funcionario;
-                        funcionarioSelect.appendChild(option);
-                    });
-                }
-            });
+      <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
+      <div id="resultado-nf" class="result hidden"></div>
+      <div id="erro-nf" class="error"></div>
 
-            // Mostrar campo "Outros" quando selecionado e validar datas (Folgas)
-            document.querySelectorAll('#motivoGroup input[name="motivo"]').forEach(function(radio) {
-                radio.addEventListener('change', function() {
-                    const dataTrabalhoInput = document.getElementById('dataTrabalho');
-                    const motivoOutrosField = document.getElementById('motivoOutros');
-                    const dataFolgaInput = document.getElementById('dataFolga');
+      <div class="history">
+        <h3>Histórico da Filial</h3>
+        <ul id="historicoLista-nf"></ul>
+        <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
+      </div>
+    </div>
+  </div>
 
-                    if (!dataTrabalhoInput.value) {
-                        alert('Selecione primeiro a Data de Trabalho!');
-                        this.checked = false;
-                        return;
-                    }
+  <script>
+    // Função para mostrar seções
+    function mostrarSecao(secaoId) {
+      // Esconder todas as seções
+      const secoes = document.querySelectorAll('.section');
+      secoes.forEach(secao => secao.classList.remove('active'));
+      
+      // Mostrar a seção selecionada
+      document.getElementById(secaoId).classList.add('active');
+      
+      // Mostrar botão de voltar
+      document.getElementById('backButton').classList.add('show');
+    }
 
-                    const dataTrabalho = new Date(dataTrabalhoInput.value);
-                    const maxDate = new Date(dataTrabalho);
+    // Função para voltar à home
+    function voltarHome() {
+      // Esconder todas as seções
+      const secoes = document.querySelectorAll('.section');
+      secoes.forEach(secao => secao.classList.remove('active'));
+      
+      // Mostrar a home
+      document.getElementById('home').classList.add('active');
+      
+      // Esconder botão de voltar
+      document.getElementById('backButton').classList.remove('show');
+    }
 
-                    if (this.value === 'DOMINGO') {
-                        maxDate.setDate(dataTrabalho.getDate() + 7);
-                    } else if (this.value === 'FERIADO') {
-                        maxDate.setDate(dataTrabalho.getDate() + 30);
-                    }
+    // SCRIPTS PARA CADASTRO DE FOLGAS - VERSÃO MELHORADA
+    const funcionariosPorFilial = {
+      "ARTUR": ["FERNANDA", "ISABELLA", "LUCILENE"],
+      "FLORIANO": ["FERNANDA", "MEIRE", "SARA", "THACIANNE"],
+      "JOTA": ["BRUNO", "CARINA", "DENISE", "FABIOLA", "JÉSSICA", "LOUISE", "NATALIA", "PRISCILA", "RAYSSA", "VERA"],
+      "MODA": ["ANA CLARA", "DAIANE", "JÉSSICA", "MARCIA", "NAISE", "MARIA"],
+      "PONTO": ["DANIELA", "EVANEUZA", "ISADORA", "PAULA", "PRISCILA", "SANDY", "SÔNIA", "SUELI"]
+    };
 
-                    dataFolgaInput.min = dataTrabalho.toISOString().split('T')[0];
-                    dataFolgaInput.max = maxDate.toISOString().split('T')[0];
+    function atualizarFuncionarios() {
+      const filialSelecionada = document.getElementById('filial-folgas').value;
+      const funcionarioSelect = document.getElementById('funcionario-folgas');
+      funcionarioSelect.innerHTML = "<option value=''>Selecione um funcionário</option>";
 
-                    motivoOutrosField.style.display = this.value === 'OUTROS' ? 'block' : 'none';
-                });
-            });
-
-            // Mostrar/ocultar campo de outra transportadora (Divergências)
-            document.getElementById('transportadora').addEventListener('change', function() {
-                document.getElementById('outrosTransportadora').style.display = 
-                    this.value === 'OUTROS' ? 'block' : 'none';
-            });
-
-            // Envio do formulário de folgas
-            document.getElementById('folgaForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const button = this.querySelector('button[type="submit"]');
-                const loadingMessage = document.getElementById('folgaLoadingMessage');
-                
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
-                loadingMessage.style.display = 'block';
-                
-                const formData = new FormData(this);
-                
-                fetch('https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(data => {
-                    alert('Folga cadastrada com sucesso!');
-                    this.reset();
-                    document.getElementById('funcionario').innerHTML = '<option value="">Selecione a filial primeiro</option>';
-                    document.getElementById('motivoOutros').style.display = 'none';
-                    document.getElementById('dataTrabalho').valueAsDate = new Date();
-                })
-                .catch(error => {
-                    alert('Erro ao enviar os dados!');
-                })
-                .finally(() => {
-                    button.disabled = false;
-                    button.innerHTML = 'ENVIAR SOLICITAÇÃO';
-                    loadingMessage.style.display = 'none';
-                });
-            });
-
-            // Envio do formulário de divergências
-            document.getElementById('divergenciaForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const button = this.querySelector('button[type="submit"]');
-                const loadingMessage = document.getElementById('divergenciaLoadingMessage');
-                
-                button.disabled = true;
-                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
-                loadingMessage.style.display = 'block';
-                
-                const formData = new FormData(this);
-                
-                fetch('https://script.google.com/macros/s/AKfycbw5xq6i5Qoc0s3f-ZaQ6FCZdsjXrC_my8d0tmgr756hWZQqT9Olu9DjsGOYwTlvnBQA/exec', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert('Divergência enviada com sucesso!');
-                    this.reset();
-                    document.getElementById('dataRecebimento').valueAsDate = new Date();
-                    document.getElementById('outrosTransportadora').style.display = 'none';
-                })
-                .catch(error => {
-                    alert('Erro ao enviar os dados!');
-                })
-                .finally(() => {
-                    button.disabled = false;
-                    button.innerHTML = 'ENVIAR DIVERGÊNCIA';
-                    loadingMessage.style.display = 'none';
-                });
-            });
+      if (filialSelecionada && funcionariosPorFilial[filialSelecionada]) {
+        funcionariosPorFilial[filialSelecionada].forEach(function(funcionario) {
+          const option = document.createElement("option");
+          option.value = funcionario;
+          option.textContent = funcionario;
+          funcionarioSelect.appendChild(option);
         });
-    </script>
+      }
+    }
+
+    // Adiciona event listener para o campo de data de trabalho
+    document.getElementById('dataTrabalho-folgas').addEventListener('change', function() {
+      const motivoSelect = document.getElementById('motivo-folgas');
+      if (motivoSelect.value !== '') {
+        verificarMotivo(); // Chama a função se um motivo já estiver selecionado
+      }
+    });
+
+    // Adiciona event listener para o campo de motivo da folga
+    document.getElementById('motivo-folgas').addEventListener('change', verificarMotivo);
+
+    function verificarMotivo() {
+      const motivo = document.getElementById('motivo-folgas').value;
+      const dataTrabalhoInput = document.getElementById("dataTrabalho-folgas");
+      const dataFolgaInput = document.getElementById("dataFolga-folgas");
+      const motivoOutrosField = document.getElementById("motivoOutros-folgas");
+
+      if (!dataTrabalhoInput.value) {
+        alert("Selecione primeiro o 'Dia Trabalhado'!");
+        document.getElementById('motivo-folgas').value = '';
+        return;
+      }
+
+      const dataTrabalho = new Date(dataTrabalhoInput.value + 'T00:00:00'); // Garante fuso horário
+      const maxDate = new Date(dataTrabalho);
+
+      if (motivo === "DOMINGO") {
+        maxDate.setDate(dataTrabalho.getDate() + 7);
+      } else if (motivo === "FERIADO" || motivo === "OUTROS") {
+        maxDate.setDate(dataTrabalho.getDate() + 60);
+      }
+
+      dataFolgaInput.min = dataTrabalho.toISOString().split('T')[0];
+      dataFolgaInput.max = maxDate.toISOString().split('T')[0];
+
+      motivoOutrosField.style.display = motivo === "OUTROS" ? "block" : "none";
+      
+      if (motivo === "OUTROS") {
+        document.getElementById('outrosMotivo-folgas').required = true;
+      } else {
+        document.getElementById('outrosMotivo-folgas').required = false;
+      }
+    }
+
+    document.getElementById("form-folgas").addEventListener("submit", function (event) {
+      event.preventDefault();
+      const formData = new FormData(this);
+
+      fetch(this.action, {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.text())
+        .then(data => {
+          alert("Folga cadastrada com sucesso!");
+          this.reset();
+          document.getElementById("funcionario-folgas").innerHTML = '<option value="">Selecione a filial primeiro</option>';
+          document.getElementById("motivoOutros-folgas").style.display = "none";
+        })
+        .catch(error => alert("Erro ao enviar os dados!"));
+    });
+
+    // SCRIPTS PARA DIVERGÊNCIA DE NOTAS FISCAIS
+    let isSubmittingDiv = false;
+
+    // Mostrar/esconder campo "Outros" transportadora
+    document.getElementById('transportadora-div').addEventListener('change', function() {
+      const outrosDiv = document.getElementById('outrosTransportadoraDiv');
+      if (this.value === 'OUTROS') {
+        outrosDiv.style.display = 'block';
+        document.getElementById('outraTransportadoraDiv').required = true;
+      } else {
+        outrosDiv.style.display = 'none';
+        document.getElementById('outraTransportadoraDiv').required = false;
+      }
+    });
+
+    function enviarFormularioDivergencia(event) {
+      event.preventDefault();
+
+      if (isSubmittingDiv) {
+        return;
+      }
+
+      isSubmittingDiv = true;
+
+      const button = event.target.querySelector("button[type='submit']");
+      const loadingMessage = document.getElementById("loadingMessageDiv");
+
+      button.disabled = true;
+      button.textContent = "Enviando...";
+
+      loadingMessage.style.display = "block";
+
+      var form = document.getElementById("formulario-divergencia");
+      var formData = new FormData(form);
+
+      fetch("https://script.google.com/macros/s/AKfycbw5xq6i5Qoc0s3f-ZaQ6FCZdsjXrC_my8d0tmgr756hWZQqT9Olu9DjsGOYwTlvnBQA/exec", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert("SUA DIVERGÊNCIA FOI ENVIADA COM SUCESSO, AGRADECEMOS SEU APOIO");
+        form.reset();
+        document.getElementById('outrosTransportadoraDiv').style.display = 'none';
+      })
+      .catch(error => {
+        alert("Erro ao enviar o formulário. Tente novamente.");
+      })
+      .finally(() => {
+        setTimeout(() => {
+          button.disabled = false;
+          button.textContent = "Enviar";
+          isSubmittingDiv = false;
+          loadingMessage.style.display = "none";
+        }, 100);
+      });
+    }
+
+    // SCRIPTS PARA TRANSFERÊNCIA ENTRE LOJAS
+    function atualizarEmailTrans() {
+      const filialOrigem = document.getElementById('filial-origem').value;
+      const filialDestinoSelect = document.getElementById('filial-destino');
+      const emailPorFilial = {
+        ARTUR: "heringarturmachado@gmail.com",
+        FLORIANO: "hs.uberlandia.floriano@gmail.com",
+        JOTA: "brunohenzo09@gmail.com",
+        MODA: "dlaire28@gmail.com",
+        PONTO: "soniameiry@gmail.com",
+        JA: "jaugustocoliveira@terra.com.br",
+        JE: "jeoliveira1966@gmail.com"
+      };
+      document.getElementById('email-trans').value = emailPorFilial[filialOrigem] || "";
+
+      Array.from(filialDestinoSelect.options).forEach(option => {
+        option.disabled = option.value === filialOrigem;
+      });
+
+      if (filialDestinoSelect.value === filialOrigem) {
+        filialDestinoSelect.value = "";
+      }
+    }
+
+    function contarLinhasTrans() {
+      const mercadorias = document.getElementById('mercadorias-trans').value;
+      const linhas = mercadorias.split('\n').filter(linha => linha.trim() !== '');
+      document.getElementById('total-itens-trans').textContent = linhas.length;
+    }
+
+    document.getElementById('transfer-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      enviarFormularioTrans();
+    });
+
+    function enviarFormularioTrans() {
+      const form = document.getElementById('transfer-form');
+      if (!form.checkValidity()) {
+        mostrarMensagemErroTrans("Por favor, preencha todos os campos obrigatórios!");
+        return;
+      }
+
+      const formData = new FormData(form);
+      const data = new URLSearchParams(formData).toString();
+
+      document.getElementById('loading-overlay-trans').style.display = 'flex';
+
+      fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: data
+      })
+      .then(response => response.json())
+      .then(responseData => {
+        document.getElementById('loading-overlay-trans').style.display = 'none';
+
+        if (responseData.numeroTransferencia) {
+          mostrarMensagemSucessoTrans();
+          exibirNumeroTransferencia(responseData.numeroTransferencia);
+          setTimeout(limparFormularioTrans, 5000);
+        } else {
+          mostrarMensagemErroTrans("Erro ao enviar: Resposta inválida do servidor.");
+        }
+      })
+      .catch(error => {
+        document.getElementById('loading-overlay-trans').style.display = 'none';
+        mostrarMensagemErroTrans("Erro ao enviar o formulário. Tente novamente.");
+      });
+    }
+
+    function mostrarMensagemSucessoTrans() {
+      document.getElementById('success-message-trans').style.display = 'block';
+      document.getElementById('error-message-trans').style.display = 'none';
+    }
+
+    function mostrarMensagemErroTrans(mensagem) {
+      document.getElementById('error-message-trans').innerHTML = mensagem;
+      document.getElementById('error-message-trans').style.display = 'block';
+      document.getElementById('success-message-trans').style.display = 'none';
+    }
+
+    function exibirNumeroTransferencia(numero) {
+      document.getElementById('numero-transferencia').style.display = 'block';
+      document.getElementById('transfer-id').textContent = numero;
+    }
+
+    function limparFormularioTrans() {
+      document.getElementById('transfer-form').reset();
+      document.getElementById('numero-transferencia').style.display = 'none';
+      document.getElementById('total-itens-trans').textContent = '0';
+      contarLinhasTrans();
+    }
+
+    // SCRIPTS PARA GERADOR DE CÓDIGOS DE BARRAS
+    function generateEAN13(code, skipValidation = false) {
+      if (!/^\d{12,13}$/.test(code)) {
+        throw new Error(`Código inválido: "${code}" - Deve conter 12 ou 13 dígitos`);
+      }
+
+      if (code.length === 12) {
+        code += calculateChecksum(code);
+      } else if (!skipValidation && calculateChecksum(code.substring(0, 12)) != code[12]) {
+        throw new Error(`Dígito verificador inválido para código: "${code}"`);
+      }
+
+      const patterns = {
+        L: ["0001101","0011001","0010011","0111101","0100011","0110001","0101111","0111011","0110111","0001011"],
+        G: ["0100111","0110011","0011011","0100001","0011101","0111001","0000101","0010001","0001001","0010111"],
+        R: ["1110010","1100110","1101100","1000010","1011100","1001110","1010000","1000100","1001000","1110100"]
+      };
+
+      const structure = ["LLLLLL","LLGLGG","LLGGLG","LLGGGL","LGLLGG","LGGLLG","LGGGLL","LGLGLG","LGLGGL","LGGLGL"];
+      const firstDigit = parseInt(code[0]);
+      const pattern = structure[firstDigit];
+
+      let barcode = "101";
+      for (let i = 1; i <= 6; i++) {
+        const digit = parseInt(code[i]);
+        barcode += patterns[pattern[i - 1]][digit];
+      }
+
+      barcode += "01010";
+
+      for (let i = 7; i <= 12; i++) {
+        const digit = parseInt(code[i]);
+        barcode += patterns.R[digit];
+      }
+
+      barcode += "101";
+
+      return {
+        code: code,
+        binary: barcode
+      };
+    }
+
+    function calculateChecksum(code) {
+      let sum = 0;
+      for (let i = 0; i < 12; i++) {
+        const digit = parseInt(code[i]);
+        sum += (i % 2 === 0) ? digit * 1 : digit * 3;
+      }
+      return (10 - (sum % 10)) % 10;
+    }
+
+    function renderBarcode(barcodeData, container) {
+      const binary = barcodeData.binary;
+      const code = barcodeData.code;
+      const width = 2;
+      const height = 60;
+      const margin = 10;
+      const fontSize = 14;
+
+      const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      const totalWidth = (binary.length * width) + (margin * 2);
+      const totalHeight = height + fontSize + 15;
+
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", totalHeight);
+      svg.setAttribute("class", "barcode-svg");
+
+      let x = margin;
+      for (let i = 0; i < binary.length; i++) {
+        if (binary[i] === '1') {
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", margin);
+          rect.setAttribute("width", width);
+          rect.setAttribute("height", height);
+          rect.setAttribute("fill", "#000");
+          svg.appendChild(rect);
+        }
+        x += width;
+      }
+
+      const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      text.setAttribute("x", totalWidth / 2);
+      text.setAttribute("y", totalHeight - 5);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("font-size", fontSize);
+      text.setAttribute("font-family", "monospace");
+      text.setAttribute("fill", "black");
+      text.textContent = code;
+      svg.appendChild(text);
+
+      const item = document.createElement("div");
+      item.className = "barcode-item";
+      item.appendChild(svg);
+      container.appendChild(item);
+    }
+
+    function gerarTodosBarras() {
+      const input = document.getElementById("codigos-barras").value.trim();
+      const container = document.getElementById("barcodes");
+      container.innerHTML = '';
+
+      if (!input) {
+        alert("Por favor, cole alguns códigos EAN13 no campo de texto.");
+        return;
+      }
+
+      const codigos = input.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+      let successCount = 0;
+      let errorCount = 0;
+      const errorMessages = [];
+
+      codigos.forEach((codigo, index) => {
+        try {
+          const barcode = generateEAN13(codigo, true);
+          renderBarcode(barcode, container);
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          errorMessages.push(`Linha ${index + 1}: ${error.message}`);
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "barcode-item no-print";
+          errorDiv.style.color = "red";
+          errorDiv.textContent = `Erro: ${codigo} - ${error.message}`;
+          container.appendChild(errorDiv);
+        }
+      });
+
+      if (errorCount > 0) {
+        alert(`Foram gerados ${successCount} códigos com sucesso.\n\nErros encontrados (${errorCount}):\n${errorMessages.join('\n')}`);
+      } else if (successCount > 0) {
+        alert(`Todos os ${successCount} códigos foram gerados com sucesso!`);
+      }
+    }
+
+    function limparTudoBarras() {
+      document.getElementById("codigos-barras").value = '';
+      document.getElementById("barcodes").innerHTML = '';
+    }
+
+    function copiarCodigosBarras() {
+      const input = document.getElementById("codigos-barras");
+      input.select();
+      document.execCommand('copy');
+      alert("Códigos copiados para a área de transferência!");
+    }
+
+    // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
+
+    function entrarNF() {
+      const codigo = document.getElementById('codigo-nf').value.trim();
+      const codigosValidos = ['288', '287', '293', '488', '559'];
+      if (!codigo || !codigosValidos.includes(codigo)) {
+        alert("Código da filial inválido.");
+        return;
+      }
+      localStorage.setItem('filial', codigo);
+      document.getElementById('login-nf').classList.add('hidden');
+      document.getElementById('principal-nf').classList.remove('hidden');
+      carregarHistoricoNF(codigo);
+      document.getElementById('chave-nf').focus();
+    }
+
+    function sairNF() {
+      localStorage.removeItem('filial');
+      document.getElementById('login-nf').classList.remove('hidden');
+      document.getElementById('principal-nf').classList.add('hidden');
+      document.getElementById('codigo-nf').value = '';
+    }
+
+    function limparHistoricoLocalNF() {
+      const senha = prompt("Digite a senha para limpar o histórico:");
+      if (senha !== "hs") {
+        alert("Senha incorreta. Operação cancelada.");
+        return;
+      }
+      const filial = localStorage.getItem('filial');
+      localStorage.removeItem(`historico_${filial}`);
+      document.getElementById('historicoLista-nf').innerHTML = '';
+      alert("Histórico local apagado.");
+    }
+
+    function consultarNotaNF() {
+      const filial = localStorage.getItem('filial');
+      const chave = document.getElementById('chave-nf').value.trim();
+      const resultado = document.getElementById('resultado-nf');
+      const erro = document.getElementById('erro-nf');
+      const loading = document.getElementById('loading-nf');
+      const botao = document.querySelector("button[onclick='consultarNotaNF()']");
+
+      resultado.classList.add('hidden');
+      erro.innerText = '';
+
+      if (!filial || !chave || chave.length !== 44) {
+        erro.innerText = 'Preencha corretamente a chave com 44 dígitos.';
+        return;
+      }
+
+      const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
+      if (historico.find(h => h.chave === chave)) {
+        erro.innerText = 'Essa chave já foi consultada anteriormente!';
+        return;
+      }
+
+      botao.disabled = true;
+      loading.classList.remove('hidden');
+
+      fetch(`${URL_SCRIPT}?chave=${chave}&filial=${filial}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            resultado.classList.remove('hidden');
+            resultado.innerHTML = `
+              <p><strong>Número da NF:</strong> ${data.data.numeroNF}</p>
+              <p><strong>Valor Total:</strong> ${data.data.valorTotal}</p>
+              <p><strong>Quantidade Total:</strong> ${data.data.quantidadeTotal}</p>
+              <p><strong>Status:</strong> ✅ ${data.data.status}</p>
+            `;
+            historico.push({ chave, dataHora: new Date().toISOString(), numeroNF: data.data.numeroNF, valorTotal: data.data.valorTotal, quantidade: data.data.quantidadeTotal });
+            localStorage.setItem(`historico_${filial}`, JSON.stringify(historico));
+            carregarHistoricoNF(filial);
+          } else {
+            erro.innerText = data.message || 'Erro ao buscar nota fiscal.';
+          }
+        })
+        .catch(() => erro.innerText = 'Erro de comunicação com o servidor.')
+        .finally(() => {
+          loading.classList.add('hidden');
+          botao.disabled = false;
+        });
+    }
+
+    function carregarHistoricoNF(filial) {
+      const historicoLista = document.getElementById('historicoLista-nf');
+      const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
+      historicoLista.innerHTML = historico.length === 0 ? '<li>Nenhum histórico local encontrado.</li>' : '';
+      historico.slice().reverse().forEach(registro => {
+        const dt = new Date(registro.dataHora);
+        const linha = `${dt.toLocaleDateString('pt-BR')} - NF ${registro.numeroNF} - ${registro.valorTotal} - ${registro.quantidade} itens`;
+        historicoLista.insertAdjacentHTML('beforeend', `<li>${linha}</li>`);
+      });
+    }
+
+    function iniciarScannerNF() {
+      const readerDiv = document.getElementById("reader-nf");
+      readerDiv.classList.remove("hidden");
+
+      Quagga.init({
+        inputStream: {
+          type: "LiveStream",
+          target: document.querySelector('#interactive-nf'),
+          constraints: {
+            facingMode: "environment"
+          }
+        },
+        locator: { patchSize: "medium", halfSample: true },
+        decoder: {
+          readers: ["code_128_reader"]
+        },
+        locate: true
+      }, function(err) {
+        if (err) {
+          console.error(err);
+          alert("Erro ao iniciar o leitor: " + err);
+          return;
+        }
+        Quagga.start();
+      });
+
+      Quagga.onDetected(data => {
+        const codigo = data.codeResult.code;
+        if (codigo.length >= 44) {
+          document.getElementById("chave-nf").value = codigo.substring(0, 44);
+          Quagga.stop();
+          readerDiv.classList.add("hidden");
+          document.getElementById("chave-nf").focus();
+        }
+      });
+    }
+
+    // Verificar se já está logado ao carregar a seção NF
+    window.addEventListener('load', function () {
+      const filial = localStorage.getItem('filial');
+      if (filial) {
+        document.getElementById('login-nf').classList.add('hidden');
+        document.getElementById('principal-nf').classList.remove('hidden');
+        carregarHistoricoNF(filial);
+        document.getElementById('chave-nf').focus();
+      }
+    });
+  </script>
+
 </body>
 </html>
+
