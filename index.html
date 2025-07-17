@@ -509,9 +509,7 @@
     <img src="logo.png" alt="Logo HS" class="logo-topo" />
     
     <div class="container">
-      <button class="form-link" onclick="mostrarSecao(\'folgas\')">
-        <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
-      </button>
+      <button class="form-link" onclick="mostrarSecao('folgas')">
       <button class="form-link" onclick="mostrarSecao(\'falta\')">
         <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
       </button>
@@ -521,7 +519,7 @@
       <button class="form-link" onclick="mostrarSecao(\'divergencia\')">
         <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
       </button>
-      <button class="form-link" onclick="mostrarSecao(\'transferencia\')">
+      <button class="form-link" onclick="mostrarSecao("transferencia")">
         <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
       </button>
       <button class="form-link" onclick="mostrarSecao(\'gerador\')">
