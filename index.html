@@ -410,6 +410,24 @@
       display: flex;
     }
 
+    /* Estilos específicos para formulários de Contagem de Sacola e Cadastro de Falta */
+    .checkbox-label {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    input[readonly] {
+      background-color: #2a2a2a;
+      color: #bbb;
+    }
+
+    #grupo-tamanho-g {
+      display: none;
+    }
+
     @media print {
       .back-button,
       .input-area,
@@ -494,10 +512,10 @@
       <button class="form-link" onclick="mostrarSecao('folgas')">
         <i class="fas fa-calendar-alt"></i> CADASTRO DE FOLGAS
       </button>
-      <button class="form-link" onclick="window.open('https://forms.gle/wXWsukfKS2w7yKuX8', '_blank')">
+      <button class="form-link" onclick="mostrarSecao('falta')">
         <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
       </button>
-      <button class="form-link" onclick="window.open('https://forms.gle/Wy9axrgLnoC5ymBk6', '_blank')">
+      <button class="form-link" onclick="mostrarSecao('sacola')">
         <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
       </button>
       <button class="form-link" onclick="mostrarSecao('divergencia')">
@@ -565,6 +583,117 @@
         </div>
 
         <button type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEÇÃO CADASTRO DE FALTA -->
+  <div id="falta" class="section">
+    <div class="form-container">
+      <h2>Cadastro de Falta</h2>
+      <form id="form-falta">
+        <div class="form-group">
+          <label for="filial-falta">Filial <span class="required-star">*</span></label>
+          <select id="filial-falta" name="filial" required>
+            <option value="">Selecione uma filial</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="funcionario-falta">Funcionário <span class="required-star">*</span></label>
+          <select id="funcionario-falta" name="funcionario" required>
+            <option value="">Selecione um funcionário</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data-falta">Data da Falta <span class="required-star">*</span></label>
+          <input type="date" id="data-falta" name="data_falta" required>
+        </div>
+
+        <div class="form-group">
+          <label for="motivo-falta">Motivo <span class="required-star">*</span></label>
+          <select id="motivo-falta" name="motivo" required>
+            <option value="">Selecione um motivo</option>
+            <option value="ATESTADO MÉDICO">ATESTADO MÉDICO</option>
+            <option value="FALTA INJUSTIFICADA">FALTA INJUSTIFICADA</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="dias-afastamento-container" style="display: none;">
+          <label for="observacao-falta">Dias de afastamento (caso atestado)</label>
+          <textarea id="observacao-falta" name="observacao" rows="4" placeholder="Ex: 3 DIAS 12/04 A 14/04"></textarea>
+        </div>
+
+        <button type="submit">Enviar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SEÇÃO CONTAGEM DE SACOLA -->
+  <div id="sacola" class="section">
+    <div class="form-container">
+      <h2>Contagem de Sacola</h2>
+      <form id="form-sacola">
+        <div class="form-group">
+          <label for="filial-sacola">Filial <span class="required-star">*</span></label>
+          <select id="filial-sacola" name="filial" required>
+            <option value="">Selecione uma filial</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data-contagem">Data da Contagem <span class="required-star">*</span></label>
+          <input type="text" id="data-contagem" name="data_contagem" readonly required>
+        </div>
+
+        <div class="form-group">
+          <label for="sacola-p">Sacola P <span class="required-star">*</span></label>
+          <input type="number" id="sacola-p" name="sacola_p" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="envelope-p">Envelope P <span class="required-star">*</span></label>
+          <input type="number" id="envelope-p" name="envelope_p" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="sacola-m">Sacola M <span class="required-star">*</span></label>
+          <input type="number" id="sacola-m" name="sacola_m" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="envelope-m">Envelope M <span class="required-star">*</span></label>
+          <input type="number" id="envelope-m" name="envelope_m" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group checkbox-label">
+          <input type="checkbox" id="mostrar-g" onclick="toggleCamposG()">
+          <label for="mostrar-g">Possui Sacola e Envelope G</label>
+        </div>
+
+        <div id="grupo-tamanho-g">
+          <div class="form-group">
+            <label for="sacola-g">Sacola G <span class="required-star">*</span></label>
+            <input type="number" id="sacola-g" name="sacola_g" placeholder="Quantidade" min="0">
+          </div>
+          <div class="form-group">
+            <label for="envelope-g">Envelope G <span class="required-star">*</span></label>
+            <input type="number" id="envelope-g" name="envelope_g" placeholder="Quantidade" min="0">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-enviar-sacola">Enviar</button>
       </form>
     </div>
   </div>
@@ -906,6 +1035,118 @@
           document.getElementById("motivoOutros-folgas").style.display = "none";
         })
         .catch(error => alert("Erro ao enviar os dados!"));
+    });
+
+    // SCRIPTS PARA CADASTRO DE FALTA
+    const filialSelectFalta = document.getElementById('filial-falta');
+    const funcionarioSelectFalta = document.getElementById('funcionario-falta');
+    const motivoSelectFalta = document.getElementById('motivo-falta');
+    const diasContainer = document.getElementById('dias-afastamento-container');
+    const formFalta = document.getElementById('form-falta');
+    const submitButtonFalta = formFalta.querySelector('button[type="submit"]');
+
+    filialSelectFalta.addEventListener('change', () => {
+      const selecionada = filialSelectFalta.value;
+      funcionarioSelectFalta.innerHTML = '<option value="">Selecione um funcionário</option>';
+      if (funcionariosPorFilial[selecionada]) {
+        funcionariosPorFilial[selecionada].forEach(nome => {
+          const option = document.createElement('option');
+          option.value = nome;
+          option.textContent = nome;
+          funcionarioSelectFalta.appendChild(option);
+        });
+      }
+    });
+
+    motivoSelectFalta.addEventListener('change', () => {
+      diasContainer.style.display = motivoSelectFalta.value === 'ATESTADO MÉDICO' ? 'block' : 'none';
+    });
+
+    formFalta.addEventListener('submit', e => {
+      e.preventDefault();
+      submitButtonFalta.disabled = true;
+
+      const data = new FormData(formFalta);
+      const dataFaltaInput = document.getElementById('data-falta');
+      const dataFalta = new Date(dataFaltaInput.value);
+      const dataFormatada = `${('0' + dataFalta.getDate()).slice(-2)}/${('0' + (dataFalta.getMonth() + 1)).slice(-2)}/${dataFalta.getFullYear()}`;
+      data.set("data_falta", dataFormatada);
+
+      fetch('https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec', {
+        method: 'POST',
+        body: data
+      })
+      .then(res => res.text())
+      .then(() => {
+        alert("Falta cadastrada com sucesso!");
+        formFalta.reset();
+        diasContainer.style.display = 'none';
+        submitButtonFalta.disabled = false;
+      })
+      .catch(() => {
+        alert("Erro ao registrar a falta. Tente novamente.");
+        submitButtonFalta.disabled = false;
+      });
+    });
+
+    // SCRIPTS PARA CONTAGEM DE SACOLA
+    function toggleCamposG() {
+      const grupoG = document.getElementById("grupo-tamanho-g");
+      const checkbox = document.getElementById("mostrar-g");
+      grupoG.style.display = checkbox.checked ? "block" : "none";
+    }
+
+    function getDataHoraAtualBR() {
+      const agora = new Date();
+      return agora.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+    }
+
+    // Preenche a data ao carregar a seção de sacola
+    function preencherDataSacola() {
+      document.getElementById("data-contagem").value = getDataHoraAtualBR();
+    }
+
+    document.getElementById("form-sacola").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const checkboxG = document.getElementById("mostrar-g");
+      const sacolaG = document.getElementById("sacola-g");
+      const envelopeG = document.getElementById("envelope-g");
+
+      // Verifica se campos G estão preenchidos se checkbox marcado
+      if (checkboxG.checked) {
+        if (sacolaG.value === "" || envelopeG.value === "") {
+          alert("Preencha os campos de Sacola G e Envelope G.");
+          return;
+        }
+      }
+
+      const botao = document.getElementById("btn-enviar-sacola");
+      botao.disabled = true;
+
+      // Atualiza a data com hora antes de enviar
+      document.getElementById("data-contagem").value = getDataHoraAtualBR();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
+          method: "POST",
+          body: formData
+        });
+
+        const resText = await response.text();
+        alert("Contagem registrada com sucesso!");
+        form.reset();
+        toggleCamposG();
+        document.getElementById("data-contagem").value = getDataHoraAtualBR();
+      } catch (err) {
+        alert("Erro ao registrar os dados. Tente novamente.");
+        console.error("Erro:", err);
+      } finally {
+        botao.disabled = false;
+      }
     });
 
     // SCRIPTS PARA DIVERGÊNCIA DE NOTAS FISCAIS
@@ -1351,6 +1592,27 @@
         document.getElementById('chave-nf').focus();
       }
     });
+
+    // Inicializar data da contagem de sacola quando a seção for mostrada
+    document.addEventListener('DOMContentLoaded', function() {
+      // Observar mudanças na seção ativa para inicializar dados quando necessário
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            const target = mutation.target;
+            if (target.id === 'sacola' && target.classList.contains('active')) {
+              preencherDataSacola();
+            }
+          }
+        });
+      });
+
+      // Observar todas as seções
+      document.querySelectorAll('.section').forEach(function(section) {
+        observer.observe(section, { attributes: true });
+      });
+    });
   </script>
 </body>
 </html>
+
