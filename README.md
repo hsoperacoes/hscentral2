@@ -510,22 +510,24 @@
     
     <div class="container">
       <button class="form-link" onclick="mostrarSecao('folgas')">
-      <button class="form-link" onclick="mostrarSecao(\'falta\')">
+        <i class="fas fa-calendar-plus"></i> CADASTRO DE FOLGAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('falta')">
         <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
       </button>
-      <button class="form-link" onclick="mostrarSecao(\'sacola\')">
+      <button class="form-link" onclick="mostrarSecao('sacola')">
         <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
       </button>
-      <button class="form-link" onclick="mostrarSecao(\'divergencia\')">
+      <button class="form-link" onclick="mostrarSecao('divergencia')">
         <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
       </button>
-      <button class="form-link" onclick="mostrarSecao("transferencia")">
+      <button class="form-link" onclick="mostrarSecao('transferencia')">
         <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
       </button>
-      <button class="form-link" onclick="mostrarSecao(\'gerador\')">
+      <button class="form-link" onclick="mostrarSecao('gerador')">
         <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
       </button>
-      <button class="form-link" onclick="mostrarSecao(\'nf\')">
+      <button class="form-link" onclick="mostrarSecao('nf')">
         <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
       </button>
     </div>
@@ -642,8 +644,8 @@
       <h2>Contagem de Sacola</h2>
       <form id="form-sacola">
         <div class="form-group">
-          <label for="filial-sacola">Filial <span class="required-star">*</span></label>
-          <select id="filial-sacola" name="filial" required>
+          <label for="filial">Filial <span class="required-star">*</span></label>
+          <select id="filial" name="filial" required>
             <option value="">Selecione uma filial</option>
             <option value="ARTUR">ARTUR</option>
             <option value="FLORIANO">FLORIANO</option>
@@ -694,7 +696,7 @@
           </div>
         </div>
 
-        <button type="submit" id="btn-enviar-sacola">Enviar</button>
+        <button type="submit" id="btn-enviar">Enviar</button>
       </form>
     </div>
   </div>
@@ -927,32 +929,32 @@
     function mostrarSecao(secaoId) {
       // Esconder todas as seções
       const secoes = document.querySelectorAll(".section");
-      secoes.forEach(secao => secao.classList.remove(\'active\'));
+      secoes.forEach(secao => secao.classList.remove('active'));
       
       // Mostrar a seção selecionada
-      document.getElementById(secaoId).classList.add(\'active\');
+      document.getElementById(secaoId).classList.add('active');
       
       // Mostrar botão de voltar
-      document.getElementById(\'backButton\').classList.add(\'show\');
+      document.getElementById('backButton').classList.add('show');
       
       // Rolagem suave para o topo da seção
-      window.scrollTo({ top: 0, behavior: \'smooth\' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // Função para voltar à home
     function voltarHome() {
       // Esconder todas as seções
       const secoes = document.querySelectorAll(".section");
-      secoes.forEach(secao => secao.classList.remove(\'active\'));
+      secoes.forEach(secao => secao.classList.remove('active'));
       
       // Mostrar a home
-      document.getElementById(\'home\').classList.add(\'active\');
+      document.getElementById('home').classList.add('active');
       
       // Esconder botão de voltar
-      document.getElementById(\'backButton\').classList.remove(\'show\');
+      document.getElementById('backButton').classList.remove('show');
       
       // Rolagem suave para o topo
-      window.scrollTo({ top: 0, behavior: \'smooth\' });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // SCRIPTS PARA CADASTRO DE FOLGAS
@@ -965,9 +967,9 @@
     };
 
     function atualizarFuncionarios() {
-      const filialSelecionada = document.getElementById(\'filial-folgas\').value;
-      const funcionarioSelect = document.getElementById(\'funcionario-folgas\');
-      funcionarioSelect.innerHTML = "<option value=\'\'>Selecione um funcionário</option>";
+      const filialSelecionada = document.getElementById('filial-folgas').value;
+      const funcionarioSelect = document.getElementById('funcionario-folgas');
+      funcionarioSelect.innerHTML = "<option value=''>Selecione um funcionário</option>";
 
       if (filialSelecionada && funcionariosPorFilial[filialSelecionada]) {
         funcionariosPorFilial[filialSelecionada].forEach(function(funcionario) {
@@ -980,29 +982,29 @@
     }
 
     // Adiciona event listener para o campo de data de trabalho
-    document.getElementById(\'dataTrabalho-folgas\').addEventListener(\'change\', function() {
-      const motivoSelect = document.getElementById(\'motivo-folgas\');
-      if (motivoSelect.value !== \'\') {
+    document.getElementById('dataTrabalho-folgas').addEventListener('change', function() {
+      const motivoSelect = document.getElementById('motivo-folgas');
+      if (motivoSelect.value !== '') {
         verificarMotivo(); // Chama a função se um motivo já estiver selecionado
       }
     });
 
     // Adiciona event listener para o campo de motivo da folga
-    document.getElementById(\'motivo-folgas\').addEventListener(\'change\', verificarMotivo);
+    document.getElementById('motivo-folgas').addEventListener('change', verificarMotivo);
 
     function verificarMotivo() {
-      const motivo = document.getElementById(\'motivo-folgas\').value;
+      const motivo = document.getElementById('motivo-folgas').value;
       const dataTrabalhoInput = document.getElementById("dataTrabalho-folgas");
       const dataFolgaInput = document.getElementById("dataFolga-folgas");
       const motivoOutrosField = document.getElementById("motivoOutros-folgas");
 
       if (!dataTrabalhoInput.value) {
-        alert("Selecione primeiro o \'Dia Trabalhado\'! ");
-        document.getElementById(\'motivo-folgas\').value = \'\';
+        alert("Selecione primeiro o 'Dia Trabalhado'! ");
+        document.getElementById('motivo-folgas').value = '';
         return;
       }
 
-      const dataTrabalho = new Date(dataTrabalhoInput.value + \'T00:00:00\'); // Garante fuso horário
+      const dataTrabalho = new Date(dataTrabalhoInput.value + 'T00:00:00'); // Garante fuso horário
       const maxDate = new Date(dataTrabalho);
 
       if (motivo === "DOMINGO") {
@@ -1011,15 +1013,15 @@
         maxDate.setDate(dataTrabalho.getDate() + 60);
       }
 
-      dataFolgaInput.min = dataTrabalho.toISOString().split(\'T\')[0];
-      dataFolgaInput.max = maxDate.toISOString().split(\'T\')[0];
+      dataFolgaInput.min = dataTrabalho.toISOString().split('T')[0];
+      dataFolgaInput.max = maxDate.toISOString().split('T')[0];
 
       motivoOutrosField.style.display = motivo === "OUTROS" ? "block" : "none";
       
       if (motivo === "OUTROS") {
-        document.getElementById(\'outrosMotivo-folgas\').required = true;
+        document.getElementById('outrosMotivo-folgas').required = true;
       } else {
-        document.getElementById(\'outrosMotivo-folgas\').required = false;
+        document.getElementById('outrosMotivo-folgas').required = false;
       }
     }
 
@@ -1035,26 +1037,26 @@
         .then(data => {
           alert("Folga cadastrada com sucesso!");
           this.reset();
-          document.getElementById("funcionario-folgas").innerHTML = \'<option value="">Selecione a filial primeiro</option>\';
+          document.getElementById("funcionario-folgas").innerHTML = '<option value="">Selecione a filial primeiro</option>';
           document.getElementById("motivoOutros-folgas").style.display = "none";
         })
         .catch(error => alert("Erro ao enviar os dados!"));
     });
 
     // SCRIPTS PARA CADASTRO DE FALTA
-    const filialSelectFalta = document.getElementById(\'filial-falta\');
-    const funcionarioSelectFalta = document.getElementById(\'funcionario-falta\');
-    const motivoSelectFalta = document.getElementById(\'motivo-falta\');
-    const diasContainer = document.getElementById(\'dias-afastamento-container\');
-    const formFalta = document.getElementById(\'form-falta\');
-    const submitButtonFalta = formFalta.querySelector(\'button[type="submit"]\');
+    const filialSelectFalta = document.getElementById('filial-falta');
+    const funcionarioSelectFalta = document.getElementById('funcionario-falta');
+    const motivoSelectFalta = document.getElementById('motivo-falta');
+    const diasContainer = document.getElementById('dias-afastamento-container');
+    const formFalta = document.getElementById('form-falta');
+    const submitButtonFalta = formFalta.querySelector('button[type="submit"]');
 
-    filialSelectFalta.addEventListener(\'change\', () => {
+    filialSelectFalta.addEventListener('change', () => {
       const selecionada = filialSelectFalta.value;
-      funcionarioSelectFalta.innerHTML = \'<option value="">Selecione um funcionário</option>\';
+      funcionarioSelectFalta.innerHTML = '<option value="">Selecione um funcionário</option>';
       if (funcionariosPorFilial[selecionada]) {
         funcionariosPorFilial[selecionada].forEach(nome => {
-          const option = document.createElement(\'option\');
+          const option = document.createElement('option');
           option.value = nome;
           option.textContent = nome;
           funcionarioSelectFalta.appendChild(option);
@@ -1062,29 +1064,29 @@
       }
     });
 
-    motivoSelectFalta.addEventListener(\'change\', () => {
-      diasContainer.style.display = motivoSelectFalta.value === \'ATESTADO MÉDICO\' ? \'block\' : \'none\';
+    motivoSelectFalta.addEventListener('change', () => {
+      diasContainer.style.display = motivoSelectFalta.value === 'ATESTADO MÉDICO' ? 'block' : 'none';
     });
 
-    formFalta.addEventListener(\'submit\', e => {
+    formFalta.addEventListener('submit', e => {
       e.preventDefault();
       submitButtonFalta.disabled = true;
 
       const data = new FormData(formFalta);
-      const dataFaltaInput = document.getElementById(\'data-falta\');
+      const dataFaltaInput = document.getElementById('data-falta');
       const dataFalta = new Date(dataFaltaInput.value);
-      const dataFormatada = `${(\'0\' + dataFalta.getDate()).slice(-2)}/${(\'0\' + (dataFalta.getMonth() + 1)).slice(-2)}/${dataFalta.getFullYear()}`;
+      const dataFormatada = `${('0' + dataFalta.getDate()).slice(-2)}/${('0' + (dataFalta.getMonth() + 1)).slice(-2)}/${dataFalta.getFullYear()}`;
       data.set("data_falta", dataFormatada);
 
-      fetch(\'https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec\', {
-        method: \'POST\',
+      fetch('https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec', {
+        method: 'POST',
         body: data
       })
       .then(res => res.text())
       .then(() => {
         alert("Falta cadastrada com sucesso!");
         formFalta.reset();
-        diasContainer.style.display = \'none\';
+        diasContainer.style.display = 'none';
         submitButtonFalta.disabled = false;
       })
       .catch(() => {
@@ -1102,7 +1104,7 @@
 
     function getDataHoraAtualBR() {
       const agora = new Date();
-      return agora.toLocaleString(\'pt-BR\', { timeZone: \'America/Sao_Paulo\' });
+      return agora.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
     }
 
     // Preenche a data ao carregar a seção de sacola
@@ -1125,7 +1127,7 @@
         }
       }
 
-      const botao = document.getElementById("btn-enviar-sacola");
+      const botao = document.getElementById("btn-enviar");
       botao.disabled = true;
 
       // Atualiza a data com hora antes de enviar
@@ -1157,14 +1159,14 @@
     let isSubmittingDiv = false;
 
     // Mostrar/esconder campo "Outros" transportadora
-    document.getElementById(\'transportadora-div\').addEventListener(\'change\', function() {
-      const outrosDiv = document.getElementById(\'outrosTransportadoraDiv\');
-      if (this.value === \'OUTROS\') {
-        outrosDiv.style.display = \'block\';
-        document.getElementById(\'outraTransportadoraDiv\').required = true;
+    document.getElementById('transportadora-div').addEventListener('change', function() {
+      const outrosDiv = document.getElementById('outrosTransportadoraDiv');
+      if (this.value === 'OUTROS') {
+        outrosDiv.style.display = 'block';
+        document.getElementById('outraTransportadoraDiv').required = true;
       } else {
-        outrosDiv.style.display = \'none\';
-        document.getElementById(\'outraTransportadoraDiv\').required = false;
+        outrosDiv.style.display = 'none';
+        document.getElementById('outraTransportadoraDiv').required = false;
       }
     });
 
@@ -1177,7 +1179,7 @@
 
       isSubmittingDiv = true;
 
-      const button = event.target.querySelector("button[type=\'submit\']");
+      const button = event.target.querySelector("button[type='submit']");
       const loadingMessage = document.getElementById("loadingMessageDiv");
 
       button.disabled = true;
@@ -1196,7 +1198,7 @@
       .then(data => {
         alert("SUA DIVERGÊNCIA FOI ENVIADA COM SUCESSO, AGRADECEMOS SEU APOIO");
         form.reset();
-        document.getElementById(\'outrosTransportadoraDiv\').style.display = \'none\';
+        document.getElementById('outrosTransportadoraDiv').style.display = 'none';
       })
       .catch(error => {
         alert("Erro ao enviar o formulário. Tente novamente.");
@@ -1213,8 +1215,8 @@
 
     // SCRIPTS PARA TRANSFERÊNCIA ENTRE LOJAS
     function atualizarEmailTrans() {
-      const filialOrigem = document.getElementById(\'filial-origem\').value;
-      const filialDestinoSelect = document.getElementById(\'filial-destino\');
+      const filialOrigem = document.getElementById('filial-origem').value;
+      const filialDestinoSelect = document.getElementById('filial-destino');
       const emailPorFilial = {
         ARTUR: "heringarturmachado@gmail.com",
         FLORIANO: "hs.uberlandia.floriano@gmail.com",
@@ -1224,7 +1226,7 @@
         JA: "jaugustocoliveira@terra.com.br",
         JE: "jeoliveira1966@gmail.com"
       };
-      document.getElementById(\'email-trans\').value = emailPorFilial[filialOrigem] || "";
+      document.getElementById('email-trans').value = emailPorFilial[filialOrigem] || "";
 
       Array.from(filialDestinoSelect.options).forEach(option => {
         option.disabled = option.value === filialOrigem;
@@ -1236,18 +1238,18 @@
     }
 
     function contarLinhasTrans() {
-      const mercadorias = document.getElementById(\'mercadorias-trans\').value;
-      const linhas = mercadorias.split(\'\\n\').filter(linha => linha.trim() !== \'\');
-      document.getElementById(\'total-itens-trans\').textContent = linhas.length;
+      const mercadorias = document.getElementById('mercadorias-trans').value;
+      const linhas = mercadorias.split('\n').filter(linha => linha.trim() !== '');
+      document.getElementById('total-itens-trans').textContent = linhas.length;
     }
 
-    document.getElementById(\'transfer-form\').addEventListener(\'submit\', function (event) {
+    document.getElementById('transfer-form').addEventListener('submit', function (event) {
       event.preventDefault();
       enviarFormularioTrans();
     });
 
     function enviarFormularioTrans() {
-      const form = document.getElementById(\'transfer-form\');
+      const form = document.getElementById('transfer-form');
       if (!form.checkValidity()) {
         mostrarMensagemErroTrans("Por favor, preencha todos os campos obrigatórios!");
         return;
@@ -1256,7 +1258,7 @@
       const formData = new FormData(form);
       const data = new URLSearchParams(formData).toString();
 
-      document.getElementById(\'loading-overlay-trans\').style.display = \'flex\';
+      document.getElementById('loading-overlay-trans').style.display = 'flex';
 
       fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
         method: "POST",
@@ -1265,7 +1267,7 @@
       })
       .then(response => response.json())
       .then(responseData => {
-        document.getElementById(\'loading-overlay-trans\').style.display = \'none\';
+        document.getElementById('loading-overlay-trans').style.display = 'none';
 
         if (responseData.numeroTransferencia) {
           mostrarMensagemSucessoTrans();
@@ -1276,37 +1278,37 @@
         }
       })
       .catch(error => {
-        document.getElementById(\'loading-overlay-trans\').style.display = \'none\';
+        document.getElementById('loading-overlay-trans').style.display = 'none';
         mostrarMensagemErroTrans("Erro ao enviar o formulário. Tente novamente.");
       });
     }
 
     function mostrarMensagemSucessoTrans() {
-      document.getElementById(\'success-message-trans\').style.display = \'block\';
-      document.getElementById(\'error-message-trans\').style.display = \'none\';
+      document.getElementById('success-message-trans').style.display = 'block';
+      document.getElementById('error-message-trans').style.display = 'none';
     }
 
     function mostrarMensagemErroTrans(mensagem) {
-      document.getElementById(\'error-message-trans\').innerHTML = mensagem;
-      document.getElementById(\'error-message-trans\').style.display = \'block\';
-      document.getElementById(\'success-message-trans\').style.display = \'none\';
+      document.getElementById('error-message-trans').innerHTML = mensagem;
+      document.getElementById('error-message-trans').style.display = 'block';
+      document.getElementById('success-message-trans').style.display = 'none';
     }
 
     function exibirNumeroTransferencia(numero) {
-      document.getElementById(\'numero-transferencia\').style.display = \'block\';
-      document.getElementById(\'transfer-id\').textContent = numero;
+      document.getElementById('numero-transferencia').style.display = 'block';
+      document.getElementById('transfer-id').textContent = numero;
     }
 
     function limparFormularioTrans() {
-      document.getElementById(\'transfer-form\').reset();
-      document.getElementById(\'numero-transferencia\').style.display = \'none\';
-      document.getElementById(\'total-itens-trans\').textContent = \'0\';
+      document.getElementById('transfer-form').reset();
+      document.getElementById('numero-transferencia').style.display = 'none';
+      document.getElementById('total-itens-trans').textContent = '0';
       contarLinhasTrans();
     }
 
     // SCRIPTS PARA GERADOR DE CÓDIGOS DE BARRAS
     function generateEAN13(code, skipValidation = false) {
-      if (!/^\\d{12,13}$/.test(code)) {
+      if (!/^\d{12,13}$/.test(code)) {
         throw new Error(`Código inválido: "${code}" - Deve conter 12 ou 13 dígitos`);
       }
 
@@ -1374,7 +1376,7 @@
 
       let x = margin;
       for (let i = 0; i < binary.length; i++) {
-        if (binary[i] === \'1\') {
+        if (binary[i] === '1') {
           const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
           rect.setAttribute("x", x);
           rect.setAttribute("y", margin);
@@ -1405,14 +1407,14 @@
     function gerarTodosBarras() {
       const input = document.getElementById("codigos-barras").value.trim();
       const container = document.getElementById("barcodes");
-      container.innerHTML = \'\';
+      container.innerHTML = '';
 
       if (!input) {
         alert("Por favor, cole alguns códigos EAN13 no campo de texto.");
         return;
       }
 
-      const codigos = input.split(\'\\n\').map(line => line.trim()).filter(line => line.length > 0);
+      const codigos = input.split('\n').map(line => line.trim()).filter(line => line.length > 0);
       let successCount = 0;
       let errorCount = 0;
       const errorMessages = [];
@@ -1434,21 +1436,21 @@
       });
 
       if (errorCount > 0) {
-        alert(`Foram gerados ${successCount} códigos com sucesso.\n\nErros encontrados (${errorCount}):\n${errorMessages.join(\'\\n\')}`);
+        alert(`Foram gerados ${successCount} códigos com sucesso.\n\nErros encontrados (${errorCount}):\n${errorMessages.join('\n')}`);
       } else if (successCount > 0) {
         alert(`Todos os ${successCount} códigos foram gerados com sucesso!`);
       }
     }
 
     function limparTudoBarras() {
-      document.getElementById("codigos-barras").value = \'\';
-      document.getElementById("barcodes").innerHTML = \'\';
+      document.getElementById("codigos-barras").value = '';
+      document.getElementById("barcodes").innerHTML = '';
     }
 
     function copiarCodigosBarras() {
       const input = document.getElementById("codigos-barras");
       input.select();
-      document.execCommand(\'copy\');
+      document.execCommand('copy');
       alert("Códigos copiados para a área de transferência!");
     }
 
@@ -1456,24 +1458,24 @@
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
 
     function entrarNF() {
-      const codigo = document.getElementById(\'codigo-nf\').value.trim();
-      const codigosValidos = [\'288\', \'287\', \'293\', \'488\', \'559\'];
+      const codigo = document.getElementById('codigo-nf').value.trim();
+      const codigosValidos = ['288', '287', '293', '488', '559'];
       if (!codigo || !codigosValidos.includes(codigo)) {
         alert("Código da filial inválido.");
         return;
       }
-      localStorage.setItem(\'filial\', codigo);
-      document.getElementById(\'login-nf\').classList.add(\'hidden\');
-      document.getElementById(\'principal-nf\').classList.remove(\'hidden\');
+      localStorage.setItem('filial', codigo);
+      document.getElementById('login-nf').classList.add('hidden');
+      document.getElementById('principal-nf').classList.remove('hidden');
       carregarHistoricoNF(codigo);
-      document.getElementById(\'chave-nf\').focus();
+      document.getElementById('chave-nf').focus();
     }
 
     function sairNF() {
-      localStorage.removeItem(\'filial\');
-      document.getElementById(\'login-nf\').classList.remove(\'hidden\');
-      document.getElementById(\'principal-nf\').classList.add(\'hidden\');
-      document.getElementById(\'codigo-nf\').value = \'\';
+      localStorage.removeItem('filial');
+      document.getElementById('login-nf').classList.remove('hidden');
+      document.getElementById('principal-nf').classList.add('hidden');
+      document.getElementById('codigo-nf').value = '';
     }
 
     function limparHistoricoLocalNF() {
@@ -1482,65 +1484,70 @@
         alert("Senha incorreta. Operação cancelada.");
         return;
       }
-      const filial = localStorage.getItem(\'filial\');
+      const filial = localStorage.getItem('filial');
       localStorage.removeItem(`historico_${filial}`);
-      document.getElementById(\'historicoLista-nf\').innerHTML = \'\';
+      document.getElementById('historicoLista-nf').innerHTML = '';
       alert("Histórico local apagado.");
     }
 
     function consultarNotaNF() {
-      const filial = localStorage.getItem(\'filial\');
-      const chave = document.getElementById(\'chave-nf\').value.trim();
-      const resultado = document.getElementById(\'resultado-nf\');
-      const erro = document.getElementById(\'erro-nf\');
-      const loading = document.getElementById(\'loading-nf\');
-      const botao = document.querySelector("button[onclick=\'consultarNotaNF()\']");
+      const filial = localStorage.getItem('filial');
+      const chave = document.getElementById('chave-nf').value.trim();
+      const resultado = document.getElementById('resultado-nf');
+      const erro = document.getElementById('erro-nf');
+      const loading = document.getElementById('loading-nf');
+      const botao = document.querySelector("button[onclick='consultarNotaNF()']");
 
-      resultado.classList.add(\'hidden\');
-      erro.innerText = \'\';
+      resultado.classList.add('hidden');
+      erro.innerText = '';
 
       if (!filial || !chave || chave.length !== 44) {
-        erro.innerText = \'Preencha corretamente a chave com 44 dígitos.\';
+        erro.innerText = 'Preencha corretamente a chave com 44 dígitos.';
         return;
       }
 
       const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
       if (historico.find(h => h.chave === chave)) {
-        erro.innerText = \'Essa chave já foi consultada anteriormente!\';
+        erro.innerText = 'Essa chave já foi consultada anteriormente!';
         return;
       }
 
       botao.disabled = true;
-      loading.classList.remove(\'hidden\');
+      loading.classList.remove('hidden');
 
       fetch(`${URL_SCRIPT}?chave=${chave}&filial=${filial}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
-            resultado.classList.remove(\'hidden\');
-            resultado.innerHTML = `\n              <p><strong>Número da NF:</strong> ${data.data.numeroNF}</p>\n              <p><strong>Valor Total:</strong> ${data.data.valorTotal}</p>\n              <p><strong>Quantidade Total:</strong> ${data.data.quantidadeTotal}</p>\n              <p><strong>Status:</strong> ✅ ${data.data.status}</p>\n            `;
+            resultado.classList.remove('hidden');
+            resultado.innerHTML = `
+              <p><strong>Número da NF:</strong> ${data.data.numeroNF}</p>
+              <p><strong>Valor Total:</strong> ${data.data.valorTotal}</p>
+              <p><strong>Quantidade Total:</strong> ${data.data.quantidadeTotal}</p>
+              <p><strong>Status:</strong> ✅ ${data.data.status}</p>
+            `;
             historico.push({ chave, dataHora: new Date().toISOString(), numeroNF: data.data.numeroNF, valorTotal: data.data.valorTotal, quantidade: data.data.quantidadeTotal });
             localStorage.setItem(`historico_${filial}`, JSON.stringify(historico));
             carregarHistoricoNF(filial);
           } else {
-            erro.innerText = data.message || \'Erro ao buscar nota fiscal.\';
+            erro.innerText = data.message || 'Erro ao buscar nota fiscal.';
           }
         })
-        .catch(() => erro.innerText = \'Erro de comunicação com o servidor.\')
+        .catch(() => erro.innerText = 'Erro de comunicação com o servidor.')
         .finally(() => {
-          loading.classList.add(\'hidden\');
+          loading.classList.add('hidden');
           botao.disabled = false;
         });
     }
 
     function carregarHistoricoNF(filial) {
-      const historicoLista = document.getElementById(\'historicoLista-nf\');
+      const historicoLista = document.getElementById('historicoLista-nf');
       const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
-      historicoLista.innerHTML = historico.length === 0 ? \'<li>Nenhum histórico local encontrado.</li>\' : \'\';
+      historicoLista.innerHTML = historico.length === 0 ? '<li>Nenhum histórico local encontrado.</li>' : '';
       historico.slice().reverse().forEach(registro => {
         const dt = new Date(registro.dataHora);
-        const linha = `${dt.toLocaleDateString(\'pt-BR\')} - NF ${registro.numeroNF} - ${registro.valorTotal} - ${registro.quantidade} itens`;
-        historicoLista.insertAdjacentHTML(\'beforeend\', `<li>${linha}</li>`);
+        const linha = `${dt.toLocaleDateString('pt-BR')} - NF ${registro.numeroNF} - ${registro.valorTotal} - ${registro.quantidade} itens`;
+        historicoLista.insertAdjacentHTML('beforeend', `<li>${linha}</li>`);
       });
     }
 
@@ -1551,7 +1558,7 @@
       Quagga.init({
         inputStream: {
           type: "LiveStream",
-          target: document.querySelector(\'#interactive-nf\'),
+          target: document.querySelector('#interactive-nf'),
           constraints: {
             facingMode: "environment"
           }
@@ -1582,24 +1589,24 @@
     }
 
     // Verificar se já está logado ao carregar a seção NF
-    window.addEventListener(\'load\', function () {
-      const filial = localStorage.getItem(\'filial\');
+    window.addEventListener('load', function () {
+      const filial = localStorage.getItem('filial');
       if (filial) {
-        document.getElementById(\'login-nf\').classList.add(\'hidden\');
-        document.getElementById(\'principal-nf\').classList.remove(\'hidden\');
+        document.getElementById('login-nf').classList.add('hidden');
+        document.getElementById('principal-nf').classList.remove('hidden');
         carregarHistoricoNF(filial);
-        document.getElementById(\'chave-nf\').focus();
+        document.getElementById('chave-nf').focus();
       }
     });
 
     // Inicializar data da contagem de sacola quando a seção for mostrada
-    document.addEventListener(\'DOMContentLoaded\', function() {
+    document.addEventListener('DOMContentLoaded', function() {
       // Observar mudanças na seção ativa para inicializar dados quando necessário
       const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-          if (mutation.type === \'attributes\' && mutation.attributeName === \'class\') {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
             const target = mutation.target;
-            if (target.id === \'sacola\' && target.classList.contains(\'active\')) {
+            if (target.id === 'sacola' && target.classList.contains('active')) {
               preencherDataSacola();
             }
           }
@@ -1607,7 +1614,7 @@
       });
 
       // Observar todas as seções
-      document.querySelectorAll(\'.section\').forEach(function(section) {
+      document.querySelectorAll('.section').forEach(function(section) {
         observer.observe(section, { attributes: true });
       });
     });
