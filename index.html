@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GERENCIAL HS - Sistema Unificado</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -506,7 +506,6 @@
       }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
 </head>
 <body>
   <!-- Botão de voltar -->
@@ -892,6 +891,7 @@
         <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
         <div id="reader-nf" class="hidden">
           <div id="interactive-nf" class="viewport"></div>
+          <button onclick="pararScannerNF()" style="margin-top: 10px;">Parar Scanner</button>
         </div>
 
         <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
@@ -913,16 +913,17 @@
     // Mapeamento de códigos para filiais
     const codigosFiliais = {
       '288': { codigo: '288', nome: 'PONTO', email: 'soniameiry@gmail.com' },
-      '761': { codigo: '761', nome: 'MODA', email: 'dlaire28@gmail.com' },
-      '287': { codigo: '287', nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
+      '287': { codigo: '287', nome: 'MODA', email: 'dlaire28@gmail.com' },
+      '293': { codigo: '293', nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
       '488': { codigo: '488', nome: 'FLORIANO', email: 'hs.uberlandia.floriano@gmail.com' },
-      '293': { codigo: '293', nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
+      '559': { codigo: '559', nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
       '600': { codigo: '600', nome: 'JA', email: 'jaugustocoliveira@terra.com.br' },
       '601': { codigo: '601', nome: 'JE', email: 'jeoliveira1966@gmail.com' }
     };
 
     // Variável global para armazenar a filial logada
     let filialLogada = null;
+    let scannerNF = null;
 
     // Funções de login/logout
     function entrar() {
@@ -1468,8 +1469,42 @@
       alert("Códigos copiados para a área de transferência!");
     }
 
-    // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
+    // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL COM DYNSOFT
+    const URL_SCRIPT_NF = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
+
+    // Inicializar o scanner Dynamsoft
+    async function inicializarScannerDynamsoft() {
+      try {
+        // Configura a licença do Dynamsoft (substitua pela sua chave de licença)
+        Dynamsoft.DBR.BarcodeScanner.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMjAwMDAxLTE2NDk4Mjk3OTI2MzUiLCJvcmdhbml6YXRpb25JRCI6IjIwMDAwMSIsInNlc3Npb25QYXNzd29yZCI6IndTcGR6Vm05WDJrcEQ5YUoifQ==";
+        
+        // Cria uma instância do scanner
+        scannerNF = await Dynamsoft.DBR.BarcodeScanner.createInstance();
+        
+        // Configurações do scanner
+        let settings = await scannerNF.getRuntimeSettings();
+        settings.barcodeFormatIds = Dynamsoft.DBR.EnumBarcodeFormat.BF_CODE_128;
+        await scannerNF.updateRuntimeSettings(settings);
+        
+        // Define o elemento onde o scanner será renderizado
+        scannerNF.setUIElement(document.getElementById('interactive-nf'));
+        
+        // Evento quando um código é lido
+        scannerNF.onUnduplicatedRead = (txt, result) => {
+          if (txt && txt.length >= 44) {
+            document.getElementById("chave-nf").value = txt.substring(0, 44);
+            pararScannerNF();
+            document.getElementById("chave-nf").focus();
+          }
+        };
+        
+        return true;
+      } catch (ex) {
+        console.error(ex);
+        alert("Erro ao inicializar o scanner: " + ex.message);
+        return false;
+      }
+    }
 
     function sairNF() {
       // Não faz logout total, apenas volta para home
@@ -1485,6 +1520,30 @@
       localStorage.removeItem(`historico_${filialLogada.codigo}`);
       document.getElementById('historicoLista-nf').innerHTML = '';
       alert("Histórico local apagado.");
+    }
+
+    async function iniciarScannerNF() {
+      const readerDiv = document.getElementById("reader-nf");
+      readerDiv.classList.remove("hidden");
+      
+      if (!scannerNF) {
+        const inicializado = await inicializarScannerDynamsoft();
+        if (!inicializado) return;
+      }
+      
+      try {
+        await scannerNF.show();
+      } catch (ex) {
+        console.error(ex);
+        alert("Erro ao iniciar o scanner: " + ex.message);
+      }
+    }
+
+    function pararScannerNF() {
+      if (scannerNF) {
+        scannerNF.hide();
+      }
+      document.getElementById("reader-nf").classList.add("hidden");
     }
 
     function consultarNotaNF() {
@@ -1511,7 +1570,7 @@
       botao.disabled = true;
       loading.classList.remove('hidden');
 
-      fetch(`${URL_SCRIPT}?chave=${chave}&filial=${filialLogada.codigo}`)
+      fetch(`${URL_SCRIPT_NF}?chave=${chave}&filial=${filialLogada.codigo}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -1550,43 +1609,6 @@
         const dt = new Date(registro.dataHora);
         const linha = `${dt.toLocaleDateString('pt-BR')} - NF ${registro.numeroNF} - ${registro.valorTotal} - ${registro.quantidade} itens`;
         historicoLista.insertAdjacentHTML('beforeend', `<li>${linha}</li>`);
-      });
-    }
-
-    function iniciarScannerNF() {
-      const readerDiv = document.getElementById("reader-nf");
-      readerDiv.classList.remove("hidden");
-
-      Quagga.init({
-        inputStream: {
-          type: "LiveStream",
-          target: document.querySelector('#interactive-nf'),
-          constraints: {
-            facingMode: "environment"
-          }
-        },
-        locator: { patchSize: "medium", halfSample: true },
-        decoder: {
-          readers: ["code_128_reader"]
-        },
-        locate: true
-      }, function(err) {
-        if (err) {
-          console.error(err);
-          alert("Erro ao iniciar o leitor: " + err);
-          return;
-        }
-        Quagga.start();
-      });
-
-      Quagga.onDetected(data => {
-        const codigo = data.codeResult.code;
-        if (codigo.length >= 44) {
-          document.getElementById("chave-nf").value = codigo.substring(0, 44);
-          Quagga.stop();
-          readerDiv.classList.add("hidden");
-          document.getElementById("chave-nf").focus();
-        }
       });
     }
 
