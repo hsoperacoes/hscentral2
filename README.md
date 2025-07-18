@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GERENCIAL HS - Sistema Unificado</title>
-  <!-- Estilos e scripts do sistema_hs_atualizado.html -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
   <style>
@@ -65,7 +64,6 @@
       margin-right: 10px;
     }
 
-    /* Botão de voltar - sempre no canto superior esquerdo */
     .back-button {
       position: fixed;
       top: 20px;
@@ -90,7 +88,6 @@
       display: block;
     }
 
-    /* Estilos para formulários - centralizados e com fundo escuro */
     .form-container {
       max-width: 600px;
       background: #1e1e1e;
@@ -196,7 +193,6 @@
       background-color: #3c4043;
     }
 
-    /* Estilos para gerador de códigos */
     .gerador-section .form-container {
       background-color: #1e1e1e;
       color: white;
@@ -266,7 +262,6 @@
       fill: white !important;
     }
 
-    /* Mensagens de sucesso e erro */
     #success-message, #error-message {
       display: none;
       padding: 12px;
@@ -420,7 +415,6 @@
       display: flex;
     }
 
-    /* Estilos específicos para formulários de Contagem de Sacola e Cadastro de Falta */
     .checkbox-label {
       font-size: 14px;
       display: flex;
@@ -512,13 +506,12 @@
       }
     }
   </style>
-  <!-- Script Dynamsoft do pasted_content.txt -->
   <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
 </head>
 <body>
   <!-- Botão de voltar -->
   <button class="back-button" id="backButton" onclick="voltarHome()">
-    <i class="fas fa-arrow-left"></i> Voltar ao Menu PRINCIPAL
+    <i class="fas fa-arrow-left"></i> Voltar à Home
   </button>
 
   <!-- Tela de Login -->
@@ -572,20 +565,14 @@
       <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
         <div class="form-group">
           <label for="filial-folgas">Filial</label>
-          <select id="filial-folgas" name="filial" required onchange="atualizarFuncionarios()">
-            <option value="">Selecione uma filial</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-          </select>
+          <input type="text" id="filial-folgas-display" readonly>
+          <input type="hidden" id="filial-folgas" name="filial">
         </div>
 
         <div class="form-group">
           <label for="funcionario-folgas">Funcionário</label>
           <select id="funcionario-folgas" name="funcionario" required>
-            <option value="">Selecione a filial primeiro</option>
+            <option value="">Selecione um funcionário</option>
           </select>
         </div>
 
@@ -627,14 +614,8 @@
       <form id="form-falta">
         <div class="form-group">
           <label for="filial-falta">Filial <span class="required-star">*</span></label>
-          <select id="filial-falta" name="filial" required>
-            <option value="">Selecione uma filial</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-          </select>
+          <input type="text" id="filial-falta-display" readonly>
+          <input type="hidden" id="filial-falta" name="filial">
         </div>
 
         <div class="form-group">
@@ -676,14 +657,8 @@
       <form id="form-sacola">
         <div class="form-group">
           <label for="filial">Filial <span class="required-star">*</span></label>
-          <select id="filial" name="filial" required>
-            <option value="">Selecione uma filial</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-          </select>
+          <input type="text" id="filial-display" readonly>
+          <input type="hidden" id="filial" name="filial">
         </div>
 
         <div class="form-group">
@@ -740,14 +715,8 @@
       <form id="formulario-divergencia" onsubmit="enviarFormularioDivergencia(event)">
         <div class="form-group">
           <label>Filial</label>
-          <select name="filial" required>
-            <option value="">Selecione uma filial</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-          </select>
+          <input type="text" id="filial-div-display" readonly>
+          <input type="hidden" name="filial" id="filial-div">
         </div>
 
         <div class="form-group">
@@ -826,22 +795,14 @@
 
       <form id="transfer-form">
         <div class="form-group">
-          <div class="question-title">Email da filial de origem:(Preenchimento automatico) <span class="required-star">*</span></div>
+          <div class="question-title">Email da filial de origem <span class="required-star">*</span></div>
           <input type="email" name="email" id="email-trans" required readonly>
         </div>
 
         <div class="form-group">
           <div class="question-title">FILIAL ORIGEM <span class="required-star">*</span></div>
-          <select name="filialOrigem" id="filial-origem" required onchange="atualizarEmailTrans()">
-            <option value="" disabled selected>Selecione</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-            <option value="JA">JA</option>
-            <option value="JE">JE</option>
-          </select>
+          <input type="text" id="filial-origem-display" readonly>
+          <input type="hidden" name="filialOrigem" id="filial-origem">
         </div>
 
         <div class="form-group">
@@ -920,18 +881,11 @@
     <div class="form-container">
       <img src="logo.png" alt="Logo" class="logo">
       
-      <div id="login-nf">
-        <h2>Login da Filial</h2>
-        <label for="codigo-nf">Código da Filial</label>
-        <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
-        <button onclick="entrarNF()">Entrar</button>
-      </div>
-
-      <div id="principal-nf" class="hidden">
+      <div id="principal-nf">
         <div class="logout">
           <button onclick="sairNF()">Sair</button>
         </div>
-        <h2>Consulta de Nota Fiscal</h2>
+        <h2>Consulta de Nota Fiscal - Filial: <span id="nome-filial-nf"></span></h2>
         <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
         <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
         <button onclick="consultarNotaNF()">Consultar</button>
@@ -958,13 +912,13 @@
   <script>
     // Mapeamento de códigos para filiais
     const codigosFiliais = {
-      '288': { nome: 'PONTO', email: 'soniameiry@gmail.com' },
-      '287': { nome: 'MODA', email: 'dlaire28@gmail.com' },
-      '293': { nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
-      '488': { nome: 'FLORIANO', email: 'hs.uberlandia.floriano@gmail.com' },
-      '559': { nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
-      '600': { nome: 'JA', email: 'jaugustocoliveira@terra.com.br' },
-      '601': { nome: 'JE', email: 'jeoliveira1966@gmail.com' }
+      '288': { codigo: '288', nome: 'PONTO', email: 'soniameiry@gmail.com' },
+      '287': { codigo: '287', nome: 'MODA', email: 'dlaire28@gmail.com' },
+      '293': { codigo: '293', nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
+      '488': { codigo: '488', nome: 'FLORIANO', email: 'hs.uberlandia.floriano@gmail.com' },
+      '559': { codigo: '559', nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
+      '600': { codigo: '600', nome: 'JA', email: 'jaugustocoliveira@terra.com.br' },
+      '601': { codigo: '601', nome: 'JE', email: 'jeoliveira1966@gmail.com' }
     };
 
     // Variável global para armazenar a filial logada
@@ -978,6 +932,7 @@
         filialLogada = codigosFiliais[codigo];
         localStorage.setItem('filial', JSON.stringify(filialLogada));
         mostrarSecao('home');
+        preencherFilialAutomaticamente();
       } else {
         alert('Código de filial inválido!');
       }
@@ -993,21 +948,58 @@
     function preencherFilialAutomaticamente() {
       if (!filialLogada) return;
       
-      // Seleciona a filial em todos os selects de filial
-      document.querySelectorAll('select[name="filial"], select[id*="filial-"]').forEach(select => {
-        const option = Array.from(select.options).find(opt => opt.value === filialLogada.nome);
-        if (option) {
-          option.selected = true;
-          
-          // Dispara o evento change se existir
-          if (select.onchange) select.onchange();
-          if (select.id === 'filial-origem' && select.onchange) select.onchange();
+      // Atualiza todos os campos de filial
+      document.querySelectorAll('[id$="-display"], [id$="-nome"]').forEach(el => {
+        if (el.id.includes('filial') || el.id.includes('nome-filial')) {
+          el.value = filialLogada.nome;
+          if (el.id.includes('nome-filial-nf')) {
+            el.textContent = filialLogada.nome;
+          }
+        }
+      });
+      
+      // Atualiza os campos hidden
+      document.querySelectorAll('[id^="filial-"]:not([id$="-display"])').forEach(el => {
+        if (el.tagName === 'INPUT' && el.type === 'hidden') {
+          el.value = filialLogada.nome;
         }
       });
       
       // Preenche o email na transferência
       if (document.getElementById('email-trans')) {
         document.getElementById('email-trans').value = filialLogada.email;
+      }
+      
+      // Remove a opção da filial atual do destino na transferência
+      if (document.getElementById('filial-destino')) {
+        const options = document.getElementById('filial-destino').options;
+        for (let i = 0; i < options.length; i++) {
+          if (options[i].value === filialLogada.nome) {
+            options[i].disabled = true;
+          }
+        }
+      }
+      
+      // Carrega funcionários para os selects que precisam
+      if (document.getElementById('funcionario-folgas')) {
+        carregarFuncionarios('funcionario-folgas');
+      }
+      if (document.getElementById('funcionario-falta')) {
+        carregarFuncionarios('funcionario-falta');
+      }
+    }
+
+    function carregarFuncionarios(selectId) {
+      const select = document.getElementById(selectId);
+      select.innerHTML = '<option value="">Selecione um funcionário</option>';
+      
+      if (filialLogada && funcionariosPorFilial[filialLogada.nome]) {
+        funcionariosPorFilial[filialLogada.nome].forEach(funcionario => {
+          const option = document.createElement('option');
+          option.value = funcionario;
+          option.textContent = funcionario;
+          select.appendChild(option);
+        });
       }
     }
 
@@ -1047,6 +1039,7 @@
       if (filialSalva) {
         filialLogada = JSON.parse(filialSalva);
         mostrarSecao('home');
+        preencherFilialAutomaticamente();
       } else {
         mostrarSecao('login');
       }
@@ -1061,31 +1054,16 @@
       "PONTO": ["DANIELA", "EVANEUZA", "ISADORA", "PAULA", "PRISCILA", "SANDY", "SÔNIA", "SUELI"]
     };
 
-    function atualizarFuncionarios() {
-      const filialSelecionada = document.getElementById('filial-folgas').value;
-      const funcionarioSelect = document.getElementById('funcionario-folgas');
-      funcionarioSelect.innerHTML = "<option value=''>Selecione um funcionário</option>";
-
-      if (filialSelecionada && funcionariosPorFilial[filialSelecionada]) {
-        funcionariosPorFilial[filialSelecionada].forEach(function(funcionario) {
-          const option = document.createElement("option");
-          option.value = funcionario;
-          option.textContent = funcionario;
-          funcionarioSelect.appendChild(option);
-        });
-      }
-    }
-
     // Adiciona event listener para o campo de data de trabalho
-    document.getElementById('dataTrabalho-folgas').addEventListener('change', function() {
+    document.getElementById('dataTrabalho-folgas')?.addEventListener('change', function() {
       const motivoSelect = document.getElementById('motivo-folgas');
       if (motivoSelect.value !== '') {
-        verificarMotivo(); // Chama a função se um motivo já estiver selecionado
+        verificarMotivo();
       }
     });
 
     // Adiciona event listener para o campo de motivo da folga
-    document.getElementById('motivo-folgas').addEventListener('change', verificarMotivo);
+    document.getElementById('motivo-folgas')?.addEventListener('change', verificarMotivo);
 
     function verificarMotivo() {
       const motivo = document.getElementById('motivo-folgas').value;
@@ -1099,7 +1077,7 @@
         return;
       }
 
-      const dataTrabalho = new Date(dataTrabalhoInput.value + 'T00:00:00'); // Garante fuso horário
+      const dataTrabalho = new Date(dataTrabalhoInput.value + 'T00:00:00');
       const maxDate = new Date(dataTrabalho);
 
       if (motivo === "DOMINGO") {
@@ -1120,7 +1098,7 @@
       }
     }
 
-    document.getElementById("form-folgas").addEventListener("submit", function (event) {
+    document.getElementById("form-folgas")?.addEventListener("submit", function (event) {
       event.preventDefault();
       const formData = new FormData(this);
 
@@ -1132,42 +1110,25 @@
         .then(data => {
           alert("Folga cadastrada com sucesso!");
           this.reset();
-          document.getElementById("funcionario-folgas").innerHTML = '<option value="">Selecione a filial primeiro</option>';
+          document.getElementById("funcionario-folgas").innerHTML = '<option value="">Selecione um funcionário</option>';
           document.getElementById("motivoOutros-folgas").style.display = "none";
+          carregarFuncionarios('funcionario-folgas');
         })
         .catch(error => alert("Erro ao enviar os dados!"));
     });
 
     // SCRIPTS PARA CADASTRO DE FALTA
-    const filialSelectFalta = document.getElementById('filial-falta');
-    const funcionarioSelectFalta = document.getElementById('funcionario-falta');
-    const motivoSelectFalta = document.getElementById('motivo-falta');
-    const diasContainer = document.getElementById('dias-afastamento-container');
-    const formFalta = document.getElementById('form-falta');
-    const submitButtonFalta = formFalta.querySelector('button[type="submit"]');
-
-    filialSelectFalta.addEventListener('change', () => {
-      const selecionada = filialSelectFalta.value;
-      funcionarioSelectFalta.innerHTML = '<option value="">Selecione um funcionário</option>';
-      if (funcionariosPorFilial[selecionada]) {
-        funcionariosPorFilial[selecionada].forEach(nome => {
-          const option = document.createElement('option');
-          option.value = nome;
-          option.textContent = nome;
-          funcionarioSelectFalta.appendChild(option);
-        });
-      }
+    document.getElementById('motivo-falta')?.addEventListener('change', () => {
+      document.getElementById('dias-afastamento-container').style.display = 
+        document.getElementById('motivo-falta').value === 'ATESTADO MÉDICO' ? 'block' : 'none';
     });
 
-    motivoSelectFalta.addEventListener('change', () => {
-      diasContainer.style.display = motivoSelectFalta.value === 'ATESTADO MÉDICO' ? 'block' : 'none';
-    });
-
-    formFalta.addEventListener('submit', e => {
+    document.getElementById("form-falta")?.addEventListener('submit', e => {
       e.preventDefault();
+      const submitButtonFalta = e.target.querySelector('button[type="submit"]');
       submitButtonFalta.disabled = true;
 
-      const data = new FormData(formFalta);
+      const data = new FormData(e.target);
       const dataFaltaInput = document.getElementById('data-falta');
       const dataFalta = new Date(dataFaltaInput.value);
       const dataFormatada = `${('0' + dataFalta.getDate()).slice(-2)}/${('0' + (dataFalta.getMonth() + 1)).slice(-2)}/${dataFalta.getFullYear()}`;
@@ -1180,9 +1141,10 @@
       .then(res => res.text())
       .then(() => {
         alert("Falta cadastrada com sucesso!");
-        formFalta.reset();
-        diasContainer.style.display = 'none';
+        e.target.reset();
+        document.getElementById('dias-afastamento-container').style.display = 'none';
         submitButtonFalta.disabled = false;
+        carregarFuncionarios('funcionario-falta');
       })
       .catch(() => {
         alert("Erro ao registrar a falta. Tente novamente.");
@@ -1207,29 +1169,24 @@
       document.getElementById("data-contagem").value = getDataHoraAtualBR();
     }
 
-    document.getElementById("form-sacola").addEventListener("submit", async function (e) {
+    document.getElementById("form-sacola")?.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const checkboxG = document.getElementById("mostrar-g");
       const sacolaG = document.getElementById("sacola-g");
       const envelopeG = document.getElementById("envelope-g");
 
-      // Verifica se campos G estão preenchidos se checkbox marcado
-      if (checkboxG.checked) {
-        if (sacolaG.value === "" || envelopeG.value === "") {
-          alert("Preencha os campos de Sacola G e Envelope G.");
-          return;
-        }
+      if (checkboxG.checked && (sacolaG.value === "" || envelopeG.value === "")) {
+        alert("Preencha os campos de Sacola G e Envelope G.");
+        return;
       }
 
       const botao = document.getElementById("btn-enviar");
       botao.disabled = true;
 
-      // Atualiza a data com hora antes de enviar
       document.getElementById("data-contagem").value = getDataHoraAtualBR();
 
-      const form = e.target;
-      const formData = new FormData(form);
+      const formData = new FormData(e.target);
 
       try {
         const response = await fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
@@ -1239,7 +1196,7 @@
 
         const resText = await response.text();
         alert("Contagem registrada com sucesso!");
-        form.reset();
+        e.target.reset();
         toggleCamposG();
         document.getElementById("data-contagem").value = getDataHoraAtualBR();
       } catch (err) {
@@ -1251,10 +1208,7 @@
     });
 
     // SCRIPTS PARA DIVERGÊNCIA DE NOTAS FISCAIS
-    let isSubmittingDiv = false;
-
-    // Mostrar/esconder campo "Outros" transportadora
-    document.getElementById('transportadora-div').addEventListener('change', function() {
+    document.getElementById('transportadora-div')?.addEventListener('change', function() {
       const outrosDiv = document.getElementById('outrosTransportadoraDiv');
       if (this.value === 'OUTROS') {
         outrosDiv.style.display = 'block';
@@ -1265,25 +1219,17 @@
       }
     });
 
-    function enviarFormularioDivergencia(event) {
+    document.getElementById("formulario-divergencia")?.addEventListener("submit", function(event) {
       event.preventDefault();
-
-      if (isSubmittingDiv) {
-        return;
-      }
-
-      isSubmittingDiv = true;
 
       const button = event.target.querySelector("button[type='submit']");
       const loadingMessage = document.getElementById("loadingMessageDiv");
 
       button.disabled = true;
       button.textContent = "Enviando...";
-
       loadingMessage.style.display = "block";
 
-      var form = document.getElementById("formulario-divergencia");
-      var formData = new FormData(form);
+      const formData = new FormData(event.target);
 
       fetch("https://script.google.com/macros/s/AKfycbw5xq6i5Qoc0s3f-ZaQ6FCZdsjXrC_my8d0tmgr756hWZQqT9Olu9DjsGOYwTlvnBQA/exec", {
         method: "POST",
@@ -1292,7 +1238,7 @@
       .then(response => response.json())
       .then(data => {
         alert("SUA DIVERGÊNCIA FOI ENVIADA COM SUCESSO, AGRADECEMOS SEU APOIO");
-        form.reset();
+        event.target.reset();
         document.getElementById('outrosTransportadoraDiv').style.display = 'none';
       })
       .catch(error => {
@@ -1302,49 +1248,22 @@
         setTimeout(() => {
           button.disabled = false;
           button.textContent = "Enviar";
-          isSubmittingDiv = false;
           loadingMessage.style.display = "none";
         }, 100);
       });
-    }
+    });
 
     // SCRIPTS PARA TRANSFERÊNCIA ENTRE LOJAS
-    function atualizarEmailTrans() {
-      const filialOrigem = document.getElementById('filial-origem').value;
-      const filialDestinoSelect = document.getElementById('filial-destino');
-      const emailPorFilial = {
-        ARTUR: "heringarturmachado@gmail.com",
-        FLORIANO: "hs.uberlandia.floriano@gmail.com",
-        JOTA: "brunohenzo09@gmail.com",
-        MODA: "dlaire28@gmail.com",
-        PONTO: "soniameiry@gmail.com",
-        JA: "jaugustocoliveira@terra.com.br",
-        JE: "jeoliveira1966@gmail.com"
-      };
-      document.getElementById('email-trans').value = emailPorFilial[filialOrigem] || "";
-
-      Array.from(filialDestinoSelect.options).forEach(option => {
-        option.disabled = option.value === filialOrigem;
-      });
-
-      if (filialDestinoSelect.value === filialOrigem) {
-        filialDestinoSelect.value = "";
-      }
-    }
-
     function contarLinhasTrans() {
       const mercadorias = document.getElementById('mercadorias-trans').value;
       const linhas = mercadorias.split('\n').filter(linha => linha.trim() !== '');
       document.getElementById('total-itens-trans').textContent = linhas.length;
     }
 
-    document.getElementById('transfer-form').addEventListener('submit', function (event) {
+    document.getElementById('transfer-form')?.addEventListener('submit', function (event) {
       event.preventDefault();
-      enviarFormularioTrans();
-    });
-
-    function enviarFormularioTrans() {
-      const form = document.getElementById('transfer-form');
+      
+      const form = event.target;
       if (!form.checkValidity()) {
         mostrarMensagemErroTrans("Por favor, preencha todos os campos obrigatórios!");
         return;
@@ -1376,7 +1295,7 @@
         document.getElementById('loading-overlay-trans').style.display = 'none';
         mostrarMensagemErroTrans("Erro ao enviar o formulário. Tente novamente.");
       });
-    }
+    });
 
     function mostrarMensagemSucessoTrans() {
       document.getElementById('success-message-trans').style.display = 'block';
@@ -1552,25 +1471,9 @@
     // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
 
-    function entrarNF() {
-      const codigo = document.getElementById('codigo-nf').value.trim();
-      const codigosValidos = ['288', '287', '293', '488', '559'];
-      if (!codigo || !codigosValidos.includes(codigo)) {
-        alert("Código da filial inválido.");
-        return;
-      }
-      localStorage.setItem('filial', codigo);
-      document.getElementById('login-nf').classList.add('hidden');
-      document.getElementById('principal-nf').classList.remove('hidden');
-      carregarHistoricoNF(codigo);
-      document.getElementById('chave-nf').focus();
-    }
-
     function sairNF() {
-      localStorage.removeItem('filial');
-      document.getElementById('login-nf').classList.remove('hidden');
-      document.getElementById('principal-nf').classList.add('hidden');
-      document.getElementById('codigo-nf').value = '';
+      // Não faz logout total, apenas volta para home
+      mostrarSecao('home');
     }
 
     function limparHistoricoLocalNF() {
@@ -1579,14 +1482,12 @@
         alert("Senha incorreta. Operação cancelada.");
         return;
       }
-      const filial = localStorage.getItem('filial');
-      localStorage.removeItem(`historico_${filial}`);
+      localStorage.removeItem(`historico_${filialLogada.codigo}`);
       document.getElementById('historicoLista-nf').innerHTML = '';
       alert("Histórico local apagado.");
     }
 
     function consultarNotaNF() {
-      const filial = localStorage.getItem('filial');
       const chave = document.getElementById('chave-nf').value.trim();
       const resultado = document.getElementById('resultado-nf');
       const erro = document.getElementById('erro-nf');
@@ -1596,12 +1497,12 @@
       resultado.classList.add('hidden');
       erro.innerText = '';
 
-      if (!filial || !chave || chave.length !== 44) {
+      if (!chave || chave.length !== 44) {
         erro.innerText = 'Preencha corretamente a chave com 44 dígitos.';
         return;
       }
 
-      const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
+      const historico = JSON.parse(localStorage.getItem(`historico_${filialLogada.codigo}`)) || [];
       if (historico.find(h => h.chave === chave)) {
         erro.innerText = 'Essa chave já foi consultada anteriormente!';
         return;
@@ -1610,7 +1511,7 @@
       botao.disabled = true;
       loading.classList.remove('hidden');
 
-      fetch(`${URL_SCRIPT}?chave=${chave}&filial=${filial}`)
+      fetch(`${URL_SCRIPT}?chave=${chave}&filial=${filialLogada.codigo}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -1621,9 +1522,15 @@
               <p><strong>Quantidade Total:</strong> ${data.data.quantidadeTotal}</p>
               <p><strong>Status:</strong> ✅ ${data.data.status}</p>
             `;
-            historico.push({ chave, dataHora: new Date().toISOString(), numeroNF: data.data.numeroNF, valorTotal: data.data.valorTotal, quantidade: data.data.quantidadeTotal });
-            localStorage.setItem(`historico_${filial}`, JSON.stringify(historico));
-            carregarHistoricoNF(filial);
+            historico.push({ 
+              chave, 
+              dataHora: new Date().toISOString(), 
+              numeroNF: data.data.numeroNF, 
+              valorTotal: data.data.valorTotal, 
+              quantidade: data.data.quantidadeTotal 
+            });
+            localStorage.setItem(`historico_${filialLogada.codigo}`, JSON.stringify(historico));
+            carregarHistoricoNF();
           } else {
             erro.innerText = data.message || 'Erro ao buscar nota fiscal.';
           }
@@ -1635,9 +1542,9 @@
         });
     }
 
-    function carregarHistoricoNF(filial) {
+    function carregarHistoricoNF() {
       const historicoLista = document.getElementById('historicoLista-nf');
-      const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
+      const historico = JSON.parse(localStorage.getItem(`historico_${filialLogada.codigo}`)) || [];
       historicoLista.innerHTML = historico.length === 0 ? '<li>Nenhum histórico local encontrado.</li>' : '';
       historico.slice().reverse().forEach(registro => {
         const dt = new Date(registro.dataHora);
@@ -1685,7 +1592,6 @@
 
     // Inicializar data da contagem de sacola quando a seção for mostrada
     document.addEventListener('DOMContentLoaded', function() {
-      // Observar mudanças na seção ativa para inicializar dados quando necessário
       const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
           if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
@@ -1697,7 +1603,6 @@
         });
       });
 
-      // Observar todas as seções
       document.querySelectorAll('.section').forEach(function(section) {
         observer.observe(section, { attributes: true });
       });
