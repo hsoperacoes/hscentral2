@@ -651,6 +651,9 @@
           <textarea id="observacao-falta" name="observacao" rows="4" placeholder="Ex: 3 DIAS 12/04 A 14/04"></textarea>
         </div>
 
+        <!-- CAMPO IDENTIFICADOR PARA DIFERENCIAR DO FORMULÁRIO DE TRANSFERÊNCIA -->
+        <input type="hidden" name="tipo_formulario" value="FALTA">
+
         <button type="submit">Enviar</button>
       </form>
     </div>
@@ -708,6 +711,9 @@
             <input type="number" id="envelope-g" name="envelope_g" placeholder="Quantidade" min="0">
           </div>
         </div>
+
+        <!-- CAMPO IDENTIFICADOR PARA DIFERENCIAR DO FORMULÁRIO DE TRANSFERÊNCIA -->
+        <input type="hidden" name="tipo_formulario" value="SACOLA">
 
         <button type="submit" id="btn-enviar">Enviar</button>
       </form>
@@ -833,6 +839,9 @@
 
         <div id="barcode-count-trans" class="barcode-count">Total de itens: <span id="total-itens-trans" class="count-number">0</span></div>
 
+        <!-- CAMPO IDENTIFICADOR PARA DIFERENCIAR DO FORMULÁRIO DE FALTA -->
+        <input type="hidden" name="tipo_formulario" value="TRANSFERENCIA">
+
         <div id="success-message-trans" style="display: none; background-color: #e8f5e8; color: #137333; padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; border: 1px solid #ceead6;">Transferência enviada com sucesso!</div>
         <div id="error-message-trans" style="display: none; background-color: #fce8e6; color: #d93025; padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; border: 1px solid #f9dedc;"></div>
 
@@ -934,6 +943,9 @@
     // Variável global para armazenar a filial logada
     let filialLogada = null;
     let scannerNF = null;
+
+    // URL do endpoint unificado
+    const ENDPOINT_UNIFICADO = 'https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec';
 
     // Funções de login/logout
     function entrar() {
@@ -1154,7 +1166,8 @@
       const dataFormatada = `${('0' + dataFalta.getDate()).slice(-2)}/${('0' + (dataFalta.getMonth() + 1)).slice(-2)}/${dataFalta.getFullYear()}`;
       data.set("data_falta", dataFormatada);
 
-      fetch('https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec', {
+      // CORREÇÃO: Usar o endpoint unificado
+      fetch(ENDPOINT_UNIFICADO, {
         method: 'POST',
         body: data
       })
@@ -1217,7 +1230,8 @@
       }
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
+        // CORREÇÃO: Usar o endpoint unificado
+        const response = await fetch(ENDPOINT_UNIFICADO, {
           method: "POST",
           body: formData
         });
@@ -1262,6 +1276,7 @@
 
       const formData = new FormData(event.target);
 
+      // CORREÇÃO: Usar o endpoint correto para divergência (mantém o original)
       fetch("https://script.google.com/macros/s/AKfycbw5xq6i5Qoc0s3f-ZaQ6FCZdsjXrC_my8d0tmgr756hWZQqT9Olu9DjsGOYwTlvnBQA/exec", {
         method: "POST",
         body: formData
@@ -1313,7 +1328,8 @@
 
       document.getElementById('loading-overlay-trans').style.display = 'flex';
 
-      fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
+      // CORREÇÃO PRINCIPAL: Usar endpoint unificado
+      fetch(ENDPOINT_UNIFICADO, {
         method: "POST",
         headers: { 
           "Content-Type": "application/x-www-form-urlencoded",
