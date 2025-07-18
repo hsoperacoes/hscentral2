@@ -1,13 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>GERENCIAL HS - Sistema Unificado</title>
+  <!-- Estilos e scripts do sistema_hs_atualizado.html -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -346,14 +345,23 @@
     }
 
     .logout {
-      text-align: right;
-      margin-bottom: 10px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
     }
 
     .logout button {
       padding: 8px 16px;
       background-color: #5f6368;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
       font-size: 14px;
+    }
+
+    .logout button:hover {
+      background-color: #3c4043;
     }
 
     .history button {
@@ -430,21 +438,6 @@
       display: none;
     }
 
-    /* Estilos para NF */
-    #scanner {
-      width: 100%;
-      height: 100vh;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: 1000;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      background-color: transparent;
-    }
-
     @media print {
       .back-button,
       .input-area,
@@ -511,8 +504,16 @@
       .container {
         padding: 20px 15px;
       }
+      
+      .logout {
+        position: static;
+        text-align: right;
+        margin-bottom: 15px;
+      }
     }
   </style>
+  <!-- Script Dynamsoft do pasted_content.txt -->
+  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
 </head>
 <body>
   <!-- Botão de voltar -->
@@ -520,8 +521,22 @@
     <i class="fas fa-arrow-left"></i> Voltar à Home
   </button>
 
+  <!-- Tela de Login -->
+  <div id="login" class="section active">
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      <h2>Login da Filial</h2>
+      <label for="codigo-filial">Código da Filial</label>
+      <input type="text" id="codigo-filial" placeholder="Digite o código da filial" />
+      <button onclick="entrar()">Entrar</button>
+    </div>
+  </div>
+
   <!-- SEÇÃO HOME -->
-  <div id="home" class="section active">
+  <div id="home" class="section">
+    <div class="logout">
+      <button onclick="sair()">Sair</button>
+    </div>
     <img src="logo.png" alt="Logo HS" class="logo-topo" />
     
     <div class="container">
@@ -919,11 +934,12 @@
         <h2>Consulta de Nota Fiscal</h2>
         <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
         <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
-        <button onclick="abrirLeitorNF()">📷 Ler Código de Barras</button>
-
-        <div id="scanner"></div>
-
         <button onclick="consultarNotaNF()">Consultar</button>
+        <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
+        <div id="reader-nf" class="hidden">
+          <div id="interactive-nf" class="viewport"></div>
+        </div>
+
         <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
         <div id="resultado-nf" class="result hidden"></div>
         <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
@@ -940,8 +956,60 @@
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
   <script>
-    // Configuração Dynamsoft
-    Dynamsoft.DBR.BarcodeScanner.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA0MDgyMzg1LVRYbFhaV0pRY205cSIsIm1haW5TZXJ2ZXJVUkwiOiJodHRwczovL21kbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsIm9yZ2FuaXphdGlvbklEIjoiMTA0MDgyMzg1Iiwic3RhbmRieVNlcnZlclVSTCI6Imh0dHBzOi8vc2Rscy5keW5hbXNvZnRvbmxpbmUuY29tIiwiY2hlY2tDb2RlIjoxNzI0OTg5ODA0fQ==";
+    // Mapeamento de códigos para filiais
+    const codigosFiliais = {
+      '288': { nome: 'PONTO', email: 'soniameiry@gmail.com' },
+      '287': { nome: 'MODA', email: 'dlaire28@gmail.com' },
+      '293': { nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
+      '488': { nome: 'FLORIANO', email: 'hs.uberlandia.floriano@gmail.com' },
+      '559': { nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
+      '600': { nome: 'JA', email: 'jaugustocoliveira@terra.com.br' },
+      '601': { nome: 'JE', email: 'jeoliveira1966@gmail.com' }
+    };
+
+    // Variável global para armazenar a filial logada
+    let filialLogada = null;
+
+    // Funções de login/logout
+    function entrar() {
+      const codigo = document.getElementById('codigo-filial').value.trim();
+      
+      if (codigosFiliais[codigo]) {
+        filialLogada = codigosFiliais[codigo];
+        localStorage.setItem('filial', JSON.stringify(filialLogada));
+        mostrarSecao('home');
+      } else {
+        alert('Código de filial inválido!');
+      }
+    }
+
+    function sair() {
+      filialLogada = null;
+      localStorage.removeItem('filial');
+      mostrarSecao('login');
+    }
+
+    // Função para pré-selecionar a filial nos formulários
+    function preencherFilialAutomaticamente() {
+      if (!filialLogada) return;
+      
+      // Seleciona a filial em todos os selects de filial
+      document.querySelectorAll('select[name="filial"], select[id*="filial-"]').forEach(select => {
+        const option = Array.from(select.options).find(opt => opt.value === filialLogada.nome);
+        if (option) {
+          option.selected = true;
+          
+          // Dispara o evento change se existir
+          if (select.onchange) select.onchange();
+          if (select.id === 'filial-origem' && select.onchange) select.onchange();
+        }
+      });
+      
+      // Preenche o email na transferência
+      if (document.getElementById('email-trans')) {
+        document.getElementById('email-trans').value = filialLogada.email;
+      }
+    }
 
     // Função para mostrar seções
     function mostrarSecao(secaoId) {
@@ -952,8 +1020,17 @@
       // Mostrar a seção selecionada
       document.getElementById(secaoId).classList.add('active');
       
-      // Mostrar botão de voltar
-      document.getElementById('backButton').classList.add('show');
+      // Pré-selecionar a filial quando mostrar qualquer formulário
+      if (secaoId !== 'login' && secaoId !== 'home') {
+        preencherFilialAutomaticamente();
+      }
+      
+      // Mostrar botão de voltar (exceto para login)
+      if (secaoId !== 'login') {
+        document.getElementById('backButton').classList.add('show');
+      } else {
+        document.getElementById('backButton').classList.remove('show');
+      }
       
       // Rolagem suave para o topo da seção
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -961,19 +1038,19 @@
 
     // Função para voltar à home
     function voltarHome() {
-      // Esconder todas as seções
-      const secoes = document.querySelectorAll(".section");
-      secoes.forEach(secao => secao.classList.remove('active'));
-      
-      // Mostrar a home
-      document.getElementById('home').classList.add('active');
-      
-      // Esconder botão de voltar
-      document.getElementById('backButton').classList.remove('show');
-      
-      // Rolagem suave para o topo
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      mostrarSecao('home');
     }
+
+    // Verificar se já está logado ao carregar a página
+    window.addEventListener('load', function() {
+      const filialSalva = localStorage.getItem('filial');
+      if (filialSalva) {
+        filialLogada = JSON.parse(filialSalva);
+        mostrarSecao('home');
+      } else {
+        mostrarSecao('login');
+      }
+    });
 
     // SCRIPTS PARA CADASTRO DE FOLGAS
     const funcionariosPorFilial = {
@@ -1474,19 +1551,19 @@
 
     // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
-    const filiaisValidas = ["293", "488", "287", "288", "761"];
-    let scannerInstance = null;
 
     function entrarNF() {
       const codigo = document.getElementById('codigo-nf').value.trim();
-      if (!codigo || !filiaisValidas.includes(codigo)) {
-        alert("Código de filial inválido.");
+      const codigosValidos = ['288', '287', '293', '488', '559'];
+      if (!codigo || !codigosValidos.includes(codigo)) {
+        alert("Código da filial inválido.");
         return;
       }
       localStorage.setItem('filial', codigo);
       document.getElementById('login-nf').classList.add('hidden');
       document.getElementById('principal-nf').classList.remove('hidden');
       carregarHistoricoNF(codigo);
+      document.getElementById('chave-nf').focus();
     }
 
     function sairNF() {
@@ -1510,26 +1587,27 @@
 
     function consultarNotaNF() {
       const filial = localStorage.getItem('filial');
-      const chaveInput = document.getElementById('chave-nf');
-      const chave = chaveInput.value.trim();
+      const chave = document.getElementById('chave-nf').value.trim();
       const resultado = document.getElementById('resultado-nf');
       const erro = document.getElementById('erro-nf');
       const loading = document.getElementById('loading-nf');
+      const botao = document.querySelector("button[onclick='consultarNotaNF()']");
 
       resultado.classList.add('hidden');
       erro.innerText = '';
 
-      if (!filial || chave.length !== 44) {
+      if (!filial || !chave || chave.length !== 44) {
         erro.innerText = 'Preencha corretamente a chave com 44 dígitos.';
         return;
       }
 
       const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
-      if (historico.some(h => h.chave === chave)) {
+      if (historico.find(h => h.chave === chave)) {
         erro.innerText = 'Essa chave já foi consultada anteriormente!';
         return;
       }
 
+      botao.disabled = true;
       loading.classList.remove('hidden');
 
       fetch(`${URL_SCRIPT}?chave=${chave}&filial=${filial}`)
@@ -1543,7 +1621,7 @@
               <p><strong>Quantidade Total:</strong> ${data.data.quantidadeTotal}</p>
               <p><strong>Status:</strong> ✅ ${data.data.status}</p>
             `;
-            historico.push({ chave, dataHora: new Date().toISOString(), ...data.data });
+            historico.push({ chave, dataHora: new Date().toISOString(), numeroNF: data.data.numeroNF, valorTotal: data.data.valorTotal, quantidade: data.data.quantidadeTotal });
             localStorage.setItem(`historico_${filial}`, JSON.stringify(historico));
             carregarHistoricoNF(filial);
           } else {
@@ -1553,72 +1631,57 @@
         .catch(() => erro.innerText = 'Erro de comunicação com o servidor.')
         .finally(() => {
           loading.classList.add('hidden');
-          chaveInput.value = '';
+          botao.disabled = false;
         });
     }
 
     function carregarHistoricoNF(filial) {
-      const lista = document.getElementById('historicoLista-nf');
+      const historicoLista = document.getElementById('historicoLista-nf');
       const historico = JSON.parse(localStorage.getItem(`historico_${filial}`)) || [];
-      lista.innerHTML = '';
-      if (historico.length === 0) {
-        lista.innerHTML = '<li>Nenhum histórico local encontrado.</li>';
-        return;
-      }
-      historico.slice().reverse().forEach(item => {
-        const data = new Date(item.dataHora).toLocaleDateString('pt-BR');
-        lista.innerHTML += `<li>${data} - NF ${item.numeroNF} - ${item.valorTotal} - ${item.quantidadeTotal} itens</li>`;
+      historicoLista.innerHTML = historico.length === 0 ? '<li>Nenhum histórico local encontrado.</li>' : '';
+      historico.slice().reverse().forEach(registro => {
+        const dt = new Date(registro.dataHora);
+        const linha = `${dt.toLocaleDateString('pt-BR')} - NF ${registro.numeroNF} - ${registro.valorTotal} - ${registro.quantidade} itens`;
+        historicoLista.insertAdjacentHTML('beforeend', `<li>${linha}</li>`);
       });
     }
 
-    async function abrirLeitorNF() {
-      const chaveInput = document.getElementById("chave-nf");
-      const scannerDiv = document.getElementById("scanner");
+    function iniciarScannerNF() {
+      const readerDiv = document.getElementById("reader-nf");
+      readerDiv.classList.remove("hidden");
 
-      if (chaveInput.value.trim() !== '') {
-        alert("Limpe o campo antes de escanear outro código.");
-        return;
-      }
-
-      try {
-        if (scannerInstance) {
-          await scannerInstance.destroyContext();
-          scannerInstance = null;
-        }
-
-        scannerDiv.style.display = "flex";
-        scannerInstance = await Dynamsoft.DBR.BarcodeScanner.createInstance();
-        await scannerInstance.updateRuntimeSettings("speed");
-
-        scannerInstance.onFrameRead = results => {
-          for (let result of results) {
-            const codigo = result.barcodeText;
-            if (codigo.length >= 44) {
-              chaveInput.value = codigo.substring(0, 44);
-              scannerInstance.hide();
-              scannerInstance.stop();
-              scannerDiv.style.display = "none";
-              return;
-            }
+      Quagga.init({
+        inputStream: {
+          type: "LiveStream",
+          target: document.querySelector('#interactive-nf'),
+          constraints: {
+            facingMode: "environment"
           }
-        };
+        },
+        locator: { patchSize: "medium", halfSample: true },
+        decoder: {
+          readers: ["code_128_reader"]
+        },
+        locate: true
+      }, function(err) {
+        if (err) {
+          console.error(err);
+          alert("Erro ao iniciar o leitor: " + err);
+          return;
+        }
+        Quagga.start();
+      });
 
-        await scannerInstance.show(scannerDiv);
-      } catch (ex) {
-        alert("Erro ao iniciar o leitor: " + ex.message);
-        scannerDiv.style.display = "none";
-      }
+      Quagga.onDetected(data => {
+        const codigo = data.codeResult.code;
+        if (codigo.length >= 44) {
+          document.getElementById("chave-nf").value = codigo.substring(0, 44);
+          Quagga.stop();
+          readerDiv.classList.add("hidden");
+          document.getElementById("chave-nf").focus();
+        }
+      });
     }
-
-    // Verificar se já está logado ao carregar a seção NF
-    window.addEventListener('load', function () {
-      const filial = localStorage.getItem('filial');
-      if (filial) {
-        document.getElementById('login-nf').classList.add('hidden');
-        document.getElementById('principal-nf').classList.remove('hidden');
-        carregarHistoricoNF(filial);
-      }
-    });
 
     // Inicializar data da contagem de sacola quando a seção for mostrada
     document.addEventListener('DOMContentLoaded', function() {
@@ -1642,4 +1705,3 @@
   </script>
 </body>
 </html>
-
