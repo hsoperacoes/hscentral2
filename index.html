@@ -876,40 +876,111 @@
   </div>
 
   <!-- SEÇÃO RECEBIMENTO DE NOTA FISCAL -->
-  <div id="nf" class="section">
-    <div class="form-container">
-      <img src="logo.png" alt="Logo" class="logo">
+<div id="nf" class="section">
+  <div class="form-container">
+    <img src="logo.png" alt="Logo" class="logo">
+    
+    <div id="principal-nf">
+      <div class="logout">
+        <button onclick="sairNF()">Sair</button>
+      </div>
+      <h2>Consulta de Nota Fiscal - Filial: <span id="nome-filial-nf"></span></h2>
+      <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
+      <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
+      <button onclick="consultarNotaNF()">Consultar</button>
+      <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
       
-      <div id="principal-nf">
-        <div class="logout">
-          <button onclick="sairNF()">Sair</button>
+      <!-- Alterado a estrutura do scanner -->
+      <div id="reader-nf" class="hidden" style="width: 100%; max-width: 350px; margin: 10px auto;">
+        <div id="interactive-nf" style="width: 100%; height: 240px; position: relative;">
+          <!-- O Dynamsoft vai inserir o vídeo aqui -->
+          <div class="dce-video-container" style="width: 100%; height: 100%; position: relative;"></div>
         </div>
-        <h2>Consulta de Nota Fiscal - Filial: <span id="nome-filial-nf"></span></h2>
-        <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
-        <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
-        <button onclick="consultarNotaNF()">Consultar</button>
-        <button onclick="iniciarScannerNF()">📷 Escanear Código</button>
-        <div id="reader-nf" class="hidden">
-          <div id="interactive-nf" class="viewport"></div>
-          <button onclick="pararScannerNF()" style="margin-top: 10px;">Parar Scanner</button>
-        </div>
+        <button onclick="pararScannerNF()" style="margin-top: 10px;">Parar Scanner</button>
+      </div>
 
-        <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
-        <div id="resultado-nf" class="result hidden"></div>
-        <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
+      <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
+      <div id="resultado-nf" class="result hidden"></div>
+      <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
 
-        <div class="history">
-          <h3>Histórico da Filial</h3>
-          <ul id="historicoLista-nf"></ul>
-          <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
-        </div>
+      <div class="history">
+        <h3>Histórico da Filial</h3>
+        <ul id="historicoLista-nf"></ul>
+        <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
       </div>
     </div>
   </div>
+</div>
 
-  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+<script>
+  // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL COM DYNSOFT
+  const URL_SCRIPT_NF = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
+  let scannerNF = null;
 
-  <script>
+  // Função para inicializar o scanner Dynamsoft
+  async function inicializarScannerDynamsoft() {
+    try {
+      // Configura a nova licença do Dynamsoft
+      Dynamsoft.DBR.BarcodeScanner.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA0MDgyMzg1LVRYbFhaV0pRY205cSIsIm1haW5TZXJ2ZXJVUkwiOiJodHRwczovL21kbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsIm9yZ2FuaXphdGlvbklEIjoiMTA0MDgyMzg1Iiwic3RhbmRieVNlcnZlclVSTCI6Imh0dHBzOi8vc2Rscy5keW5hbXNvZnRvbmxpbmUuY29tIiwiY2hlY2tDb2RlIjoxNzI0OTg5ODA0fQ==";
+      
+      // Cria uma instância do scanner
+      scannerNF = await Dynamsoft.DBR.BarcodeScanner.createInstance();
+      
+      // Configurações do scanner
+      let settings = await scannerNF.getRuntimeSettings();
+      settings.barcodeFormatIds = Dynamsoft.DBR.EnumBarcodeFormat.BF_CODE_128 | 
+                                Dynamsoft.DBR.EnumBarcodeFormat.BF_CODE_39 | 
+                                Dynamsoft.DBR.EnumBarcodeFormat.BF_QR_CODE;
+      await scannerNF.updateRuntimeSettings(settings);
+      
+      // Define o elemento onde o scanner será renderizado
+      await scannerNF.setUIElement(document.getElementById('interactive-nf'));
+      
+      // Evento quando um código é lido
+      scannerNF.onUnduplicatedRead = (txt, result) => {
+        if (txt && txt.length >= 44) {
+          document.getElementById("chave-nf").value = txt.substring(0, 44);
+          pararScannerNF();
+          document.getElementById("chave-nf").focus();
+        }
+      };
+      
+      return true;
+    } catch (ex) {
+      console.error(ex);
+      alert("Erro ao inicializar o scanner: " + ex.message);
+      return false;
+    }
+  }
+
+  async function iniciarScannerNF() {
+    const readerDiv = document.getElementById("reader-nf");
+    readerDiv.classList.remove("hidden");
+    
+    if (!scannerNF) {
+      const inicializado = await inicializarScannerDynamsoft();
+      if (!inicializado) return;
+    }
+    
+    try {
+      await scannerNF.open();
+      await scannerNF.startScanning();
+    } catch (ex) {
+      console.error(ex);
+      alert("Erro ao iniciar o scanner: " + ex.message);
+    }
+  }
+
+  function pararScannerNF() {
+    if (scannerNF) {
+      scannerNF.stopScanning();
+      scannerNF.hide();
+    }
+    document.getElementById("reader-nf").classList.add("hidden");
+  }
+
+  // ... (mantenha o restante do código como está)
+</script>
     // Mapeamento de códigos para filiais
     const codigosFiliais = {
       '288': { codigo: '288', nome: 'PONTO', email: 'soniameiry@gmail.com' },
