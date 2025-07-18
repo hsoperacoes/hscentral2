@@ -913,10 +913,10 @@
     // Mapeamento de códigos para filiais
     const codigosFiliais = {
       '288': { codigo: '288', nome: 'PONTO', email: 'soniameiry@gmail.com' },
-      '287': { codigo: '287', nome: 'MODA', email: 'dlaire28@gmail.com' },
-      '293': { codigo: '293', nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
+      '761': { codigo: '761', nome: 'MODA', email: 'dlaire28@gmail.com' },
+      '287': { codigo: '287', nome: 'JOTA', email: 'brunohenzo09@gmail.com' },
       '488': { codigo: '488', nome: 'FLORIANO', email: 'hs.uberlandia.floriano@gmail.com' },
-      '559': { codigo: '559', nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
+      '293': { codigo: '293', nome: 'ARTUR', email: 'heringarturmachado@gmail.com' },
       '600': { codigo: '600', nome: 'JA', email: 'jaugustocoliveira@terra.com.br' },
       '601': { codigo: '601', nome: 'JE', email: 'jeoliveira1966@gmail.com' }
     };
