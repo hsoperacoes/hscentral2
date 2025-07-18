@@ -518,7 +518,7 @@
 <body>
   <!-- Botão de voltar -->
   <button class="back-button" id="backButton" onclick="voltarHome()">
-    <i class="fas fa-arrow-left"></i> Voltar à Home
+    <i class="fas fa-arrow-left"></i> Voltar ao Menu PRINCIPAL
   </button>
 
   <!-- Tela de Login -->
