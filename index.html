@@ -901,7 +901,7 @@
           <div id="interactive-nf" class="viewport">
             <div class="dce-video-container"></div>
           </div>
-          <button onclick="pararScannerNF()" style="margin-top: 10px;">Parar Scanner</button>
+
         </div>
 
         <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
@@ -1555,7 +1555,6 @@
     function pararScannerNF() {
       if (scannerNF) {
         scannerNF.stopScanning();
-        scannerNF.hide();
       }
       document.getElementById("reader-nf").classList.add("hidden");
     }
@@ -1646,3 +1645,4 @@
   </script>
 </body>
 </html>
+
