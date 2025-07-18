@@ -808,16 +808,8 @@
 
         <div class="form-group">
           <div class="question-title">FILIAL ORIGEM <span class="required-star">*</span></div>
-          <select name="filialOrigem" id="filial-origem" required onchange="atualizarEmailTrans()">
-            <option value="" disabled selected>Selecione</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-            <option value="JA">JA</option>
-            <option value="JE">JE</option>
-          </select>
+          <input type="text" id="filial-origem-display" readonly>
+          <input type="hidden" name="filialOrigem" id="filial-origem">
         </div>
 
         <div class="form-group">
@@ -987,6 +979,14 @@
       // Preenche o email na transferência
       if (document.getElementById('email-trans')) {
         document.getElementById('email-trans').value = filialLogada.email;
+      }
+      
+      // Preenche a filial origem na transferência (CORREÇÃO APLICADA)
+      if (document.getElementById('filial-origem-display')) {
+        document.getElementById('filial-origem-display').value = filialLogada.nome;
+      }
+      if (document.getElementById('filial-origem')) {
+        document.getElementById('filial-origem').value = filialLogada.nome;
       }
       
       // Remove a opção da filial atual do destino na transferência
@@ -1209,9 +1209,11 @@
 
       const formData = new FormData(e.target);
 
-      // Adicionar a filial logada ao formData explicitamente
+      // CORREÇÃO: Garantir que a filial seja sempre preenchida
       if (filialLogada && filialLogada.nome) {
         formData.set("filial", filialLogada.nome);
+        // Também atualizar o campo hidden
+        document.getElementById("filial").value = filialLogada.nome;
       }
 
       try {
@@ -1225,6 +1227,9 @@
         e.target.reset();
         toggleCamposG();
         document.getElementById("data-contagem").value = getDataHoraAtualBR();
+        
+        // CORREÇÃO: Manter a filial preenchida após o reset
+        preencherFilialAutomaticamente();
       } catch (err) {
         alert("Erro ao registrar os dados. Tente novamente.");
         console.error("Erro:", err);
@@ -1266,6 +1271,7 @@
         alert("SUA DIVERGÊNCIA FOI ENVIADA COM SUCESSO, AGRADECEMOS SEU APOIO");
         event.target.reset();
         document.getElementById('outrosTransportadoraDiv').style.display = 'none';
+        preencherFilialAutomaticamente();
       })
       .catch(error => {
         alert("Erro ao enviar o formulário. Tente novamente.");
@@ -1296,6 +1302,13 @@
       }
 
       const formData = new FormData(form);
+      
+      // CORREÇÃO: Garantir que a filial origem seja sempre a filial logada
+      if (filialLogada && filialLogada.nome) {
+        formData.set("filialOrigem", filialLogada.nome);
+        formData.set("email", filialLogada.email);
+      }
+      
       const data = new URLSearchParams(formData).toString();
 
       document.getElementById('loading-overlay-trans').style.display = 'flex';
@@ -1344,6 +1357,8 @@
       document.getElementById('numero-transferencia').style.display = 'none';
       document.getElementById('total-itens-trans').textContent = '0';
       contarLinhasTrans();
+      // CORREÇÃO: Manter a filial preenchida após limpar
+      preencherFilialAutomaticamente();
     }
 
     // SCRIPTS PARA GERADOR DE CÓDIGOS DE BARRAS
