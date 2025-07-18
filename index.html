@@ -802,14 +802,22 @@
 
       <form id="transfer-form">
         <div class="form-group">
-          <div class="question-title">Email da filial de origem <span class="required-star">*</span></div>
+          <div class="question-title">Email da filial de origem:(Preenchimento automatico) <span class="required-star">*</span></div>
           <input type="email" name="email" id="email-trans" required readonly>
         </div>
 
         <div class="form-group">
           <div class="question-title">FILIAL ORIGEM <span class="required-star">*</span></div>
-          <input type="text" id="filial-origem-display" readonly>
-          <input type="hidden" name="filialOrigem" id="filial-origem">
+          <select name="filialOrigem" id="filial-origem" required onchange="atualizarEmailTrans()">
+            <option value="" disabled selected>Selecione</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+            <option value="JA">JA</option>
+            <option value="JE">JE</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -1120,10 +1128,11 @@
         .then(response => response.text())
         .then(data => {
           alert("Folga cadastrada com sucesso!");
-          this.reset();
+           this.reset();
           document.getElementById("funcionario-folgas").innerHTML = '<option value="">Selecione um funcionário</option>';
           document.getElementById("motivoOutros-folgas").style.display = "none";
-          carregarFuncionarios('funcionario-folgas');
+          carregarFuncionarios("funcionario-folgas");
+          preencherFilialAutomaticamente();
         })
         .catch(error => alert("Erro ao enviar os dados!"));
     });
@@ -1153,9 +1162,10 @@
       .then(() => {
         alert("Falta cadastrada com sucesso!");
         e.target.reset();
-        document.getElementById('dias-afastamento-container').style.display = 'none';
+        document.getElementById("dias-afastamento-container").style.display = "none";
         submitButtonFalta.disabled = false;
-        carregarFuncionarios('funcionario-falta');
+        carregarFuncionarios("funcionario-falta");
+        preencherFilialAutomaticamente();
       })
       .catch(() => {
         alert("Erro ao registrar a falta. Tente novamente.");
@@ -1198,6 +1208,11 @@
       document.getElementById("data-contagem").value = getDataHoraAtualBR();
 
       const formData = new FormData(e.target);
+
+      // Adicionar a filial logada ao formData explicitamente
+      if (filialLogada && filialLogada.nome) {
+        formData.set("filial", filialLogada.nome);
+      }
 
       try {
         const response = await fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
