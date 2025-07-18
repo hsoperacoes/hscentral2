@@ -1301,38 +1301,61 @@
         return;
       }
 
-      const formData = new FormData(form);
-      
-      // CORREÇÃO: Garantir que a filial origem seja sempre a filial logada
-      if (filialLogada && filialLogada.nome) {
-        formData.set("filialOrigem", filialLogada.nome);
-        formData.set("email", filialLogada.email);
+      // CORREÇÃO: Garantir que os dados da filial estão corretos
+      if (filialLogada) {
+        document.getElementById('email-trans').value = filialLogada.email;
+        document.getElementById('filial-origem').value = filialLogada.nome;
+        document.getElementById('filial-origem-display').value = filialLogada.nome;
       }
-      
+
+      const formData = new FormData(form);
       const data = new URLSearchParams(formData).toString();
 
       document.getElementById('loading-overlay-trans').style.display = 'flex';
 
       fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: { 
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Accept": "application/json, text/plain, */*"
+        },
         body: data
       })
-      .then(response => response.json())
-      .then(responseData => {
+      .then(response => {
+        // Primeiro, vamos tentar ler como texto para ver o que está sendo retornado
+        return response.text().then(text => {
+          // Tentar fazer parse como JSON
+          try {
+            const jsonData = JSON.parse(text);
+            return { success: true, data: jsonData, rawText: text };
+          } catch (e) {
+            // Se não conseguir fazer parse como JSON, retornar como texto
+            return { success: false, data: null, rawText: text, error: e.message };
+          }
+        });
+      })
+      .then(result => {
         document.getElementById('loading-overlay-trans').style.display = 'none';
 
-        if (responseData.numeroTransferencia) {
+        if (result.success && result.data && result.data.numeroTransferencia) {
+          // Resposta JSON válida com número da transferência
           mostrarMensagemSucessoTrans();
-          exibirNumeroTransferencia(responseData.numeroTransferencia);
+          exibirNumeroTransferencia(result.data.numeroTransferencia);
+          setTimeout(limparFormularioTrans, 5000);
+        } else if (result.rawText && result.rawText.includes('SUCESSO')) {
+          // Resposta de texto indicando sucesso (mesmo sem JSON válido)
+          mostrarMensagemSucessoTrans();
+          exibirNumeroTransferencia('N/A - Verifique na planilha');
           setTimeout(limparFormularioTrans, 5000);
         } else {
-          mostrarMensagemErroTrans("Erro ao enviar: Resposta inválida do servidor.");
+          // Erro ou resposta inesperada
+          mostrarMensagemErroTrans(`Erro na resposta do servidor: ${result.rawText || 'Resposta vazia'}`);
         }
       })
       .catch(error => {
         document.getElementById('loading-overlay-trans').style.display = 'none';
-        mostrarMensagemErroTrans("Erro ao enviar o formulário. Tente novamente.");
+        mostrarMensagemErroTrans("Erro de comunicação com o servidor. Verifique sua conexão e tente novamente.");
+        console.error('Erro:', error);
       });
     });
 
@@ -1356,6 +1379,8 @@
       document.getElementById('transfer-form').reset();
       document.getElementById('numero-transferencia').style.display = 'none';
       document.getElementById('total-itens-trans').textContent = '0';
+      document.getElementById('success-message-trans').style.display = 'none';
+      document.getElementById('error-message-trans').style.display = 'none';
       contarLinhasTrans();
       // CORREÇÃO: Manter a filial preenchida após limpar
       preencherFilialAutomaticamente();
