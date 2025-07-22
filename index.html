@@ -569,7 +569,7 @@
     <div class="form-container">
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
-      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
+      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwN5XqijIIyPfsRjLFbjNoNW7BRtS2hRhnIiq-evxh2v--Jrx1Sfs03mcUubDlFuixU4Q/exec">
         <div class="form-group">
           <label for="filial-folgas">Filial</label>
           <input type="text" id="filial-folgas-display" readonly>
@@ -945,7 +945,7 @@
     let scannerNF = null;
 
     // URL do endpoint unificado
-    const ENDPOINT_UNIFICADO = 'https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec';
+    const ENDPOINT_UNIFICADO = 'https://script.google.com/macros/s/AKfycbwN5XqijIIyPfsRjLFbjNoNW7BRtS2hRhnIiq-evxh2v--Jrx1Sfs03mcUubDlFuixU4Q/exec';
 
     // Funções de login/logout
     function entrar() {
@@ -1277,7 +1277,7 @@
       const formData = new FormData(event.target);
 
       // CORREÇÃO: Usar o endpoint correto para divergência (mantém o original)
-      fetch("https://script.google.com/macros/s/AKfycbw5xq6i5Qoc0s3f-ZaQ6FCZdsjXrC_my8d0tmgr756hWZQqT9Olu9DjsGOYwTlvnBQA/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbwN5XqijIIyPfsRjLFbjNoNW7BRtS2hRhnIiq-evxh2v--Jrx1Sfs03mcUubDlFuixU4Q/exec", {
         method: "POST",
         body: formData
       })
@@ -1551,7 +1551,7 @@
     }
 
     // SCRIPTS PARA RECEBIMENTO DE NOTA FISCAL COM DYNSOFT
-    const URL_SCRIPT_NF = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
+    const URL_SCRIPT_NF = "https://script.google.com/macros/s/AKfycbwN5XqijIIyPfsRjLFbjNoNW7BRtS2hRhnIiq-evxh2v--Jrx1Sfs03mcUubDlFuixU4Q/exec";
 
     // Inicializar o scanner Dynamsoft
     async function inicializarScannerDynamsoft() {
