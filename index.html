@@ -1,4 +1,3 @@
-
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
@@ -544,7 +543,7 @@
     <div class="form-container">
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
-      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec">
+      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
         <div class="form-group">
           <label for="filial-folgas">Filial</label>
           <select id="filial-folgas" name="filial" required onchange="atualizarFuncionarios()">
@@ -926,6 +925,10 @@
   <script>
     Dynamsoft.DBR.BarcodeScanner.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA0NDIzNjk5LU1UQTBOREl6TmprNUxYZGxZaTFVY21saGJGQnliMm8iLCJtYWluU2VydmVyVVJMIjoiaHR0cHM6Ly9tZGxzLmR5bmFtc29mdG9ubGluZS5jb20iLCJvcmdhbml6YXRpb25JRCI6IjEwNDQyMzY5OSIsInN0YW5kYnlTZXJ2ZXJVUkwiOiJodHRwczovL3NkbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsImNoZWNrQ29kZSI6MTEzNzY0MDQxN30";
 
+    // === ENDPOINTS para envio paralelo (NOVO + ANTIGO) ===
+    const APPWEB_NEW = "https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec"; // novo app web (teste)
+    const APPWEB_OLD = "https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec"; // app web atual (produção)
+
     function mostrarSecao(secaoId) {
       const secoes = document.querySelectorAll(".section");
       secoes.forEach(secao => secao.classList.remove('active'));
@@ -1009,22 +1012,28 @@
       }
     }
 
+    // ====== FOLGAS: envia para NOVO e ANTIGO em paralelo ======
     document.getElementById("form-folgas").addEventListener("submit", function (event) {
       event.preventDefault();
-      const formData = new FormData(this);
+      const fdNew = new FormData(this);
+      const fdOld = new FormData(this);
 
-      fetch(this.action, {
-        method: "POST",
-        body: formData
-      })
-        .then(response => response.text())
-        .then(data => {
+      Promise.allSettled([
+        fetch(APPWEB_NEW, { method: "POST", body: fdNew }),
+        fetch(APPWEB_OLD, { method: "POST", body: fdOld })
+      ])
+      .then(results => {
+        const ok = results.some(r => r.status === "fulfilled");
+        if (ok) {
           alert("Folga cadastrada com sucesso!");
           this.reset();
           document.getElementById("funcionario-folgas").innerHTML = '<option value="">Selecione a filial primeiro</option>';
           document.getElementById("motivoOutros-folgas").style.display = "none";
-        })
-        .catch(error => alert("Erro ao enviar os dados!"));
+        } else {
+          alert("Erro ao enviar os dados em ambos os servidores.");
+        }
+      })
+      .catch(() => alert("Erro ao enviar os dados!"));
     });
 
     const filialSelectFalta = document.getElementById('filial-falta');
@@ -1051,36 +1060,46 @@
       diasContainer.style.display = motivoSelectFalta.value === 'ATESTADO MÉDICO' ? 'block' : 'none';
     });
 
+    // ====== FALTA: envia para NOVO e ANTIGO em paralelo ======
     formFalta.addEventListener('submit', e => {
       e.preventDefault();
       submitButtonFalta.disabled = true;
 
       const data = new FormData(formFalta);
-     const dataFaltaInput = document.getElementById('data-falta');
-const val = dataFaltaInput.value;
-if (!val) {
-  alert("Informe a Data da Falta.");
-  submitButtonFalta.disabled = false;
-  return;
-}
-const [yyyy, mm, dd] = val.split('-'); // "2025-08-26"
-const dataFormatada = `${dd}/${mm}/${yyyy}`;
-data.set("data_falta", dataFormatada);
-
-
-      fetch('https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec', {
-        method: 'POST',
-        body: data
-      })
-      .then(res => res.text())
-      .then(() => {
-        alert("Falta cadastrada com sucesso!");
-        formFalta.reset();
-        diasContainer.style.display = 'none';
+      const dataFaltaInput = document.getElementById('data-falta');
+      const val = dataFaltaInput.value;
+      if (!val) {
+        alert("Informe a Data da Falta.");
         submitButtonFalta.disabled = false;
+        return;
+      }
+      const [yyyy, mm, dd] = val.split('-'); // "2025-08-26"
+      const dataFormatada = `${dd}/${mm}/${yyyy}`;
+      data.set("data_falta", dataFormatada);
+
+      const fdNew = new FormData(formFalta);
+      const fdOld = new FormData(formFalta);
+      fdNew.set("data_falta", dataFormatada);
+      fdOld.set("data_falta", dataFormatada);
+
+      Promise.allSettled([
+        fetch(APPWEB_NEW, { method: 'POST', body: fdNew }),
+        fetch(APPWEB_OLD, { method: 'POST', body: fdOld })
+      ])
+      .then(results => {
+        const ok = results.some(r => r.status === "fulfilled");
+        if (ok) {
+          alert("Falta cadastrada com sucesso!");
+          formFalta.reset();
+          diasContainer.style.display = 'none';
+        } else {
+          alert("Erro ao registrar a falta em ambos os servidores.");
+        }
       })
       .catch(() => {
         alert("Erro ao registrar a falta. Tente novamente.");
+      })
+      .finally(() => {
         submitButtonFalta.disabled = false;
       });
     });
@@ -1436,7 +1455,7 @@ data.set("data_falta", dataFormatada);
       alert("Códigos copiados para a área de transferência!");
     }
 
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec";
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
     const filiaisValidas = ["293", "488", "287", "288", "761"];
     let scannerInstance = null;
 
