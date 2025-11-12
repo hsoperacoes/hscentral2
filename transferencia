@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transferência Entre Lojas - GERENCIAL HS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <div id="transferencia" class="section active">
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      <h1>TRANSFERÊNCIA ENTRE LOJAS</h1>
+
+      <form id="transfer-form">
+        <div class="form-group">
+          <div class="question-title">Email da filial de origem:(Preenchimento automatico) <span class="required-star">*</span></div>
+          <input type="email" name="email" id="email-trans" required readonly>
+        </div>
+
+        <div class="form-group">
+          <div class="question-title">FILIAL ORIGEM <span class="required-star">*</span></div>
+          <select name="filialOrigem" id="filial-origem" required onchange="atualizarEmailTrans()">
+            <option value="" disabled selected>Selecione</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+            <option value="JA">JA</option>
+            <option value="JE">JE</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="question-title">FILIAL DESTINO <span class="required-star">*</span></div>
+          <select name="filialDestino" id="filial-destino" required>
+            <option value="" disabled selected>Selecione</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+            <option value="JA">JA</option>
+            <option value="JE">JE</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div class="question-title">CÓDIGO DE BARRAS <span class="required-star">*</span></div>
+          <input type="text" name="codigoBarras" id="codigo-barras-trans" placeholder="Leia ou digite o código de barras" required>
+        </div>
+
+        <div id="barcode-count-trans" class="barcode-count">Total de itens: <span id="total-itens-trans" class="count-number">0</span></div>
+
+        <div id="success-message-trans" style="display: none; background-color: #e8f5e8; color: #137333; padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; border: 1px solid #ceead6;">Transferência enviada com sucesso!</div>
+        <div id="error-message-trans" style="display: none; background-color: #fce8e6; color: #d93025; padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; border: 1px solid #f9dedc;"></div>
+
+        <div class="submit-buttons">
+          <button type="reset" class="clear-button">Limpar formulário</button>
+          <button type="submit" class="submit-button" id="submit-button-trans">Enviar</button>
+        </div>
+      </form>
+
+      <div id="numero-transferencia" style="display: none; margin-top: 20px; font-size: 18px; text-align: center;">
+        Número da transferência: <strong id="transfer-id"></strong>
+      </div>
+    </div>
+
+    <div class="loading-overlay" id="loading-overlay-trans">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <h3>Processando sua transferência...</h3>
+        <p>Aguarde enquanto enviamos os dados.</p>
+      </div>
+    </div>
+  </div>
+  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+  <script src="script.js"></script>
+</body>
+</html>
