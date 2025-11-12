@@ -60,27 +60,48 @@
 
   <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
   <script>
+    // Evita quebra se o script.js fizer: Dynamsoft.DBR.BarcodeScanner.license = "..."
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- teu JS existente -->
+  <!-- seu JS com o mapa funcionariosPorFilial -->
   <script src="./script.js"></script>
 
-  <!-- ponte mínima: usa o mesmo funcionariosPorFilial do script.js -->
+  <!-- Ponte defensiva: usa seu mapa se existir; senão, fallback idêntico ao seu -->
   <script>
     (function () {
+      // Fallback local (igual ao que você colou no script.js)
+      const FALLBACK_MAP = {
+        "ARTUR": ["LUCILENE","POLIANA","TAINARA"],
+        "FLORIANO": ["IOLANDA","MEIRE","SARA","GABRYELLA"],
+        "JOTA": ["BRUNO","CARINA","DENISE","FABIOLA","INGRID","MARCOS","RAYSSA","VERA"],
+        "MODA": ["ANA CLARA","DAIANE","JOANA","MARCIA","MARIA"],
+        "PONTO": ["DANIELA","EVANEUZA","ISADORA","PAULA","PRISCILA","SÔNIA","SUELI"]
+      };
+
       const filialSel = document.getElementById('filial-falta');
       const funcSel   = document.getElementById('funcionario-falta');
 
+      function getMapa() {
+        try {
+          if (window.funcionariosPorFilial && typeof window.funcionariosPorFilial === 'object') {
+            return window.funcionariosPorFilial;
+          }
+        } catch (_) {}
+        return FALLBACK_MAP;
+      }
+
       function atualizarFuncionariosFalta() {
         if (!filialSel || !funcSel) return;
+        const mapa   = getMapa();
         const filial = (filialSel.value || '').trim();
+
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
-        if (window.funcionariosPorFilial && window.funcionariosPorFilial[filial]) {
-          window.funcionariosPorFilial[filial].forEach(function (nome) {
+        if (mapa[filial] && Array.isArray(mapa[filial])) {
+          mapa[filial].forEach(function (nome) {
             const opt = document.createElement('option');
             opt.value = nome;
             opt.textContent = nome;
@@ -89,7 +110,9 @@
         }
       }
 
+      // liga mudança
       filialSel && filialSel.addEventListener('change', atualizarFuncionariosFalta);
+      // se já houver valor, popula
       if (filialSel && filialSel.value) atualizarFuncionariosFalta();
     })();
   </script>
