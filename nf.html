@@ -6,211 +6,97 @@
   <title>Recebimento de Nota Fiscal - GERENCIAL HS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
-  <!-- libs do leitor (mantidas) -->
+  <!-- Leitores (mantidos) -->
   <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
 </head>
 <body>
   <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  
   <div id="nf" class="section active">
     <div class="form-container">
       <img src="logo.png" alt="Logo" class="logo">
       
+      <!-- TELA DE LOGIN -->
       <div id="login-nf">
         <h2>Login da Filial</h2>
         <label for="codigo-nf">Código da Filial</label>
-        <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
-        <button id="btn-entrar-nf" onclick="entrarNF()">Entrar</button>
+        <input type="text" id="codigo-nf" placeholder="Digite o código (ex: 293)" />
+        <button id="btn-entrar-nf">Entrar</button>
+        <p id="erro-nf" style="color:#d93025;margin-top:10px;font-size:14px;"></p>
       </div>
 
+      <!-- TELA PRINCIPAL -->
       <div id="principal-nf" class="hidden">
         <div class="logout">
-          <button onclick="sairNF()">Sair</button>
+          <button id="btn-sair-nf">Sair</button>
         </div>
         <h2>Consulta de Nota Fiscal</h2>
+
         <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
         <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
-        <button onclick="abrirLeitorNF()">📷 Ler Código de Barras</button>
+        <button id="btn-leitor-nf">📷 Ler Código de Barras</button>
 
         <div id="scanner"></div>
 
-        <button onclick="consultarNotaNF()">Consultar</button>
+        <button id="btn-consultar-nf">Consultar</button>
+
         <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
         <div id="resultado-nf" class="result hidden"></div>
-        <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
 
         <div class="history">
           <h3>Histórico da Filial</h3>
           <ul id="historicoLista-nf"></ul>
-          <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
+          <button id="btn-limpar-nf">🗑 Limpar Histórico Local</button>
         </div>
       </div>
     </div>
   </div>
+
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- teu script principal: se ele quebrar, o fallback abaixo assume -->
-  <script src="script.js"></script>
-
-  <!-- Fallback defensivo: se script.js não definiu as funções de NF, cria versões locais -->
+  <!-- ⚙️ STUB Dynamsoft (previne erro e destravamento do JS) -->
   <script>
-  (function() {
-    // ==== MAPA DE CÓDIGOS -> FILIAL (usa os mesmos que você já tinha no script.js) ====
-    // Ex.: "ARTUR": "288", "FLORIANO": "287", "JOTA": "293", ...
-    var senhasNF = {
-      "ARTUR": "288",
-      "FLORIANO": "287",
-      "JOTA": "293",
-      "MODA": "294",
-      "PONTO": "295"
-    };
+    window.Dynamsoft = window.Dynamsoft || {};
+    Dynamsoft.DBR = Dynamsoft.DBR || {};
+    Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
+  </script>
 
-    // Se o script.js já definiu, respeitamos. Se não, criamos.
-    if (typeof window.filialLogadaNF === "undefined") window.filialLogadaNF = null;
+  <!-- 🔗 seu script principal -->
+  <script src="./script.js"></script>
 
-    // Utilitário
-    function $(sel){ return document.querySelector(sel); }
+  <!-- ⚙️ Conserto: vincula o botão de login às funções -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const codInput = document.getElementById("codigo-nf");
+      const btnEntrar = document.getElementById("btn-entrar-nf");
+      const btnSair = document.getElementById("btn-sair-nf");
+      const erro = document.getElementById("erro-nf");
 
-    // ===== entrarNF (fallback) =====
-    if (typeof window.entrarNF !== "function") {
-      window.entrarNF = function entrarNF(){
-        var codigo = ($("#codigo-nf")?.value || "").trim();
-        var filial = Object.keys(senhasNF).find(function(key){ return senhasNF[key] === codigo; });
-
-        if (filial) {
-          window.filialLogadaNF = filial;
-          $("#login-nf")?.classList.add("hidden");
-          $("#principal-nf")?.classList.remove("hidden");
-          carregarHistoricoNF(); // ok se existir, senão o nosso fallback define abaixo
+      function tryEntrar() {
+        if (typeof window.entrarNF === "function") {
+          window.entrarNF();
         } else {
-          // mensagem simples no lugar de alert
-          var el = $("#erro-nf");
-          if (el) { el.textContent = "Código da filial incorreto."; }
+          erro.textContent = "Função de login não carregou. Verifique o script.js.";
         }
-      };
-    }
-
-    // ===== sairNF (fallback) =====
-    if (typeof window.sairNF !== "function") {
-      window.sairNF = function sairNF(){
-        window.filialLogadaNF = null;
-        $("#principal-nf")?.classList.add("hidden");
-        $("#login-nf")?.classList.remove("hidden");
-        var el = $("#codigo-nf"); if (el) el.value = "";
-        $("#erro-nf")?.textContent = "";
-        $("#resultado-nf")?.classList.add("hidden");
-        $("#resultado-nf")?.innerHTML = "";
-      };
-    }
-
-    // ===== carregarHistoricoNF (fallback) =====
-    if (typeof window.carregarHistoricoNF !== "function") {
-      window.carregarHistoricoNF = function carregarHistoricoNF(){
-        if (!window.filialLogadaNF) return;
-        var historico = [];
-        try {
-          historico = JSON.parse(localStorage.getItem("historicoNF_" + window.filialLogadaNF)) || [];
-        } catch(_) {}
-        var lista = $("#historicoLista-nf");
-        if (!lista) return;
-        lista.innerHTML = "";
-        historico.forEach(function(item){
-          var li = document.createElement("li");
-          try {
-            var dt = new Date(item.data).toLocaleString();
-            li.textContent = dt + " - " + (item.nomeEmitente || "") + " (" + (item.chave || "").substring(0,6) + "...)";
-          } catch(_) {
-            li.textContent = (item.chave || "");
-          }
-          li.onclick = function(){
-            var inp = $("#chave-nf"); if (inp) inp.value = item.chave || "";
-            if (typeof window.consultarNotaNF === "function") window.consultarNotaNF();
-          };
-          lista.appendChild(li);
-        });
-      };
-    }
-
-    // ===== limparHistoricoLocalNF (fallback) =====
-    if (typeof window.limparHistoricoLocalNF !== "function") {
-      window.limparHistoricoLocalNF = function limparHistoricoLocalNF(){
-        if (!window.filialLogadaNF) return;
-        try {
-          localStorage.removeItem("historicoNF_" + window.filialLogadaNF);
-        } catch(_) {}
-        window.carregarHistoricoNF();
-      };
-    }
-
-    // ===== abrirLeitorNF (fallback mínimo) =====
-    if (typeof window.abrirLeitorNF !== "function") {
-      window.abrirLeitorNF = async function abrirLeitorNF(){
-        // Se você já usa Dynamsoft no script.js, ótimo. Aqui só garantimos que não quebre.
-        if (!window.Dynamsoft || !Dynamsoft.DBR || !Dynamsoft.DBR.BarcodeScanner) {
-          var el = $("#erro-nf");
-          if (el) el.textContent = "Leitor indisponível nesta página.";
-          return;
-        }
-        try {
-          var scanner = await Dynamsoft.DBR.BarcodeScanner.createInstance();
-          var host = $("#scanner");
-          if (host) host.appendChild(scanner.getUIElement());
-          scanner.onFrameRead = function(results){
-            if (results && results.length) {
-              var code = results[0].barcodeText || "";
-              var inp = $("#chave-nf"); if (inp) inp.value = code;
-              scanner.hide();
-              host && (host.style.display = "none");
-              if (typeof window.consultarNotaNF === "function") window.consultarNotaNF();
-            }
-          };
-          await scanner.show();
-          if (host) host.style.display = "block";
-        } catch (ex) {
-          var el = $("#erro-nf");
-          if (el) el.textContent = ex && ex.message ? ex.message : "Erro ao abrir leitor.";
-        }
-      };
-    }
-
-    // ===== consultarNotaNF (placeholder opcional) =====
-    // (Se já existir no seu script.js, a sua versão é usada.)
-    if (typeof window.consultarNotaNF !== "function") {
-      window.consultarNotaNF = function consultarNotaNF(){
-        var chave = ($("#chave-nf")?.value || "").replace(/\D+/g,"");
-        var erro = $("#erro-nf"), res = $("#resultado-nf");
-        if (erro) erro.textContent = "";
-        if (res) { res.classList.add("hidden"); res.innerHTML = ""; }
-
-        if (chave.length !== 44) {
-          if (erro) erro.textContent = "A chave deve ter 44 dígitos.";
-          return;
-        }
-        // Aqui você já tinha a chamada à API externa no script.js.
-        // Este fallback só valida a chave e não consulta a API.
-        if (res) {
-          res.innerHTML = "<p>Chave válida. (A consulta real permanece no seu script.js)</p>";
-          res.classList.remove("hidden");
-        }
-      };
-    }
-
-    // ===== UX: Enter no campo de código chama entrarNF =====
-    document.addEventListener("DOMContentLoaded", function(){
-      var input = $("#codigo-nf");
-      var btn   = $("#btn-entrar-nf");
-      if (input) {
-        input.addEventListener("keydown", function(ev){
-          if (ev.key === "Enter") {
-            ev.preventDefault();
-            if (typeof window.entrarNF === "function") window.entrarNF();
-          }
-        });
       }
-      // Se já havia filial logada (persistida em outro script), respeitamos
-      // (Opcional: você pode guardar a filial em localStorage ao logar)
+
+      function trySair() {
+        if (typeof window.sairNF === "function") {
+          window.sairNF();
+        }
+      }
+
+      btnEntrar.addEventListener("click", tryEntrar);
+      codInput.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          tryEntrar();
+        }
+      });
+
+      btnSair.addEventListener("click", trySair);
     });
-  })();
   </script>
 </body>
 </html>
