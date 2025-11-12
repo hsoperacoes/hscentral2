@@ -64,58 +64,19 @@
   </div>
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- Caminho relativo correto para GH Pages sob /hscentral2 -->
-  <script src="./script.js"></script>
+  <!-- seu JS já existente -->
+  <script src="script.js"></script>
 
-  <!-- Shim leve: mantém seu HTML e garante o populate de funcionários -->
+  <!-- reforço: garante o bind mesmo se removerem o onchange do HTML -->
   <script>
-    // Fallback local (troque pelos nomes reais quando quiser)
-    const _FALLBACK_FUNCIONARIOS = {
-      ARTUR: ["Amanda","Bruno","Carla"],
-      FLORIANO: ["Diego","Elisa","Fabio"],
-      JOTA: ["Gabi","Heitor","Igor"],
-      MODA: ["Julia","Karla","Leo"],
-      PONTO: ["Mila","Nico","Olivia"]
-    };
-
-    async function _carregarFuncionarios(filial) {
-      // Se existir no seu script.js, usa a função real
-      if (typeof window.listarFuncionarios === "function") {
-        const dados = await window.listarFuncionarios(filial);
-        return Array.isArray(dados) ? dados : [];
-      }
-      // Fallback local para não quebrar
-      return _FALLBACK_FUNCIONARIOS[filial] || [];
-    }
-
-    window.atualizarFuncionarios = async function () {
-      const filialSel = document.getElementById("filial-folgas");
-      const funcSel   = document.getElementById("funcionario-folgas");
-      const filial = (filialSel?.value || "").trim();
-      funcSel.innerHTML = '<option value="">Carregando…</option>';
-
-      if (!filial) {
-        funcSel.innerHTML = '<option value="">Selecione a filial primeiro</option>';
-        return;
-      }
-
-      try {
-        const lista = await _carregarFuncionarios(filial);
-        funcSel.innerHTML = '<option value="">Selecione um funcionário</option>' +
-          lista.map(n => `<option value="${n}">${n}</option>`).join("");
-      } catch (e) {
-        console.error(e);
-        funcSel.innerHTML = '<option value="">Falha ao carregar funcionários</option>';
-      }
-    };
-
-    // Mostra campo "OUTROS"
     (function () {
-      const motivo = document.getElementById("motivo-folgas");
-      const boxOutros = document.getElementById("motivoOutros-folgas");
-      motivo?.addEventListener("change", () => {
-        boxOutros.style.display = motivo.value === "OUTROS" ? "block" : "none";
-      });
+      const filialSel = document.getElementById('filial-folgas');
+
+      if (typeof window.atualizarFuncionarios === 'function') {
+        filialSel && filialSel.addEventListener('change', window.atualizarFuncionarios);
+        // se já vier selecionada, popula na carga
+        if (filialSel && filialSel.value) window.atualizarFuncionarios();
+      }
     })();
   </script>
 </body>
