@@ -3,190 +3,214 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Consulta de NF por Filial — GERENCIAL HS</title>
-  <link rel="stylesheet" href="./style.css" />
-  <style>
-    /* Estilos mínimos para garantir visual mesmo sem style.css */
-    body{font-family:Arial,sans-serif;background:#000;color:#fff;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;min-height:100vh}
-    .logo-topo{width:100px;margin:30px 0 10px}
-    .form-container{max-width:600px;background:#1e1e1e;padding:30px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.3);color:#fff;margin:0 16px}
-    .form-container h1,.form-container h2{text-align:center;margin-bottom:24px}
-    .form-group{margin-bottom:16px}
-    label{font-size:14px;font-weight:600;display:block;margin-bottom:6px;color:#ccc}
-    input,select,textarea{width:100%;padding:12px;font-size:14px;border:1px solid #444;border-radius:4px;background:#2a2a2a;color:#fff;box-sizing:border-box}
-    input:focus,select:focus{outline:none;border-color:#673ab7;box-shadow:0 0 0 2px rgba(103,58,183,.2)}
-    .row{display:flex;gap:10px}
-    .row > *{flex:1}
-    .btn{background:#673ab7;color:#fff;border:none;padding:12px 20px;border-radius:4px;font-size:16px;cursor:pointer;font-weight:600}
-    .btn:hover{background:#5e35b1}
-    .muted{color:#bbb;font-size:13px}
-    .hidden{display:none !important}
-    .back-button{position:fixed;top:20px;left:20px;background:#4CAF50;color:#fff;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;font-size:14px;z-index:1000}
-  </style>
+  <title>Recebimento de Nota Fiscal - GERENCIAL HS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- libs do leitor (mantidas) -->
+  <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
 </head>
 <body>
-  <a class="back-button" href="./index.html">Voltar à Home</a>
-  <img src="./logo.png" alt="Logo" class="logo-topo"/>
+  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <div id="nf" class="section active">
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      
+      <div id="login-nf">
+        <h2>Login da Filial</h2>
+        <label for="codigo-nf">Código da Filial</label>
+        <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
+        <button id="btn-entrar-nf" onclick="entrarNF()">Entrar</button>
+      </div>
 
-  <!-- BLOCO 1: LOGIN POR CÓDIGO DE FILIAL -->
-  <div id="loginBlock" class="form-container">
-    <h1>Consulta de Nota Fiscal</h1>
-    <p class="muted" id="loginHint">Informe o <strong>código da filial</strong> para continuar.</p>
-    <div class="row form-group">
-      <div>
-        <label for="codigoFilial">Código da Filial</label>
-        <input id="codigoFilial" type="number" inputmode="numeric" placeholder="Ex.: 293" autocomplete="off" />
+      <div id="principal-nf" class="hidden">
+        <div class="logout">
+          <button onclick="sairNF()">Sair</button>
+        </div>
+        <h2>Consulta de Nota Fiscal</h2>
+        <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
+        <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
+        <button onclick="abrirLeitorNF()">📷 Ler Código de Barras</button>
+
+        <div id="scanner"></div>
+
+        <button onclick="consultarNotaNF()">Consultar</button>
+        <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
+        <div id="resultado-nf" class="result hidden"></div>
+        <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
+
+        <div class="history">
+          <h3>Histórico da Filial</h3>
+          <ul id="historicoLista-nf"></ul>
+          <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
+        </div>
       </div>
     </div>
-    <button id="btnEntrar" class="btn">Entrar</button>
-    <p class="muted" id="loginErro" style="margin-top:10px;color:#ff9b9b;display:none">Código inválido. Confira e tente novamente.</p>
   </div>
+  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- BLOCO 2: ÁREA PRINCIPAL DA CONSULTA (liberada após login) -->
-  <div id="mainBlock" class="form-container hidden">
-    <h2 id="tituloFilial">Filial: —</h2>
+  <!-- teu script principal: se ele quebrar, o fallback abaixo assume -->
+  <script src="script.js"></script>
 
-    <!-- Exemplo de campos principais (ajuste aos seus reais) -->
-    <div class="form-group">
-      <label for="chaveNFe">Chave da NF-e (44 dígitos)</label>
-      <input id="chaveNFe" type="text" maxlength="44" placeholder="Cole ou leia via scanner" />
-    </div>
-
-    <div class="row">
-      <button id="btnConsultar" class="btn">Consultar</button>
-      <button id="btnLimpar" class="btn" style="background:#5f6368">Limpar</button>
-    </div>
-
-    <p class="muted" style="margin-top:12px">Dica: cole a chave ou use o leitor para preencher automaticamente.</p>
-
-    <div id="statusMsg" class="muted" style="margin-top:16px"></div>
-    <div id="resultado" style="margin-top:16px"></div>
-  </div>
-
-  <!-- 1) Carrega seu JS do projeto -->
-  <script src="./script.js"></script>
-
-  <!-- 2) Fallback inline: garante o fluxo mesmo se script.js não estiver disponível
-         ou ainda não tiver as funções específicas da página de NF. -->
+  <!-- Fallback defensivo: se script.js não definiu as funções de NF, cria versões locais -->
   <script>
-    (function() {
-      // Mapa de códigos -> nome da filial (use o que você padronizou no projeto)
-      const MAPA_FILIAIS = {
-        287: 'JOTA',
-        288: 'MODA',       // PONTO DA MODA
-        293: 'ARTUR',
-        488: 'FLORIANO',
-        761: 'PONTO'
+  (function() {
+    // ==== MAPA DE CÓDIGOS -> FILIAL (usa os mesmos que você já tinha no script.js) ====
+    // Ex.: "ARTUR": "288", "FLORIANO": "287", "JOTA": "293", ...
+    var senhasNF = {
+      "ARTUR": "288",
+      "FLORIANO": "287",
+      "JOTA": "293",
+      "MODA": "294",
+      "PONTO": "295"
+    };
+
+    // Se o script.js já definiu, respeitamos. Se não, criamos.
+    if (typeof window.filialLogadaNF === "undefined") window.filialLogadaNF = null;
+
+    // Utilitário
+    function $(sel){ return document.querySelector(sel); }
+
+    // ===== entrarNF (fallback) =====
+    if (typeof window.entrarNF !== "function") {
+      window.entrarNF = function entrarNF(){
+        var codigo = ($("#codigo-nf")?.value || "").trim();
+        var filial = Object.keys(senhasNF).find(function(key){ return senhasNF[key] === codigo; });
+
+        if (filial) {
+          window.filialLogadaNF = filial;
+          $("#login-nf")?.classList.add("hidden");
+          $("#principal-nf")?.classList.remove("hidden");
+          carregarHistoricoNF(); // ok se existir, senão o nosso fallback define abaixo
+        } else {
+          // mensagem simples no lugar de alert
+          var el = $("#erro-nf");
+          if (el) { el.textContent = "Código da filial incorreto."; }
+        }
       };
+    }
 
-      const $ = (sel) => document.querySelector(sel);
-      const loginBlock = $('#loginBlock');
-      const mainBlock  = $('#mainBlock');
-      const loginErro  = $('#loginErro');
-      const codInput   = $('#codigoFilial');
-      const btnEntrar  = $('#btnEntrar');
-      const tituloFilial = $('#tituloFilial');
+    // ===== sairNF (fallback) =====
+    if (typeof window.sairNF !== "function") {
+      window.sairNF = function sairNF(){
+        window.filialLogadaNF = null;
+        $("#principal-nf")?.classList.add("hidden");
+        $("#login-nf")?.classList.remove("hidden");
+        var el = $("#codigo-nf"); if (el) el.value = "";
+        $("#erro-nf")?.textContent = "";
+        $("#resultado-nf")?.classList.add("hidden");
+        $("#resultado-nf")?.innerHTML = "";
+      };
+    }
 
-      // Se o seu script.js já oferece um setup específico, use-o;
-      // caso contrário, aplicamos este fallback completo.
-      if (typeof window.setupNFPage === 'function') {
-        window.setupNFPage();
-        return;
-      }
-
-      // Persistência leve do último login
-      const LS_KEY_CODE = 'hs_nf_codigo_filial';
-      const LS_KEY_NAME = 'hs_nf_nome_filial';
-
-      function setStatus(texto) {
-        const el = $('#statusMsg');
-        if (el) el.textContent = texto || '';
-      }
-
-      function destravar(nomeFilial, codFilial) {
-        // Mostra a área principal e guarda o contexto da filial
-        tituloFilial.textContent = `Filial: ${nomeFilial} (cód. ${codFilial})`;
-        loginBlock.classList.add('hidden');
-        mainBlock.classList.remove('hidden');
-        localStorage.setItem(LS_KEY_CODE, String(codFilial));
-        localStorage.setItem(LS_KEY_NAME, String(nomeFilial));
-        setStatus('');
-        $('#chaveNFe')?.focus();
-      }
-
-      function validarCodigo() {
-        const raw = (codInput.value || '').trim();
-        const cod = Number(raw);
-        if (!raw || !Number.isInteger(cod)) return null;
-        const nome = MAPA_FILIAIS[cod];
-        if (!nome) return null;
-        return { cod, nome };
-      }
-
-      // Enter para avançar
-      codInput.addEventListener('keydown', (ev) => {
-        if (ev.key === 'Enter') btnEntrar.click();
-      });
-
-      btnEntrar.addEventListener('click', () => {
-        const info = validarCodigo();
-        if (!info) {
-          loginErro.style.display = 'block';
-          return;
-        }
-        loginErro.style.display = 'none';
-        destravar(info.nome, info.cod);
-      });
-
-      // Pré-preenche se já tiver login salvo
-      const codSalvo  = localStorage.getItem(LS_KEY_CODE);
-      const nomeSalvo = localStorage.getItem(LS_KEY_NAME);
-      if (codSalvo && nomeSalvo && MAPA_FILIAIS[Number(codSalvo)]) {
-        destravar(nomeSalvo, codSalvo);
-      }
-
-      // Ações da área principal (exemplo básico; ajuste para sua API)
-      const btnConsultar = $('#btnConsultar');
-      const btnLimpar    = $('#btnLimpar');
-      const chaveInput   = $('#chaveNFe');
-      const outResultado = $('#resultado');
-
-      btnLimpar?.addEventListener('click', () => {
-        chaveInput.value = '';
-        outResultado.innerHTML = '';
-        setStatus('Campos limpos.');
-        chaveInput.focus();
-      });
-
-      btnConsultar?.addEventListener('click', async () => {
-        const chave = (chaveInput.value || '').replace(/\D+/g, '');
-        if (chave.length !== 44) {
-          setStatus('A chave deve ter 44 dígitos.');
-          return;
-        }
-        setStatus('Consultando…');
-
+    // ===== carregarHistoricoNF (fallback) =====
+    if (typeof window.carregarHistoricoNF !== "function") {
+      window.carregarHistoricoNF = function carregarHistoricoNF(){
+        if (!window.filialLogadaNF) return;
+        var historico = [];
         try {
-          // >>> Troque pela sua URL publicada do Apps Script (deployment /exec)
-          const APP_URL = 'COLE_AQUI_SUA_URL_DO_APPS_SCRIPT_EXEC';
-          // Envie também o contexto da filial:
-          const resp = await fetch(APP_URL + '?acao=consultarNF&filial=' + encodeURIComponent(localStorage.getItem(LS_KEY_NAME) || '') + '&chave=' + encodeURIComponent(chave));
-          if (!resp.ok) throw new Error('HTTP ' + resp.status);
-          const data = await resp.json(); // espera JSON do ContentService
-          setStatus('Consulta concluída.');
+          historico = JSON.parse(localStorage.getItem("historicoNF_" + window.filialLogadaNF)) || [];
+        } catch(_) {}
+        var lista = $("#historicoLista-nf");
+        if (!lista) return;
+        lista.innerHTML = "";
+        historico.forEach(function(item){
+          var li = document.createElement("li");
+          try {
+            var dt = new Date(item.data).toLocaleString();
+            li.textContent = dt + " - " + (item.nomeEmitente || "") + " (" + (item.chave || "").substring(0,6) + "...)";
+          } catch(_) {
+            li.textContent = (item.chave || "");
+          }
+          li.onclick = function(){
+            var inp = $("#chave-nf"); if (inp) inp.value = item.chave || "";
+            if (typeof window.consultarNotaNF === "function") window.consultarNotaNF();
+          };
+          lista.appendChild(li);
+        });
+      };
+    }
 
-          // Render simples (ajuste ao seu retorno real)
-          outResultado.innerHTML = `
-            <div><strong>Número NF:</strong> ${data.numero ?? '-'}</div>
-            <div><strong>Valor Total:</strong> ${data.valorTotal ?? '-'}</div>
-            <div><strong>Qtd Itens:</strong> ${data.qtdItens ?? '-'}</div>
-          `;
-        } catch (err) {
-          console.error(err);
-          setStatus('Falha na consulta. Verifique a URL do Apps Script (/exec), permissões públicas e o formato JSON.');
+    // ===== limparHistoricoLocalNF (fallback) =====
+    if (typeof window.limparHistoricoLocalNF !== "function") {
+      window.limparHistoricoLocalNF = function limparHistoricoLocalNF(){
+        if (!window.filialLogadaNF) return;
+        try {
+          localStorage.removeItem("historicoNF_" + window.filialLogadaNF);
+        } catch(_) {}
+        window.carregarHistoricoNF();
+      };
+    }
+
+    // ===== abrirLeitorNF (fallback mínimo) =====
+    if (typeof window.abrirLeitorNF !== "function") {
+      window.abrirLeitorNF = async function abrirLeitorNF(){
+        // Se você já usa Dynamsoft no script.js, ótimo. Aqui só garantimos que não quebre.
+        if (!window.Dynamsoft || !Dynamsoft.DBR || !Dynamsoft.DBR.BarcodeScanner) {
+          var el = $("#erro-nf");
+          if (el) el.textContent = "Leitor indisponível nesta página.";
+          return;
         }
-      });
-    })();
+        try {
+          var scanner = await Dynamsoft.DBR.BarcodeScanner.createInstance();
+          var host = $("#scanner");
+          if (host) host.appendChild(scanner.getUIElement());
+          scanner.onFrameRead = function(results){
+            if (results && results.length) {
+              var code = results[0].barcodeText || "";
+              var inp = $("#chave-nf"); if (inp) inp.value = code;
+              scanner.hide();
+              host && (host.style.display = "none");
+              if (typeof window.consultarNotaNF === "function") window.consultarNotaNF();
+            }
+          };
+          await scanner.show();
+          if (host) host.style.display = "block";
+        } catch (ex) {
+          var el = $("#erro-nf");
+          if (el) el.textContent = ex && ex.message ? ex.message : "Erro ao abrir leitor.";
+        }
+      };
+    }
+
+    // ===== consultarNotaNF (placeholder opcional) =====
+    // (Se já existir no seu script.js, a sua versão é usada.)
+    if (typeof window.consultarNotaNF !== "function") {
+      window.consultarNotaNF = function consultarNotaNF(){
+        var chave = ($("#chave-nf")?.value || "").replace(/\D+/g,"");
+        var erro = $("#erro-nf"), res = $("#resultado-nf");
+        if (erro) erro.textContent = "";
+        if (res) { res.classList.add("hidden"); res.innerHTML = ""; }
+
+        if (chave.length !== 44) {
+          if (erro) erro.textContent = "A chave deve ter 44 dígitos.";
+          return;
+        }
+        // Aqui você já tinha a chamada à API externa no script.js.
+        // Este fallback só valida a chave e não consulta a API.
+        if (res) {
+          res.innerHTML = "<p>Chave válida. (A consulta real permanece no seu script.js)</p>";
+          res.classList.remove("hidden");
+        }
+      };
+    }
+
+    // ===== UX: Enter no campo de código chama entrarNF =====
+    document.addEventListener("DOMContentLoaded", function(){
+      var input = $("#codigo-nf");
+      var btn   = $("#btn-entrar-nf");
+      if (input) {
+        input.addEventListener("keydown", function(ev){
+          if (ev.key === "Enter") {
+            ev.preventDefault();
+            if (typeof window.entrarNF === "function") window.entrarNF();
+          }
+        });
+      }
+      // Se já havia filial logada (persistida em outro script), respeitamos
+      // (Opcional: você pode guardar a filial em localStorage ao logar)
+    });
+  })();
   </script>
 </body>
 </html>
