@@ -58,50 +58,35 @@
   </div>
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- Caminho relativo correto para GH Pages sob /hscentral2 -->
-  <script src="./script.js"></script>
+  <!-- seu JS já existente -->
+  <script src="script.js"></script>
 
-  <!-- Shim leve: reaproveita a mesma lógica de populate -->
+  <!-- ponte mínima para popular funcionários reaproveitando funcionariosPorFilial -->
   <script>
-    async function _carregarFuncionariosFalta(filial) {
-      if (typeof window.listarFuncionarios === "function") {
-        const dados = await window.listarFuncionarios(filial);
-        return Array.isArray(dados) ? dados : [];
-      }
-      // fallback igual ao de folgas (mantenha sincronizado se usar)
-      const MAP = {
-        ARTUR: ["Amanda","Bruno","Carla"],
-        FLORIANO: ["Diego","Elisa","Fabio"],
-        JOTA: ["Gabi","Heitor","Igor"],
-        MODA: ["Julia","Karla","Leo"],
-        PONTO: ["Mila","Nico","Olivia"]
-      };
-      return MAP[filial] || [];
-    }
-
     (function () {
-      const filialSel = document.getElementById("filial-falta");
-      const funcSel   = document.getElementById("funcionario-falta");
+      const filialSel = document.getElementById('filial-falta');
+      const funcSel   = document.getElementById('funcionario-falta');
 
-      async function atualizar() {
-        const filial = (filialSel?.value || "").trim();
-        funcSel.innerHTML = '<option value="">Carregando…</option>';
+      function atualizarFuncionariosFalta() {
+        if (!filialSel || !funcSel) return;
+        const filial = (filialSel.value || '').trim();
+        funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
-        if (!filial) {
-          funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
-          return;
-        }
-        try {
-          const lista = await _carregarFuncionariosFalta(filial);
-          funcSel.innerHTML = '<option value="">Selecione um funcionário</option>' +
-            lista.map(n => `<option value="${n}">${n}</option>`).join("");
-        } catch (e) {
-          console.error(e);
-          funcSel.innerHTML = '<option value="">Falha ao carregar funcionários</option>';
+        // usa o mesmo mapa já declarado no script.js
+        if (window.funcionariosPorFilial && window.funcionariosPorFilial[filial]) {
+          window.funcionariosPorFilial[filial].forEach(function (nome) {
+            const opt = document.createElement('option');
+            opt.value = nome;
+            opt.textContent = nome;
+            funcSel.appendChild(opt);
+          });
         }
       }
 
-      filialSel?.addEventListener("change", atualizar);
+      filialSel && filialSel.addEventListener('change', atualizarFuncionariosFalta);
+
+      // se já tiver uma filial selecionada ao abrir, popula logo
+      if (filialSel && filialSel.value) atualizarFuncionariosFalta();
     })();
   </script>
 </body>
