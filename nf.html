@@ -3,48 +3,190 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Recebimento de Nota Fiscal - GERENCIAL HS</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  <title>Consulta de NF por Filial — GERENCIAL HS</title>
+  <link rel="stylesheet" href="./style.css" />
+  <style>
+    /* Estilos mínimos para garantir visual mesmo sem style.css */
+    body{font-family:Arial,sans-serif;background:#000;color:#fff;margin:0;padding:0;display:flex;flex-direction:column;align-items:center;min-height:100vh}
+    .logo-topo{width:100px;margin:30px 0 10px}
+    .form-container{max-width:600px;background:#1e1e1e;padding:30px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.3);color:#fff;margin:0 16px}
+    .form-container h1,.form-container h2{text-align:center;margin-bottom:24px}
+    .form-group{margin-bottom:16px}
+    label{font-size:14px;font-weight:600;display:block;margin-bottom:6px;color:#ccc}
+    input,select,textarea{width:100%;padding:12px;font-size:14px;border:1px solid #444;border-radius:4px;background:#2a2a2a;color:#fff;box-sizing:border-box}
+    input:focus,select:focus{outline:none;border-color:#673ab7;box-shadow:0 0 0 2px rgba(103,58,183,.2)}
+    .row{display:flex;gap:10px}
+    .row > *{flex:1}
+    .btn{background:#673ab7;color:#fff;border:none;padding:12px 20px;border-radius:4px;font-size:16px;cursor:pointer;font-weight:600}
+    .btn:hover{background:#5e35b1}
+    .muted{color:#bbb;font-size:13px}
+    .hidden{display:none !important}
+    .back-button{position:fixed;top:20px;left:20px;background:#4CAF50;color:#fff;border:none;padding:10px 15px;border-radius:6px;cursor:pointer;font-size:14px;z-index:1000}
+  </style>
 </head>
 <body>
-  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
-  <div id="nf" class="section active">
-    <div class="form-container">
-      <img src="logo.png" alt="Logo" class="logo">
-      
-      <div id="login-nf">
-        <h2>Login da Filial</h2>
-        <label for="codigo-nf">Código da Filial</label>
-        <input type="text" id="codigo-nf" placeholder="Digite sua senha" />
-        <button onclick="entrarNF()">Entrar</button>
-      </div>
+  <a class="back-button" href="./index.html">Voltar à Home</a>
+  <img src="./logo.png" alt="Logo" class="logo-topo"/>
 
-      <div id="principal-nf" class="hidden">
-        <div class="logout">
-          <button onclick="sairNF()">Sair</button>
-        </div>
-        <h2>Consulta de Nota Fiscal</h2>
-        <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
-        <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
-        <button onclick="abrirLeitorNF()">📷 Ler Código de Barras</button>
-
-        <div id="scanner"></div>
-
-        <button onclick="consultarNotaNF()">Consultar</button>
-        <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
-        <div id="resultado-nf" class="result hidden"></div>
-        <div id="erro-nf" style="color: #d93025; margin-top: 10px; font-size: 14px;"></div>
-
-        <div class="history">
-          <h3>Histórico da Filial</h3>
-          <ul id="historicoLista-nf"></ul>
-          <button onclick="limparHistoricoLocalNF()">🗑 Limpar Histórico Local</button>
-        </div>
+  <!-- BLOCO 1: LOGIN POR CÓDIGO DE FILIAL -->
+  <div id="loginBlock" class="form-container">
+    <h1>Consulta de Nota Fiscal</h1>
+    <p class="muted" id="loginHint">Informe o <strong>código da filial</strong> para continuar.</p>
+    <div class="row form-group">
+      <div>
+        <label for="codigoFilial">Código da Filial</label>
+        <input id="codigoFilial" type="number" inputmode="numeric" placeholder="Ex.: 293" autocomplete="off" />
       </div>
     </div>
+    <button id="btnEntrar" class="btn">Entrar</button>
+    <p class="muted" id="loginErro" style="margin-top:10px;color:#ff9b9b;display:none">Código inválido. Confira e tente novamente.</p>
   </div>
-  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
-  <script src="script.js"></script>
+
+  <!-- BLOCO 2: ÁREA PRINCIPAL DA CONSULTA (liberada após login) -->
+  <div id="mainBlock" class="form-container hidden">
+    <h2 id="tituloFilial">Filial: —</h2>
+
+    <!-- Exemplo de campos principais (ajuste aos seus reais) -->
+    <div class="form-group">
+      <label for="chaveNFe">Chave da NF-e (44 dígitos)</label>
+      <input id="chaveNFe" type="text" maxlength="44" placeholder="Cole ou leia via scanner" />
+    </div>
+
+    <div class="row">
+      <button id="btnConsultar" class="btn">Consultar</button>
+      <button id="btnLimpar" class="btn" style="background:#5f6368">Limpar</button>
+    </div>
+
+    <p class="muted" style="margin-top:12px">Dica: cole a chave ou use o leitor para preencher automaticamente.</p>
+
+    <div id="statusMsg" class="muted" style="margin-top:16px"></div>
+    <div id="resultado" style="margin-top:16px"></div>
+  </div>
+
+  <!-- 1) Carrega seu JS do projeto -->
+  <script src="./script.js"></script>
+
+  <!-- 2) Fallback inline: garante o fluxo mesmo se script.js não estiver disponível
+         ou ainda não tiver as funções específicas da página de NF. -->
+  <script>
+    (function() {
+      // Mapa de códigos -> nome da filial (use o que você padronizou no projeto)
+      const MAPA_FILIAIS = {
+        287: 'JOTA',
+        288: 'MODA',       // PONTO DA MODA
+        293: 'ARTUR',
+        488: 'FLORIANO',
+        761: 'PONTO'
+      };
+
+      const $ = (sel) => document.querySelector(sel);
+      const loginBlock = $('#loginBlock');
+      const mainBlock  = $('#mainBlock');
+      const loginErro  = $('#loginErro');
+      const codInput   = $('#codigoFilial');
+      const btnEntrar  = $('#btnEntrar');
+      const tituloFilial = $('#tituloFilial');
+
+      // Se o seu script.js já oferece um setup específico, use-o;
+      // caso contrário, aplicamos este fallback completo.
+      if (typeof window.setupNFPage === 'function') {
+        window.setupNFPage();
+        return;
+      }
+
+      // Persistência leve do último login
+      const LS_KEY_CODE = 'hs_nf_codigo_filial';
+      const LS_KEY_NAME = 'hs_nf_nome_filial';
+
+      function setStatus(texto) {
+        const el = $('#statusMsg');
+        if (el) el.textContent = texto || '';
+      }
+
+      function destravar(nomeFilial, codFilial) {
+        // Mostra a área principal e guarda o contexto da filial
+        tituloFilial.textContent = `Filial: ${nomeFilial} (cód. ${codFilial})`;
+        loginBlock.classList.add('hidden');
+        mainBlock.classList.remove('hidden');
+        localStorage.setItem(LS_KEY_CODE, String(codFilial));
+        localStorage.setItem(LS_KEY_NAME, String(nomeFilial));
+        setStatus('');
+        $('#chaveNFe')?.focus();
+      }
+
+      function validarCodigo() {
+        const raw = (codInput.value || '').trim();
+        const cod = Number(raw);
+        if (!raw || !Number.isInteger(cod)) return null;
+        const nome = MAPA_FILIAIS[cod];
+        if (!nome) return null;
+        return { cod, nome };
+      }
+
+      // Enter para avançar
+      codInput.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') btnEntrar.click();
+      });
+
+      btnEntrar.addEventListener('click', () => {
+        const info = validarCodigo();
+        if (!info) {
+          loginErro.style.display = 'block';
+          return;
+        }
+        loginErro.style.display = 'none';
+        destravar(info.nome, info.cod);
+      });
+
+      // Pré-preenche se já tiver login salvo
+      const codSalvo  = localStorage.getItem(LS_KEY_CODE);
+      const nomeSalvo = localStorage.getItem(LS_KEY_NAME);
+      if (codSalvo && nomeSalvo && MAPA_FILIAIS[Number(codSalvo)]) {
+        destravar(nomeSalvo, codSalvo);
+      }
+
+      // Ações da área principal (exemplo básico; ajuste para sua API)
+      const btnConsultar = $('#btnConsultar');
+      const btnLimpar    = $('#btnLimpar');
+      const chaveInput   = $('#chaveNFe');
+      const outResultado = $('#resultado');
+
+      btnLimpar?.addEventListener('click', () => {
+        chaveInput.value = '';
+        outResultado.innerHTML = '';
+        setStatus('Campos limpos.');
+        chaveInput.focus();
+      });
+
+      btnConsultar?.addEventListener('click', async () => {
+        const chave = (chaveInput.value || '').replace(/\D+/g, '');
+        if (chave.length !== 44) {
+          setStatus('A chave deve ter 44 dígitos.');
+          return;
+        }
+        setStatus('Consultando…');
+
+        try {
+          // >>> Troque pela sua URL publicada do Apps Script (deployment /exec)
+          const APP_URL = 'COLE_AQUI_SUA_URL_DO_APPS_SCRIPT_EXEC';
+          // Envie também o contexto da filial:
+          const resp = await fetch(APP_URL + '?acao=consultarNF&filial=' + encodeURIComponent(localStorage.getItem(LS_KEY_NAME) || '') + '&chave=' + encodeURIComponent(chave));
+          if (!resp.ok) throw new Error('HTTP ' + resp.status);
+          const data = await resp.json(); // espera JSON do ContentService
+          setStatus('Consulta concluída.');
+
+          // Render simples (ajuste ao seu retorno real)
+          outResultado.innerHTML = `
+            <div><strong>Número NF:</strong> ${data.numero ?? '-'}</div>
+            <div><strong>Valor Total:</strong> ${data.valorTotal ?? '-'}</div>
+            <div><strong>Qtd Itens:</strong> ${data.qtdItens ?? '-'}</div>
+          `;
+        } catch (err) {
+          console.error(err);
+          setStatus('Falha na consulta. Verifique a URL do Apps Script (/exec), permissões públicas e o formato JSON.');
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
