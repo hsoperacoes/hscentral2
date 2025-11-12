@@ -2,42 +2,46 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GERENCIAL HS - Sistema Unificado</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HS Central — Início</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Arial, sans-serif; background:#0b0c0e; color:#eaeaea; display:flex; min-height:100vh; flex-direction:column; }
+    header { padding:24px 16px 8px; text-align:center; }
+    .logo-topo { width:90px; height:auto; display:block; margin:0 auto 8px; }
+    h1 { margin:0; font-size:22px; font-weight:700; }
+    .wrap { width:100%; max-width:980px; margin: 0 auto; padding: 16px; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; }
+    a.card {
+      display:flex; align-items:center; gap:12px; padding:16px; border-radius:12px; text-decoration:none; color:#fff;
+      background:#181a1f; border:1px solid #2a2d33; transition: transform .15s ease, border-color .15s ease;
+    }
+    a.card:hover { transform: translateY(-2px); border-color:#6d4aff; }
+    a.card i { width:24px; text-align:center; opacity:.9; }
+    footer { margin-top:auto; text-align:center; padding:20px; color:#9aa0a6; }
+  </style>
 </head>
 <body>
-  <div id="home" class="section active">
+  <header>
     <img src="logo.png" alt="Logo HS" class="logo-topo" />
-    
-    <div class="container">
-      <a class="form-link" href="folgas.html">
-        <i class="fas fa-calendar-plus"></i> CADASTRO DE FOLGAS
-      </a>
-      <a class="form-link" href="falta.html">
-        <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
-      </a>
-      <a class="form-link" href="sacola.html">
-        <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
-      </a>
-      <a class="form-link" href="divergencia.html">
-        <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
-      </a>
-      <a class="form-link" href="transferencia.html">
-        <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
-      </a>
-      <a class="form-link" href="gerador.html">
-        <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
-      </a>
-      <a class="form-link" href="nf.html">
-        <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
-      </a>
+    <h1>HS Central</h1>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <a class="card" href="folgas.html"><i class="fa-solid fa-calendar-plus"></i> Cadastro de Folgas</a>
+      <a class="card" href="falta.html"><i class="fa-solid fa-calendar-minus"></i> Cadastro de Falta</a>
+      <a class="card" href="sacola.html"><i class="fa-solid fa-lock"></i> Contagem de Sacola</a>
+      <a class="card" href="divergencia.html"><i class="fa-solid fa-file-invoice-dollar"></i> Divergência de NFs</a>
+      <a class="card" href="transferencia.html"><i class="fa-solid fa-exchange-alt"></i> Transferência entre Lojas</a>
+      <a class="card" href="gerador.html"><i class="fa-solid fa-barcode"></i> Gerador de Códigos</a>
+      <a class="card" href="nf.html"><i class="fa-solid fa-receipt"></i> Recebimento de Nota Fiscal</a>
+      <a class="card" href="reserva.html"><i class="fa-solid fa-bookmark"></i> Reserva de Peças</a>
     </div>
-  </div>
+  </main>
 
-  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
-
-  <script src="script.js"></script>
+  <footer>HS Operações © 2025 — Todos os direitos reservados</footer>
 </body>
 </html>
