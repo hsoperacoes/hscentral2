@@ -3,47 +3,112 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HS Central — Início</title>
+  <title>HS Central</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
-    body { margin:0; font-family: Arial, sans-serif; background:#0e0e0f; color:#fff; display:flex; min-height:100vh; flex-direction:column; }
-    header { padding:28px 16px 8px; text-align:center; }
-    .logo-topo { width:90px; height:auto; display:block; margin:0 auto 10px; }
-    h1 { margin:0; font-size:24px; font-weight:700; }
-    .wrap { width:100%; max-width:720px; margin: 0 auto; padding: 16px; }
-    .stack { display:flex; flex-direction:column; gap:14px; }
-    .card {
-      display:flex; align-items:center; gap:12px;
-      width:100%; padding:18px 18px;
-      background:#1b1b1d; border:1px solid #2b2b2e; border-radius:12px;
-      color:#eaeaea; text-decoration:none; font-weight:700; font-size:16px;
-      transition: transform .08s ease, background .2s ease, border-color .2s ease;
-      box-shadow: 0 0 24px rgba(0,0,0,.18);
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #07090d;
+      color: #e9eefc;
+      display: grid;
+      place-items: start center;
+      padding: 48px 16px 32px;
     }
-    .card i { font-size:18px; opacity:.9; }
-    .card:hover { transform: translateY(-1px); background:#202226; border-color:#35363a; }
-    footer { margin-top:auto; text-align:center; padding:18px; color:#bdbdbd; font-size:12px; }
+    .wrap {
+      width: 100%;
+      max-width: 920px; /* MAIS LARGO (como sua versão antiga) */
+      background: #121826;
+      border: 1px solid #1f2a44;
+      border-radius: 18px;
+      padding: 28px 24px 18px;
+      box-shadow: 0 12px 36px rgba(0,0,0,.45);
+    }
+    .brand {
+      text-align: center;
+      margin: 8px 0 18px;
+    }
+    .brand img {
+      width: 110px; /* logo/peixe mais ampliado */
+      height: auto;
+      filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
+    }
+    h1 {
+      margin: 6px 0 18px;
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: .3px;
+    }
+    .list {
+      display: grid;
+      gap: 14px;
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      background: #182033;
+      border: 1px solid #25314e;
+      border-radius: 14px;
+      padding: 16px 18px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #e9eefc;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(0,0,0,.25);
+      transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+    .item i { opacity: .9; }
+    .item:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(67,176,255,.12);
+      border-color: #35508a;
+    }
+    footer {
+      width: 100%;
+      max-width: 920px;
+      margin-top: 18px;
+      text-align: center;
+      color: #a7b4d0;
+      background: #121826;
+      border: 1px solid #1f2a44;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+    @media (max-width: 560px){
+      .wrap{ padding: 22px 14px 12px; }
+      .item{ font-size: 15px; padding: 14px 16px; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <img src="logo.png" alt="Logo HS" class="logo-topo" />
-    <h1>HS Central</h1>
-  </header>
-
   <main class="wrap">
-    <div class="stack">
-      <a class="card" href="folgas.html"><i class="fa-solid fa-calendar-plus"></i> Cadastro de Folgas</a>
-      <a class="card" href="falta.html"><i class="fa-solid fa-calendar-minus"></i> Cadastro de Falta</a>
-      <a class="card" href="sacola.html"><i class="fa-solid fa-lock"></i> Contagem de Sacola</a>
-      <a class="card" href="divergencia.html"><i class="fa-solid fa-file-invoice-dollar"></i> Divergência de NFs</a>
-      <a class="card" href="transferencia.html"><i class="fa-solid fa-right-left"></i> Transferência entre Lojas</a>
-      <a class="card" href="gerador.html"><i class="fa-solid fa-barcode"></i> Gerador de Códigos</a>
-      <a class="card" href="nf.html"><i class="fa-solid fa-file-invoice"></i> Recebimento de Nota Fiscal</a>
-      <a class="card" href="reserva.html"><i class="fa-solid fa-bookmark"></i> Reserva de Peças</a>
+    <div class="brand">
+      <!-- Use seu logo.png (o “peixe”) para manter o visual anterior -->
+      <img src="logo.png" alt="HS Central">
     </div>
+    <h1>HS Central</h1>
+
+    <!-- ITENS EM COLUNA, MAIS LARGOS (um embaixo do outro) -->
+    <nav class="list">
+      <a class="item" href="folgas.html"><i class="fa-regular fa-calendar-plus"></i> CADASTRO DE FOLGAS</a>
+      <a class="item" href="falta.html"><i class="fa-regular fa-calendar-minus"></i> CADASTRO DE FALTA</a>
+      <a class="item" href="sacola.html"><i class="fa-solid fa-lock"></i> CONTAGEM DE SACOLA</a>
+      <a class="item" href="divergencia.html"><i class="fa-solid fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NFS</a>
+      <a class="item" href="transferencia.html"><i class="fa-solid fa-right-left"></i> TRANSFERÊNCIA ENTRE LOJAS</a>
+      <a class="item" href="gerador.html"><i class="fa-solid fa-barcode"></i> GERADOR DE CÓDIGOS</a>
+      <a class="item" href="nf.html"><i class="fa-regular fa-clipboard"></i> RECEBIMENTO DE NOTA FISCAL</a>
+      <a class="item" href="reserva.html"><i class="fa-regular fa-bookmark"></i> RESERVA DE PEÇAS</a>
+    </nav>
   </main>
 
   <footer>HS Operações © 2025 — Todos os direitos reservados</footer>
