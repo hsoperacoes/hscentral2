@@ -64,17 +64,23 @@
   </div>
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- seu JS já existente -->
-  <script src="script.js"></script>
+  <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
+  <script>
+    window.Dynamsoft = window.Dynamsoft || {};
+    Dynamsoft.DBR = Dynamsoft.DBR || {};
+    Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
+  </script>
 
-  <!-- reforço: garante o bind mesmo se removerem o onchange do HTML -->
+  <!-- teu JS existente -->
+  <script src="./script.js"></script>
+
+  <!-- reforço: garante o bind mesmo se o atributo onchange sair do HTML -->
   <script>
     (function () {
       const filialSel = document.getElementById('filial-folgas');
 
       if (typeof window.atualizarFuncionarios === 'function') {
         filialSel && filialSel.addEventListener('change', window.atualizarFuncionarios);
-        // se já vier selecionada, popula na carga
         if (filialSel && filialSel.value) window.atualizarFuncionarios();
       }
     })();
