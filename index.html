@@ -2,25 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HS Central — Início</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
-    body { margin:0; font-family: Arial, sans-serif; background:#0b0c0e; color:#eaeaea; display:flex; min-height:100vh; flex-direction:column; }
-    header { padding:24px 16px 8px; text-align:center; }
-    .logo-topo { width:90px; height:auto; display:block; margin:0 auto 8px; }
-    h1 { margin:0; font-size:22px; font-weight:700; }
-    .wrap { width:100%; max-width:980px; margin: 0 auto; padding: 16px; }
-    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px; }
-    a.card {
-      display:flex; align-items:center; gap:12px; padding:16px; border-radius:12px; text-decoration:none; color:#fff;
-      background:#181a1f; border:1px solid #2a2d33; transition: transform .15s ease, border-color .15s ease;
+    body { margin:0; font-family: Arial, sans-serif; background:#0e0e0f; color:#fff; display:flex; min-height:100vh; flex-direction:column; }
+    header { padding:28px 16px 8px; text-align:center; }
+    .logo-topo { width:90px; height:auto; display:block; margin:0 auto 10px; }
+    h1 { margin:0; font-size:24px; font-weight:700; }
+    .wrap { width:100%; max-width:720px; margin: 0 auto; padding: 16px; }
+    .stack { display:flex; flex-direction:column; gap:14px; }
+    .card {
+      display:flex; align-items:center; gap:12px;
+      width:100%; padding:18px 18px;
+      background:#1b1b1d; border:1px solid #2b2b2e; border-radius:12px;
+      color:#eaeaea; text-decoration:none; font-weight:700; font-size:16px;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      box-shadow: 0 0 24px rgba(0,0,0,.18);
     }
-    a.card:hover { transform: translateY(-2px); border-color:#6d4aff; }
-    a.card i { width:24px; text-align:center; opacity:.9; }
-    footer { margin-top:auto; text-align:center; padding:20px; color:#9aa0a6; }
+    .card i { font-size:18px; opacity:.9; }
+    .card:hover { transform: translateY(-1px); background:#202226; border-color:#35363a; }
+    footer { margin-top:auto; text-align:center; padding:18px; color:#bdbdbd; font-size:12px; }
   </style>
 </head>
 <body>
@@ -30,14 +34,14 @@
   </header>
 
   <main class="wrap">
-    <div class="grid">
+    <div class="stack">
       <a class="card" href="folgas.html"><i class="fa-solid fa-calendar-plus"></i> Cadastro de Folgas</a>
       <a class="card" href="falta.html"><i class="fa-solid fa-calendar-minus"></i> Cadastro de Falta</a>
       <a class="card" href="sacola.html"><i class="fa-solid fa-lock"></i> Contagem de Sacola</a>
       <a class="card" href="divergencia.html"><i class="fa-solid fa-file-invoice-dollar"></i> Divergência de NFs</a>
-      <a class="card" href="transferencia.html"><i class="fa-solid fa-exchange-alt"></i> Transferência entre Lojas</a>
+      <a class="card" href="transferencia.html"><i class="fa-solid fa-right-left"></i> Transferência entre Lojas</a>
       <a class="card" href="gerador.html"><i class="fa-solid fa-barcode"></i> Gerador de Códigos</a>
-      <a class="card" href="nf.html"><i class="fa-solid fa-receipt"></i> Recebimento de Nota Fiscal</a>
+      <a class="card" href="nf.html"><i class="fa-solid fa-file-invoice"></i> Recebimento de Nota Fiscal</a>
       <a class="card" href="reserva.html"><i class="fa-solid fa-bookmark"></i> Reserva de Peças</a>
     </div>
   </main>
