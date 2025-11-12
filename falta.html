@@ -4,59 +4,83 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cadastro de Falta - GERENCIAL HS</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
-  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
-  <div id="falta" class="section active">
-    <div class="form-container">
-      <img src="logo.png" alt="Logo" class="logo">
-      <h2>Cadastro de Falta</h2>
-      <form id="form-falta">
-        <div class="form-group">
-          <label for="filial-falta">Filial <span class="required-star">*</span></label>
-          <select id="filial-falta" name="filial" required>
-            <option value="">Selecione uma filial</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-          </select>
-        </div>
+  <a class="back-button show" href="./index.html">Voltar à Home</a>
 
-        <div class="form-group">
-          <label for="funcionario-falta">Funcionário <span class="required-star">*</span></label>
-          <select id="funcionario-falta" name="funcionario" required>
-            <option value="">Selecione um funcionário</option>
-          </select>
-        </div>
+  <img src="./logo.png" alt="Logo" class="logo-topo"/>
 
-        <div class="form-group">
-          <label for="data-falta">Data da Falta <span class="required-star">*</span></label>
-          <input type="date" id="data-falta" name="data_falta" required>
-        </div>
+  <div class="form-container">
+    <h1>Cadastro de Falta</h1>
 
-        <div class="form-group">
-          <label for="motivo-falta">Motivo <span class="required-star">*</span></label>
-          <select id="motivo-falta" name="motivo" required>
-            <option value="">Selecione um motivo</option>
-            <option value="ATESTADO MÉDICO">ATESTADO MÉDICO</option>
-            <option value="FALTA INJUSTIFICADA">FALTA INJUSTIFICADA</option>
-          </select>
-        </div>
+    <!-- FILIAL -->
+    <div class="form-group">
+      <label for="filialFalta" class="question-title">Filial</label>
+      <select id="filialFalta" name="filial" required>
+        <option value="">Selecione uma filial</option>
+        <option value="ARTUR">ARTUR</option>
+        <option value="FLORIANO">FLORIANO</option>
+        <option value="JOTA">JOTA</option>
+        <option value="MODA">MODA</option>
+        <option value="PONTO">PONTO</option>
+      </select>
+    </div>
 
-        <div class="form-group" id="dias-afastamento-container" style="display: none;">
-          <label for="observacao-falta">Dias de afastamento (caso atestado)</label>
-          <textarea id="observacao-falta" name="observacao" rows="4" placeholder="Ex: 3 DIAS 12/04 A 14/04"></textarea>
-        </div>
+    <!-- FUNCIONÁRIO -->
+    <div class="form-group">
+      <label for="funcionarioFalta" class="question-title">Funcionário</label>
+      <select id="funcionarioFalta" name="funcionario" required>
+        <option value="">Selecione a filial primeiro</option>
+      </select>
+    </div>
 
-        <button type="submit">Enviar</button>
-      </form>
+    <!-- DATA DA FALTA -->
+    <div class="form-group">
+      <label for="dataFalta" class="question-title">Data da Falta</label>
+      <input type="date" id="dataFalta" name="data_falta" required/>
+    </div>
+
+    <!-- RAZÃO -->
+    <div class="form-group">
+      <label for="razaoFalta" class="question-title">Razão</label>
+      <select id="razaoFalta" name="razao" required>
+        <option value="">Selecione</option>
+        <option>ATESTADO MÉDICO</option>
+        <option>FALTA JUSTIFICADA</option>
+        <option>FALTA INJUSTIFICADA</option>
+      </select>
+    </div>
+
+    <!-- DIAS AFASTAMENTO (opcional, se atestado) -->
+    <div class="form-group">
+      <label for="diasAfastamento" class="question-title">Dias de afastamento (caso atestado)</label>
+      <input id="diasAfastamento" name="dias_afastamento" type="number" min="0" step="1" placeholder="Opcional"/>
+    </div>
+
+    <div class="submit-buttons">
+      <button id="enviarFalta" type="button" class="submit-button">Enviar</button>
+      <button id="limparFalta" type="button" class="clear-button">Limpar</button>
     </div>
   </div>
-  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
-  <script src="script.js"></script>
+
+  <!-- IMPORTANTE: carrega as funções que populam funcionários e enviam o formulário -->
+  <script src="./script.js"></script>
+  <!-- Fallback leve (caso o script.js não defina setupFaltaPage) -->
+  <script>
+    if (typeof window.setupFaltaPage === "function") {
+      window.setupFaltaPage({
+        filialSelect: "#filialFalta",
+        funcionarioSelect: "#funcionarioFalta",
+        submitBtn: "#enviarFalta",
+        clearBtn: "#limparFalta",
+        fields: {
+          dataFalta: "#dataFalta",
+          razao: "#razaoFalta",
+          diasAfastamento: "#diasAfastamento"
+        }
+      });
+    }
+  </script>
 </body>
 </html>
