@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contagem de Sacola - GERENCIAL HS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <div id="sacola" class="section active">
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      <h2>Contagem de Sacola</h2>
+      <form id="form-sacola">
+        <div class="form-group">
+          <label for="filial">Filial <span class="required-star">*</span></label>
+          <select id="filial" name="filial" required>
+            <option value="">Selecione uma filial</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data-contagem">Data da Contagem <span class="required-star">*</span></label>
+          <input type="text" id="data-contagem" name="data_contagem" readonly required>
+        </div>
+
+        <div class="form-group">
+          <label for="sacola-p">Sacola P <span class="required-star">*</span></label>
+          <input type="number" id="sacola-p" name="sacola_p" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="envelope-p">Envelope P <span class="required-star">*</span></label>
+          <input type="number" id="envelope-p" name="envelope_p" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="sacola-m">Sacola M <span class="required-star">*</span></label>
+          <input type="number" id="sacola-m" name="sacola_m" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="envelope-m">Envelope M <span class="required-star">*</span></label>
+          <input type="number" id="envelope-m" name="envelope_m" placeholder="Quantidade" min="0" required>
+        </div>
+
+        <div class="form-group checkbox-label">
+          <input type="checkbox" id="mostrar-g" onclick="toggleCamposG()">
+          <label for="mostrar-g">Possui Sacola e Envelope G</label>
+        </div>
+
+        <div id="grupo-tamanho-g">
+          <div class="form-group">
+            <label for="sacola-g">Sacola G <span class="required-star">*</span></label>
+            <input type="number" id="sacola-g" name="sacola_g" placeholder="Quantidade" min="0">
+          </div>
+          <div class="form-group">
+            <label for="envelope-g">Envelope G <span class="required-star">*</span></label>
+            <input type="number" id="envelope-g" name="envelope_g" placeholder="Quantidade" min="0">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-enviar">Enviar</button>
+      </form>
+    </div>
+  </div>
+  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+  <script src="script.js"></script>
+</body>
+</html>
