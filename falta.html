@@ -58,10 +58,17 @@
   </div>
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- seu JS já existente -->
-  <script src="script.js"></script>
+  <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
+  <script>
+    window.Dynamsoft = window.Dynamsoft || {};
+    Dynamsoft.DBR = Dynamsoft.DBR || {};
+    Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
+  </script>
 
-  <!-- ponte mínima para popular funcionários reaproveitando funcionariosPorFilial -->
+  <!-- teu JS existente -->
+  <script src="./script.js"></script>
+
+  <!-- ponte mínima: usa o mesmo funcionariosPorFilial do script.js -->
   <script>
     (function () {
       const filialSel = document.getElementById('filial-falta');
@@ -72,7 +79,6 @@
         const filial = (filialSel.value || '').trim();
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
-        // usa o mesmo mapa já declarado no script.js
         if (window.funcionariosPorFilial && window.funcionariosPorFilial[filial]) {
           window.funcionariosPorFilial[filial].forEach(function (nome) {
             const opt = document.createElement('option');
@@ -84,8 +90,6 @@
       }
 
       filialSel && filialSel.addEventListener('change', atualizarFuncionariosFalta);
-
-      // se já tiver uma filial selecionada ao abrir, popula logo
       if (filialSel && filialSel.value) atualizarFuncionariosFalta();
     })();
   </script>
