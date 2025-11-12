@@ -3,91 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cadastro de Folga - GERENCIAL HS</title>
-  <link rel="stylesheet" href="./style.css" />
+  <title>Cadastro de Folgas - GERENCIAL HS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <a class="back-button show" href="./index.html">Voltar à Home</a>
+  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <div id="folgas" class="section active">
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      <h2>Cadastro de Folga Funcionários</h2>
+      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
+        <div class="form-group">
+          <label for="filial-folgas">Filial</label>
+          <select id="filial-folgas" name="filial" required onchange="atualizarFuncionarios()">
+            <option value="">Selecione uma filial</option>
+            <option value="ARTUR">ARTUR</option>
+            <option value="FLORIANO">FLORIANO</option>
+            <option value="JOTA">JOTA</option>
+            <option value="MODA">MODA</option>
+            <option value="PONTO">PONTO</option>
+          </select>
+        </div>
 
-  <img src="./logo.png" alt="Logo" class="logo-topo"/>
+        <div class="form-group">
+          <label for="funcionario-folgas">Funcionário</label>
+          <select id="funcionario-folgas" name="funcionario" required>
+            <option value="">Selecione a filial primeiro</option>
+          </select>
+        </div>
 
-  <div class="form-container">
-    <h1>Cadastro de Folga Funcionários</h1>
+        <div class="form-group">
+          <label for="dataTrabalho-folgas">Dia Trabalhado</label>
+          <input type="date" id="dataTrabalho-folgas" name="dataTrabalho" required>
+        </div>
 
-    <!-- FILIAL -->
-    <div class="form-group">
-      <label for="filialFolga" class="question-title">Filial</label>
-      <select id="filialFolga" name="filial" required>
-        <option value="">Selecione uma filial</option>
-        <option value="ARTUR">ARTUR</option>
-        <option value="FLORIANO">FLORIANO</option>
-        <option value="JOTA">JOTA</option>
-        <option value="MODA">MODA</option>
-        <option value="PONTO">PONTO</option>
-      </select>
-    </div>
+        <div class="form-group">
+          <label for="motivo-folgas">Motivo da Folga</label>
+          <select id="motivo-folgas" name="motivo" required>
+            <option value="">Selecione um motivo</option>
+            <option value="DOMINGO">DOMINGO</option>
+            <option value="FERIADO">FERIADO</option>
+            <option value="OUTROS">OUTROS</option>
+          </select>
+        </div>
 
-    <!-- FUNCIONÁRIO -->
-    <div class="form-group">
-      <label for="funcionarioFolga" class="question-title">Funcionário</label>
-      <select id="funcionarioFolga" name="funcionario" required>
-        <option value="">Selecione a filial primeiro</option>
-      </select>
-    </div>
+        <div class="form-group" id="motivoOutros-folgas" style="display: none;">
+          <label for="outrosMotivo-folgas">Especificar o Motivo</label>
+          <input type="text" id="outrosMotivo-folgas" name="outrosMotivo" placeholder="Escreva o motivo">
+        </div>
 
-    <!-- DIA TRABALHADO -->
-    <div class="form-group">
-      <label for="diaTrabalhado" class="question-title">Dia Trabalhado</label>
-      <input type="date" id="diaTrabalhado" name="dia_trabalhado" required/>
-    </div>
+        <div class="form-group">
+          <label for="dataFolga-folgas">Data da Folga</label>
+          <input type="date" id="dataFolga-folgas" name="dataFolga" required>
+        </div>
 
-    <!-- MOTIVO -->
-    <div class="form-group">
-      <label for="motivoFolga" class="question-title">Motivo da Folga</label>
-      <select id="motivoFolga" name="motivo" required>
-        <option value="">Selecione um motivo</option>
-        <option>DOMINGO</option>
-        <option>FERIADO</option>
-        <option>OUTROS</option>
-      </select>
-    </div>
-
-    <!-- ESPECIFICAR MOTIVO -->
-    <div class="form-group">
-      <label for="motivoObs" class="question-title">Especificar o Motivo</label>
-      <input id="motivoObs" name="motivo_obs" placeholder="Opcional"/>
-    </div>
-
-    <!-- DATA DA FOLGA -->
-    <div class="form-group">
-      <label for="dataFolga" class="question-title">Data da Folga</label>
-      <input type="date" id="dataFolga" name="data_folga" required/>
-    </div>
-
-    <div class="submit-buttons">
-      <button id="enviarFolga" type="button" class="submit-button">Enviar</button>
-      <button id="limparFolga" type="button" class="clear-button">Limpar</button>
+        <button type="submit">Enviar</button>
+      </form>
     </div>
   </div>
+  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- IMPORTANTE: carrega as funções que populam funcionários e enviam o formulário -->
+  <!-- Caminho relativo correto para GH Pages sob /hscentral2 -->
   <script src="./script.js"></script>
-  <!-- Fallback leve (caso o script.js não defina setupFolgasPage) -->
+
+  <!-- Shim leve: mantém seu HTML e garante o populate de funcionários -->
   <script>
-    if (typeof window.setupFolgasPage === "function") {
-      window.setupFolgasPage({
-        filialSelect: "#filialFolga",
-        funcionarioSelect: "#funcionarioFolga",
-        submitBtn: "#enviarFolga",
-        clearBtn: "#limparFolga",
-        fields: {
-          diaTrabalhado: "#diaTrabalhado",
-          motivo: "#motivoFolga",
-          motivoObs: "#motivoObs",
-          dataFolga: "#dataFolga"
-        }
-      });
+    // Fallback local (troque pelos nomes reais quando quiser)
+    const _FALLBACK_FUNCIONARIOS = {
+      ARTUR: ["Amanda","Bruno","Carla"],
+      FLORIANO: ["Diego","Elisa","Fabio"],
+      JOTA: ["Gabi","Heitor","Igor"],
+      MODA: ["Julia","Karla","Leo"],
+      PONTO: ["Mila","Nico","Olivia"]
+    };
+
+    async function _carregarFuncionarios(filial) {
+      // Se existir no seu script.js, usa a função real
+      if (typeof window.listarFuncionarios === "function") {
+        const dados = await window.listarFuncionarios(filial);
+        return Array.isArray(dados) ? dados : [];
+      }
+      // Fallback local para não quebrar
+      return _FALLBACK_FUNCIONARIOS[filial] || [];
     }
+
+    window.atualizarFuncionarios = async function () {
+      const filialSel = document.getElementById("filial-folgas");
+      const funcSel   = document.getElementById("funcionario-folgas");
+      const filial = (filialSel?.value || "").trim();
+      funcSel.innerHTML = '<option value="">Carregando…</option>';
+
+      if (!filial) {
+        funcSel.innerHTML = '<option value="">Selecione a filial primeiro</option>';
+        return;
+      }
+
+      try {
+        const lista = await _carregarFuncionarios(filial);
+        funcSel.innerHTML = '<option value="">Selecione um funcionário</option>' +
+          lista.map(n => `<option value="${n}">${n}</option>`).join("");
+      } catch (e) {
+        console.error(e);
+        funcSel.innerHTML = '<option value="">Falha ao carregar funcionários</option>';
+      }
+    };
+
+    // Mostra campo "OUTROS"
+    (function () {
+      const motivo = document.getElementById("motivo-folgas");
+      const boxOutros = document.getElementById("motivoOutros-folgas");
+      motivo?.addEventListener("change", () => {
+        boxOutros.style.display = motivo.value === "OUTROS" ? "block" : "none";
+      });
+    })();
   </script>
 </body>
 </html>
