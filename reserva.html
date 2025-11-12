@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reserva de Peças</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.3/imask.min.js"></script>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background:#0e0e0f; color:#fff; margin:0; padding:24px; }
+    .home-btn{
+      position: fixed; left: 16px; top: 16px; z-index: 1000;
+      background:#6d4aff; color:#fff; border:0; border-radius:8px; padding:8px 12px; cursor:pointer;
+      display:flex; align-items:center; gap:8px;
+    }
+    .home-btn:hover{ filter:brightness(1.05); }
+    .logo-topo { display:block; width:84px; height:auto; margin: 6px auto 18px; }
+    .wrap { max-width: 720px; margin: 0 auto; background:#1b1b1d; border:1px solid #2b2b2e; border-radius:12px; padding:28px; box-shadow: 0 0 24px rgba(0,0,0,.25 ); }
+    h1 { margin:0 0 8px; font-size: 22px; text-align:center; }
+    p.sub { margin:0 0 24px; color:#bdbdbd; text-align:center; }
+    .field { margin-bottom: 16px; }
+    label { display:block; margin:0 0 6px; font-weight: 600; color:#d7d7d7; font-size: 14px; }
+    select, input, textarea { width:100%; padding:12px; background:#242427; border:1px solid #3a3a40; border-radius:8px; color:#fff; font-size:14px; }
+    textarea { min-height: 120px; resize: vertical; }
+    .grid { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+    .grid > .field { margin-bottom:0; }
+    .info { background:#202226; border:1px solid #30343a; border-radius:8px; padding:12px; margin: 12px 0 20px; }
+    .info strong { color:#ff6b6b; }
+    .count { font-weight:700; color:#ff6b6b; }
+    .actions { display:flex; gap:12px; }
+    button { flex:1; padding:12px 16px; border:0; border-radius:8px; cursor:pointer; font-weight:700; }
+    .primary { background:#6d4aff; color:#fff; }
+    .secondary { background:#3b3f46; color:#fff; }
+    .ok { background:#113e1a; border:1px solid #2e7d32; color:#c8f7cb; padding:12px; border-radius:8px; margin-top:12px; display:none; }
+    .err { background:#3a1616; border:1px solid #b71c1c; color:#ffcdd2; padding:12px; border-radius:8px; margin-top:12px; display:none; }
+  </style>
+</head>
+<body>
+  <a class="home-btn" href="index.html" title="Voltar à Home"><i class="fa-solid fa-arrow-left"></i> Home</a>
+  <img src="logo.png" class="logo-topo" alt="Logo HS" />
+
+  <div class="wrap">
+    <h1><i class="fa-solid fa-bookmark"></i> Reserva de Peças</h1>
+    <p class="sub">Prazo padrão para retirada: <strong>2 dias úteis</strong>.</p>
+
+    <div class="info">
+      <div>Data da reserva: <strong id="dataReservaLabel">--/--/----</strong></div>
+      <div>Data limite (2 dias úteis): <strong id="dataLimiteLabel">--/--/----</strong></div>
+    </div>
+
+    <form id="form-reserva">
+      <div class="field">
+        <label for="filial">Filial *</label>
+        <select id="filial" name="filial" required>
+          <option value="">Selecione</option>
+          <option value="ARTUR">ARTUR</option>
+          <option value="FLORIANO">FLORIANO</option>
+          <option value="JOTA">JOTA</option>
+          <option value="MODA">MODA</option>
+          <option value="PONTO">PONTO</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="funcionario">Funcionário *</label>
+        <select id="funcionario" name="funcionario" required>
+          <option value="">Selecione a filial primeiro</option>
+        </select>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="data_reserva">Data da Reserva *</label>
+          <input type="text" id="data_reserva" name="data_reserva" readonly required />
+        </div>
+        <div class="field">
+          <label for="cliente">Nome do Cliente</label>
+          <input type="text" id="cliente" name="cliente" placeholder="Opcional" />
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="celular">Celular *</label>
+          <input type="tel" id="celular" name="celular" placeholder="(DDD) XXXXX-XXXX" required />
+        </div>
+        <div class="field">
+          <label for="previewContagem">Total de itens</label>
+          <input type="text" id="previewContagem" value="0" readonly />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pecas">Inclua as peças (uma por linha) *</label>
+        <textarea id="pecas" name="pecas" placeholder="Uma peça por linha" required></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="reset" class="secondary" id="btnLimpar">Limpar</button>
+        <button type="submit" class="primary" id="btnEnviar">Enviar Reserva</button>
+      </div>
+
+      <div id="ok" class="ok"></div>
+      <div id="err" class="err"></div>
+
+      <input type="hidden" name="tipo" value="reserva" />
+    </form>
+  </div>
+
+  <script>
+    // ======= CONFIG =======
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec';
+    const funcionariosPorFilial = {
+      ARTUR: ["FERNANDA","ISABELLA","LUCILENE"],
+      FLORIANO: ["FERNANDA","MEIRE","SARA","THACIANNE"],
+      JOTA: ["BRUNO","CARINA","DENISE","FABIOLA","JÉSSICA","LOUISE","NATALIA","PRISCILA","RAYSSA","VERA"],
+      MODA: ["ANA CLARA","DAIANE","JÉSSICA","MARCIA","NAISE","MARIA"],
+      PONTO: ["DANIELA","EVANEUZA","ISADORA","PAULA","PRISCILA","SANDY","SÔNIA","SUELI"]
+    };
+
+    // ======= Datas =======
+    function formatarDataBR(d){
+      const dd = String(d.getDate()).padStart(2,'0');
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const yyyy = d.getFullYear();
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function calcularDataLimite2DiasUteis(aPartirDe){
+      const base = aPartirDe ? new Date(aPartirDe.getTime()) : new Date();
+      let diasUteisAdicionados = 0;
+      while (diasUteisAdicionados < 2) {
+        base.setDate(base.getDate() + 1);
+        const diaDaSemana = base.getDay();
+        if (diaDaSemana !== 0 && diaDaSemana !== 6) {
+          diasUteisAdicionados++;
+        }
+      }
+      return base;
+    }
+
+    function initDatas(){
+      const hoje = new Date();
+      document.getElementById('data_reserva').value = formatarDataBR(hoje);
+      document.getElementById('dataReservaLabel').textContent = formatarDataBR(hoje);
+      document.getElementById('dataLimiteLabel').textContent = formatarDataBR(calcularDataLimite2DiasUteis(hoje));
+    }
+
+    // ======= Filial -> Funcionários =======
+    document.getElementById('filial').addEventListener('change', e=>{
+      const f = e.target.value; const sel = document.getElementById('funcionario');
+      sel.innerHTML = '<option value="">Selecione</option>';
+      (funcionariosPorFilial[f]||[]).forEach(nome=>{
+        const op = document.createElement('option');
+        op.value = nome; op.textContent = nome; sel.appendChild(op);
+      });
+    });
+
+    // ======= Contagem dinâmica =======
+    const pecas = document.getElementById('pecas');
+    const preview = document.getElementById('previewContagem');
+    pecas.addEventListener('input', ()=>{
+      const qtd = pecas.value.split('\n').filter(l=>l.trim()!=='').length;
+      preview.value = qtd;
+    });
+
+    // ======= Envio =======
+    const form = document.getElementById('form-reserva');
+    const ok = document.getElementById('ok');
+    const err = document.getElementById('err');
+    const btnEnviar = document.getElementById('btnEnviar');
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      ok.style.display = 'none'; err.style.display = 'none';
+      btnEnviar.disabled = true;
+      btnEnviar.textContent = 'Enviando...';
+
+      if(!document.getElementById('filial').value){ err.textContent='Selecione a filial.'; err.style.display='block'; btnEnviar.disabled=false; btnEnviar.textContent='Enviar Reserva'; return; }
+      if(!document.getElementById('funcionario').value){ err.textContent='Selecione o funcionário.'; err.style.display='block'; btnEnviar.disabled=false; btnEnviar.textContent='Enviar Reserva'; return; }
+
+      const fd = new FormData(form);
+      fd.set('data_reserva', document.getElementById('data_reserva').value);
+
+      try{
+        const resp = await fetch(ENDPOINT, { method:'POST', body: fd });
+        if (!resp.ok) throw new Error(`Erro de rede: ${resp.statusText}`);
+        const json = await resp.json();
+        if(!json.success) throw new Error(json.message || 'Falha ao registrar a reserva.');
+
+        ok.innerHTML = 'Reserva registrada. Uma notificação foi enviada.';
+        ok.style.display = 'block';
+        form.reset();
+        document.getElementById('funcionario').innerHTML = '<option value="">Selecione a filial primeiro</option>';
+        initDatas();
+        preview.value = 0;
+        mask.updateValue();
+      } catch(e){
+        err.textContent = `Erro: ${e.message}`; err.style.display='block';
+      } finally {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Enviar Reserva';
+      }
+    });
+
+    document.getElementById('btnLimpar').addEventListener('click', ()=>{
+      setTimeout(()=>{ initDatas(); preview.value=0; ok.style.display='none'; err.style.display='none'; mask.updateValue(); }, 0);
+    });
+
+    // ======= Máscara de Celular =======
+    const celularInput = document.getElementById('celular');
+    const mascaraCelular = {
+      mask: [
+        { mask: '(00) 0000-0000' },
+        { mask: '(00) 00000-0000' }
+      ]
+    };
+    const mask = IMask(celularInput, mascaraCelular);
+
+    initDatas();
+  </script>
+</body>
+</html>
