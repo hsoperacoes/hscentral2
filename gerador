@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerador de Código de Barras - GERENCIAL HS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
+</head>
+<body>
+  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <div id="gerador" class="section gerador-section active">
+    <div class="form-container">
+      <img src="logo.png" alt="Logo" class="logo">
+      <h1>Gerador de Códigos de Barras em Lote - EAN13</h1>
+
+      <div class="input-area">
+        <h2>Cole seus códigos (um por linha):</h2>
+        <textarea id="codigos-barras" placeholder="Cole aqui vários códigos EAN13, um por linha&#10;Exemplo:&#10;7891000315507&#10;7891910000197&#10;7891234567890"></textarea>
+
+        <div class="controls">
+          <button onclick="gerarTodosBarras()">Gerar Códigos</button>
+          <button onclick="limparTudoBarras()">Limpar Tudo</button>
+          <button onclick="copiarCodigosBarras()">Copiar Códigos</button>
+          <button onclick="window.print()">Imprimir Códigos</button>
+        </div>
+
+        <div class="example-title">Exemplos (não são apagados ao limpar):</div>
+      </div>
+
+      <div class="output-area">
+        <h2>Códigos Gerados:</h2>
+        <div id="barcodes" class="barcode-container"></div>
+      </div>
+    </div>
+  </div>
+  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+  <script src="script.js"></script>
+</body>
+</html>
