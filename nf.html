@@ -3,100 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Recebimento de Nota Fiscal - GERENCIAL HS</title>
+  <title>Consulta NF - GERENCIAL HS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
-  <!-- Leitores (mantidos) -->
-  <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background-color: #111;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+    input, button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover { background-color: #0056b3; }
+    .hidden { display: none; }
+    #resultado-nf, #erro-nf {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #resultado-nf {
+      background-color: #0f0f0f;
+    }
+    #erro-nf {
+      color: #ff4b4b;
+    }
+    footer {
+      margin-top: 20px;
+      color: #999;
+      font-size: 14px;
+    }
+    .history {
+      margin-top: 25px;
+      background: #0c0c0c;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .history ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .history li {
+      margin: 4px 0;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .logout button {
+      background-color: #dc3545;
+      margin-bottom: 10px;
+    }
+    #scanner {
+      width: 100%;
+      height: 300px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      background-color: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
-  
-  <div id="nf" class="section active">
-    <div class="form-container">
-      <img src="logo.png" alt="Logo" class="logo">
-      
-      <!-- TELA DE LOGIN -->
-      <div id="login-nf">
-        <h2>Login da Filial</h2>
-        <label for="codigo-nf">Código da Filial</label>
-        <input type="text" id="codigo-nf" placeholder="Digite o código (ex: 293)" />
-        <button id="btn-entrar-nf">Entrar</button>
-        <p id="erro-nf" style="color:#d93025;margin-top:10px;font-size:14px;"></p>
+  <div class="form-container">
+    <img src="logo.png" alt="Logo" style="display:block;margin:auto;width:100px;margin-bottom:20px;">
+
+    <!-- LOGIN -->
+    <div id="login-nf">
+      <h2>Login da Filial</h2>
+      <label for="codigo-nf">Código da Filial</label>
+      <input type="text" id="codigo-nf" placeholder="Digite o código (ex: 293)" />
+      <button id="btn-entrar-nf">Entrar</button>
+      <p id="erro-nf"></p>
+    </div>
+
+    <!-- PRINCIPAL -->
+    <div id="principal-nf" class="hidden">
+      <div class="logout">
+        <button id="btn-sair-nf">Sair</button>
       </div>
+      <h2>Consulta de Nota Fiscal</h2>
 
-      <!-- TELA PRINCIPAL -->
-      <div id="principal-nf" class="hidden">
-        <div class="logout">
-          <button id="btn-sair-nf">Sair</button>
-        </div>
-        <h2>Consulta de Nota Fiscal</h2>
+      <input type="text" id="chave-nf" placeholder="Digite a chave de 44 dígitos" maxlength="44">
+      <button id="btn-leitor-nf">📷 Ler Código de Barras</button>
+      <div id="scanner"></div>
+      <button id="btn-consultar-nf">Consultar</button>
 
-        <label for="chave-nf">Chave de Acesso (44 dígitos)</label>
-        <input type="text" id="chave-nf" placeholder="Digite a chave completa" maxlength="44" />
-        <button id="btn-leitor-nf">📷 Ler Código de Barras</button>
+      <div id="loading-nf" class="hidden">⏳ Consultando nota fiscal...</div>
+      <div id="resultado-nf" class="hidden"></div>
 
-        <div id="scanner"></div>
-
-        <button id="btn-consultar-nf">Consultar</button>
-
-        <div id="loading-nf" class="loading hidden">⏳ Consultando nota fiscal...</div>
-        <div id="resultado-nf" class="result hidden"></div>
-
-        <div class="history">
-          <h3>Histórico da Filial</h3>
-          <ul id="historicoLista-nf"></ul>
-          <button id="btn-limpar-nf">🗑 Limpar Histórico Local</button>
-        </div>
+      <div class="history">
+        <h3>Histórico da Filial</h3>
+        <ul id="historicoLista-nf"></ul>
+        <button id="btn-limpar-nf">🗑 Limpar Histórico Local</button>
       </div>
     </div>
   </div>
 
-  <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+  <footer>HS Operações © 2025</footer>
 
-  <!-- ⚙️ STUB Dynamsoft (previne erro e destravamento do JS) -->
-  <script>
-    window.Dynamsoft = window.Dynamsoft || {};
-    Dynamsoft.DBR = Dynamsoft.DBR || {};
-    Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
-  </script>
-
-  <!-- 🔗 seu script principal -->
-  <script src="./script.js"></script>
-
-  <!-- ⚙️ Conserto: vincula o botão de login às funções -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const codInput = document.getElementById("codigo-nf");
-      const btnEntrar = document.getElementById("btn-entrar-nf");
-      const btnSair = document.getElementById("btn-sair-nf");
-      const erro = document.getElementById("erro-nf");
-
-      function tryEntrar() {
-        if (typeof window.entrarNF === "function") {
-          window.entrarNF();
-        } else {
-          erro.textContent = "Função de login não carregou. Verifique o script.js.";
-        }
-      }
-
-      function trySair() {
-        if (typeof window.sairNF === "function") {
-          window.sairNF();
-        }
-      }
-
-      btnEntrar.addEventListener("click", tryEntrar);
-      codInput.addEventListener("keydown", e => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          tryEntrar();
-        }
-      });
-
-      btnSair.addEventListener("click", trySair);
-    });
-  </script>
+  <script src="script_nf.js"></script>
 </body>
 </html>
