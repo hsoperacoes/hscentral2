@@ -6,6 +6,25 @@
   <title>Transferência Entre Lojas - GERENCIAL HS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* O CSS original do repositório foi omitido aqui para manter o foco no HTML e JS,
+       mas você deve garantir que o arquivo 'style.css' esteja acessível ou que
+       o CSS esteja embutido/linkado corretamente. */
+    
+    /* Estilos básicos para garantir a visualização mínima */
+    body { font-family: Arial, sans-serif; background-color: #000; color: #fff; margin: 0; padding: 0; }
+    .form-container { max-width: 600px; background: #1e1e1e; padding: 30px; border-radius: 8px; margin: 50px auto; }
+    .form-group { margin-bottom: 20px; }
+    .question-title { font-weight: bold; color: #ccc; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #444; border-radius: 4px; background-color: #2a2a2a; color: white; }
+    .submit-button { background-color: #673ab7; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+    .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); color: white; justify-content: center; align-items: center; flex-direction: column; z-index: 1000; }
+    .spinner { border: 4px solid transparent; border-top: 4px solid #fff; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    #success-message-trans, #error-message-trans { padding: 12px; margin-top: 20px; border-radius: 4px; text-align: center; }
+    #success-message-trans { background-color: #e8f5e8; color: #137333; }
+    #error-message-trans { background-color: #fce8e6; color: #d93025; }
+  </style>
 </head>
 <body>
   <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
@@ -78,6 +97,104 @@
     </div>
   </div>
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
-  <script src="script.js"></script>
+  
+  <script>
+    const APPWEB_URL = "https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec";
+
+    // Mapeamento de Filial para Email (Ajuste conforme sua necessidade)
+    const filialEmails = {
+      "ARTUR": "artur@exemplo.com",
+      "FLORIANO": "floriano@exemplo.com",
+      "JOTA": "jota@exemplo.com",
+      "MODA": "moda@exemplo.com",
+      "PONTO": "ponto@exemplo.com",
+      "JA": "ja@exemplo.com",
+      "JE": "je@exemplo.com"
+    };
+
+    // Função para atualizar o email da filial de origem
+    function atualizarEmailTrans() {
+      const filialOrigem = document.getElementById('filial-origem').value;
+      const emailInput = document.getElementById('email-trans');
+      emailInput.value = filialEmails[filialOrigem] || '';
+    }
+
+    // Lógica de submissão do formulário
+    document.getElementById('transfer-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+      const loadingOverlay = document.getElementById('loading-overlay-trans');
+      const successMessage = document.getElementById('success-message-trans');
+      const errorMessage = document.getElementById('error-message-trans');
+      const submitButton = document.getElementById('submit-button-trans');
+
+      // Ocultar mensagens anteriores
+      successMessage.style.display = 'none';
+      errorMessage.style.display = 'none';
+      errorMessage.textContent = '';
+      document.getElementById('numero-transferencia').style.display = 'none';
+
+      // Mostrar overlay de carregamento
+      loadingOverlay.style.display = 'flex';
+      submitButton.disabled = true;
+
+      fetch(APPWEB_URL, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro de rede ou servidor: ' + response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        loadingOverlay.style.display = 'none';
+        submitButton.disabled = false;
+
+        if (data.status === 'success') {
+          successMessage.style.display = 'block';
+          document.getElementById('transfer-id').textContent = data.transferId || 'N/A';
+          document.getElementById('numero-transferencia').style.display = 'block';
+          form.reset();
+          document.getElementById('total-itens-trans').textContent = '0'; // Resetar contador de itens
+          document.getElementById('email-trans').value = ''; // Limpar email
+        } else {
+          errorMessage.textContent = 'Erro ao enviar: ' + (data.message || 'Resposta inesperada do servidor.');
+          errorMessage.style.display = 'block';
+        }
+      })
+      .catch(error => {
+        loadingOverlay.style.display = 'none';
+        submitButton.disabled = false;
+        errorMessage.textContent = 'Falha na comunicação: ' + error.message;
+        errorMessage.style.display = 'block';
+      });
+    });
+
+    // Lógica para contagem de itens (simples, precisa ser ajustada se houver lógica de leitura de código de barras)
+    document.getElementById('codigo-barras-trans').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const barcodeInput = e.target;
+        const barcode = barcodeInput.value.trim();
+        
+        if (barcode) {
+          // Aqui você adicionaria a lógica para processar o código de barras
+          // Por enquanto, apenas incrementa o contador e limpa o campo
+          const totalItensSpan = document.getElementById('total-itens-trans');
+          let totalItens = parseInt(totalItensSpan.textContent);
+          totalItensSpan.textContent = totalItens + 1;
+          
+          // Simulação de envio do item para o Apps Script (se necessário)
+          // Se o Apps Script processa item por item, o fetch deve ser aqui.
+          
+          barcodeInput.value = ''; // Limpa o campo para o próximo item
+        }
+      }
+    });
+  </script>
 </body>
 </html>
