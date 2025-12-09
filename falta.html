@@ -60,7 +60,7 @@
 
     .form-container {
       width: 100%;
-      max-width: 720px; /* esticado para os lados */
+      max-width: 720px;
       margin: 0 auto;
       background:#1b1b1d;
       border:1px solid #2b2b2e;
@@ -142,9 +142,7 @@
 
   <div id="falta" class="section active">
     <div class="form-container">
-      <!-- Logo também dentro do card (se quiser só em cima, pode remover essa linha) -->
-      <img src="logo.png" alt="Logo" class="logo">
-      <h2>Cadastro de Falta</h2>
+            <h2>Cadastro de Falta</h2>
 
       <form id="form-falta">
         <div class="form-group">
@@ -194,22 +192,19 @@
 
   <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
   <script>
-    // Evita quebra se o script.js fizer: Dynamsoft.DBR.BarcodeScanner.license = "..."
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- seu JS geral (caso tenha lógicas de falta/motivo/datas lá) -->
+  <!-- seu JS geral -->
   <script src="./script.js"></script>
 
-  <!-- Funcionários vindos da mesma aba FUNCIONÁRIOS da planilha -->
+  <!-- Funcionários vindos da mesma aba FUNCIONÁRIOS + uso dos parâmetros da URL -->
   <script>
-    // URL pública da aba FUNCIONÁRIOS (mesma usada no reserva.html)
     const FUNCIONARIOS_SHEET_URL =
       'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?gid=1390331275';
 
-    // Fallback caso não consiga ler a planilha (igual ao que você já usava)
     const FALLBACK_MAP = {
       "ARTUR": ["LUCILENE","POLIANA","TAINARA"],
       "FLORIANO": ["IOLANDA","MEIRE","SARA","GABRYELLA"],
@@ -219,7 +214,7 @@
     };
 
     let funcionariosPorFilial = {};
-    let statusFuncionarios = 'carregando'; // 'carregando' | 'ok' | 'erro'
+    let statusFuncionarios = 'carregando';
 
     async function carregarFuncionariosFalta() {
       try {
@@ -231,7 +226,7 @@
 
         const json = JSON.parse(matchJson[0]);
         const rows = json.table.rows || [];
-        if (!rows.length) throw new Error('Nenhuma linha encontrada na aba FUNCIONÁRIOS.');
+        if (!rows.length) throw new Error('Nenhuma linha na aba FUNCIONÁRIOS.');
 
         const headerRow = rows[0];
         const mapa = {};
@@ -240,7 +235,7 @@
           const headerVal = cell && cell.v ? String(cell.v).trim() : '';
           if (!headerVal) return;
 
-          const chave = headerVal.split(' ')[0].toUpperCase(); // "ARTUR MALHAS" -> "ARTUR"
+          const chave = headerVal.split(' ')[0].toUpperCase();
 
           const nomes = [];
           for (let r = 1; r < rows.length; r++) {
@@ -264,7 +259,7 @@
       }
     }
 
-    function preencherFuncionariosSelect(filialSel, funcSel) {
+    function preencherFuncionariosSelect(filialSel, funcSel, funcionarioParam) {
       if (!filialSel || !funcSel) return;
 
       const filial = (filialSel.value || '').trim().toUpperCase();
@@ -281,24 +276,86 @@
         opt.textContent = nome;
         funcSel.appendChild(opt);
       });
+
+      // se veio funcionário pela URL, tenta selecionar
+      if (funcionarioParam) {
+        const existe = lista.includes(funcionarioParam);
+        if (!existe && funcionarioParam.trim()) {
+          const extra = document.createElement('option');
+          extra.value = funcionarioParam;
+          extra.textContent = funcionarioParam + ' (não listado)';
+          funcSel.appendChild(extra);
+        }
+        funcSel.value = funcionarioParam;
+      }
+    }
+
+    function aplicarParametrosURL() {
+      const params = new URLSearchParams(window.location.search);
+
+      const filialParam      = params.get('filial');
+      const funcionarioParam = params.get('funcionario');
+      const dataParam        = params.get('data_falta');
+      const motivoParam      = params.get('motivo');
+      const obsParam         = params.get('observacao');
+
+      const filialSel = document.getElementById('filial-falta');
+      const funcSel   = document.getElementById('funcionario-falta');
+      const dataInp   = document.getElementById('data-falta');
+      const motivoSel = document.getElementById('motivo-falta');
+      const obsText   = document.getElementById('observacao-falta');
+
+      if (filialParam && filialSel) {
+        filialSel.value = filialParam.toUpperCase();
+      }
+
+      if (dataParam && dataInp) {
+        dataInp.value = dataParam;
+      }
+
+      if (motivoParam && motivoSel) {
+        motivoSel.value = motivoParam;
+        atualizarVisibilidadeDiasAfastamento();
+      }
+
+      if (obsParam && obsText) {
+        // decode + -> espaço
+        obsText.value = decodeURIComponent(obsParam.replace(/\+/g, ' '));
+      }
+
+      // preencher funcionários depois que mapa estiver carregado
+      if (filialSel && funcSel) {
+        preencherFuncionariosSelect(filialSel, funcSel, funcionarioParam);
+      }
+    }
+
+    function atualizarVisibilidadeDiasAfastamento() {
+      const motivoSel = document.getElementById('motivo-falta');
+      const container = document.getElementById('dias-afastamento-container');
+      if (!motivoSel || !container) return;
+
+      if (motivoSel.value === 'ATESTADO MÉDICO') {
+        container.style.display = 'block';
+      } else {
+        container.style.display = 'none';
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       const filialSel = document.getElementById('filial-falta');
       const funcSel   = document.getElementById('funcionario-falta');
+      const motivoSel = document.getElementById('motivo-falta');
 
-      // liga mudança
+      if (motivoSel) {
+        motivoSel.addEventListener('change', atualizarVisibilidadeDiasAfastamento);
+      }
+
       if (filialSel && funcSel) {
         filialSel.addEventListener('change', () => preencherFuncionariosSelect(filialSel, funcSel));
       }
 
-      // carrega dados da planilha e, se já tiver filial selecionada, preenche
       carregarFuncionariosFalta().then(() => {
-        if (filialSel && filialSel.value) {
-          preencherFuncionariosSelect(filialSel, funcSel);
-        } else if (funcSel) {
-          funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
-        }
+        aplicarParametrosURL();
       });
     });
   </script>
