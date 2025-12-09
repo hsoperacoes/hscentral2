@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cadastro de Folgas - GERENCIAL HS</title>
+
+  <!-- Ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Seu tema global (mesmo usado nas outras telas) -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- Ajustes visuais específicos desta tela -->
@@ -37,13 +41,51 @@
       text-align: center;
       margin-bottom: 24px;
     }
+
+    /* ===== BARRA SUPERIOR COM BOTÃO DE VOLTAR (PADRÃO FALTA) ===== */
+    .top-nav {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 24px 0 8px;
+    }
+
+    /* sobrescreve o .back-button antigo (fixed na esquerda) */
+    .back-button {
+      position: static !important;
+      left: auto;
+      top: auto;
+      transform: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #111827;
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      text-decoration: none;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .back-button i {
+      font-size: 0.85rem;
+    }
+
+    .back-button:hover {
+      background: #1f2937;
+    }
   </style>
 </head>
 <body>
+
   <!-- Botão de voltar à Home igual ao das outras telas -->
-  <a href="index.html" class="back-button show">
-    <i class="fas fa-arrow-left"></i> Voltar à Home
-  </a>
+  <div class="top-nav">
+    <a href="index.html" class="back-button show">
+      <i class="fas fa-arrow-left"></i> Voltar à Home
+    </a>
+  </div>
 
   <div id="folgas" class="section active">
     <div class="form-container">
@@ -108,7 +150,7 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft (só pra garantir se style.js um dia usar) -->
+  <!-- STUB da Dynamsoft (só pra garantir se um dia algo for chamado) -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
@@ -234,7 +276,7 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      // ---------- 3. Envio do formulário (igual versão funcional antiga) ----------
+      // ---------- 3. Envio do formulário ----------
       function configurarEnvio() {
         if (!formFolgas) return;
 
