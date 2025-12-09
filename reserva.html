@@ -246,22 +246,27 @@ K0WE NATSI
         if (!matchJson) throw new Error('Resposta da planilha não está em formato gviz esperado (talvez não esteja pública).');
 
         const json = JSON.parse(matchJson[0]);
-        const cols = json.table.cols || [];
         const rows = json.table.rows || [];
+        if (!rows.length) throw new Error('Nenhuma linha encontrada na aba FUNCIONÁRIOS.');
 
+        const headerRow = rows[0]; // primeira linha = cabeçalho visível na planilha
         const mapa = {};
 
-        cols.forEach((col, colIdx) => {
-          if (!col.label) return;
-          const header = String(col.label).trim();
-          const chave = header.split(' ')[0].toUpperCase(); // "ARTUR MALHAS" -> "ARTUR"
+        headerRow.c.forEach((cell, colIdx) => {
+          const headerVal = cell && cell.v ? String(cell.v).trim() : '';
+          if (!headerVal) return;
+
+          // "ARTUR MALHAS" -> "ARTUR"
+          const chave = headerVal.split(' ')[0].toUpperCase();
 
           const nomes = [];
-          rows.forEach(r => {
-            const cell = r.c[colIdx];
-            const val = cell && cell.v ? String(cell.v).trim() : '';
+          for (let r = 1; r < rows.length; r++) {
+            const linha = rows[r];
+            if (!linha || !linha.c) continue;
+            const c = linha.c[colIdx];
+            const val = c && c.v ? String(c.v).trim() : '';
             if (val) nomes.push(val);
-          });
+          }
 
           mapa[chave] = nomes;
         });
@@ -271,6 +276,7 @@ K0WE NATSI
 
         selFunc.innerHTML = '<option value="">Selecione a filial primeiro</option>';
         hint.textContent = 'Lista carregada com sucesso da aba FUNCIONÁRIOS.';
+        console.log('Funcionários carregados:', funcionariosPorFilial);
       } catch (e) {
         console.error('Erro ao carregar funcionários:', e);
         statusFuncionarios = 'erro';
