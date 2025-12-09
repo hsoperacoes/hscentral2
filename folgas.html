@@ -6,12 +6,59 @@
   <title>Cadastro de Folgas - GERENCIAL HS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Ajustes visuais específicos desta tela -->
+  <style>
+    body {
+      background: #050509;
+    }
+
+    .section {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px 32px;
+      min-height: 100vh;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 760px;   /* mais largo, igual reserva/falta */
+      margin: 0 auto;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 12px;
+      max-width: 80px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      z-index: 1000;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
-  <!-- Botão padrão para voltar à home -->
-  <a href="index.html" class="back-button show">
+  <!-- Botão padrão de voltar à Home (igual aos outros) -->
+  <button class="back-button" onclick="window.location.href='index.html'">
     <i class="fas fa-arrow-left"></i> Voltar à Home
-  </a>
+  </button>
 
   <div id="folgas" class="section active">
     <div class="form-container">
@@ -81,38 +128,34 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft para evitar erro se o script.js mexer no leitor -->
+  <!-- STUB da Dynamsoft (caso script.js mexa nela) -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- Seu JS global (onde já está a parte que busca FUNCIONÁRIOS e monta window.funcionariosPorFilial) -->
-  <script src="./script.js"></script>
+  <!-- IMPORTANTE: caminho ABSOLUTO para garantir que o script.js seja achado,
+       mesmo se o folgas.html estiver em subpasta -->
+  <script src="/hscentral2/script.js"></script>
 
   <!-- Lógica específica da página de FOLGAS -->
   <script>
     (function () {
-      const filialSel   = document.getElementById('filial-folgas');
-      const funcSel     = document.getElementById('funcionario-folgas');
-      const motivoSel   = document.getElementById('motivo-folgas');
-      const dataTrabInp = document.getElementById('dataTrabalho-folgas');
-      const dataFolgaInp= document.getElementById('dataFolga-folgas');
-      const motivoOutrosDiv = document.getElementById('motivoOutros-folgas');
-      const outrosMotivoInp = document.getElementById('outrosMotivo-folgas');
-      const formFolgas  = document.getElementById('form-folgas');
+      const filialSel        = document.getElementById('filial-folgas');
+      const funcSel          = document.getElementById('funcionario-folgas');
+      const motivoSel        = document.getElementById('motivo-folgas');
+      const dataTrabInp      = document.getElementById('dataTrabalho-folgas');
+      const dataFolgaInp     = document.getElementById('dataFolga-folgas');
+      const motivoOutrosDiv  = document.getElementById('motivoOutros-folgas');
+      const outrosMotivoInp  = document.getElementById('outrosMotivo-folgas');
+      const formFolgas       = document.getElementById('form-folgas');
 
-      // --- CARREGAR FUNCIONÁRIOS A PARTIR DO MESMO SCRIPT DA RESERVA ---
-      function preencherSelectCarregando() {
-        if (!funcSel) return;
-        funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
-      }
-
+      // ---------- CARREGAR FUNCIONÁRIOS ----------
       function atualizarFuncionariosFolgas() {
         if (!filialSel || !funcSel) return;
 
-        const mapa = (window.funcionariosPorFilial || {});
+        const mapa   = (window.funcionariosPorFilial || {});
         const filial = (filialSel.value || '').trim();
 
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
@@ -130,18 +173,16 @@
       async function inicializarFuncionarios() {
         try {
           if (!funcSel) return;
-          preencherSelectCarregando();
+          funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
 
-          // Se existir uma função global carregarFuncionarios() (definida no script.js), usa ela
+          // Usa a mesma função da reserva, se existir
           if (typeof window.carregarFuncionarios === 'function') {
             await window.carregarFuncionarios();
           }
 
-          // Liga o change depois que carregou o mapa
           if (filialSel) {
             filialSel.addEventListener('change', atualizarFuncionariosFolgas);
 
-            // Se a filial já vier preenchida (futuro login por filial), já popula
             if (filialSel.value) {
               atualizarFuncionariosFolgas();
             } else {
@@ -154,7 +195,7 @@
         }
       }
 
-      // --- REGRAS DE MOTIVO / DATAS (igual à versão funcional antiga) ---
+      // ---------- REGRAS DE MOTIVO / DATAS ----------
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -176,39 +217,32 @@
         dataFolgaInp.min = dataTrabalho.toISOString().split('T')[0];
         dataFolgaInp.max = maxDate.toISOString().split('T')[0];
 
-        // Campo "OUTROS"
         motivoOutrosDiv.style.display = motivo === "OUTROS" ? "block" : "none";
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
       if (dataTrabInp && motivoSel) {
         dataTrabInp.addEventListener('change', function () {
-          if (motivoSel.value !== '') {
-            verificarMotivo();
-          }
+          if (motivoSel.value !== '') verificarMotivo();
         });
         motivoSel.addEventListener('change', verificarMotivo);
       }
 
-      // --- ENVIO DO FORMULÁRIO (mesmo esquema que já funciona: fetch + reset + alert) ---
+      // ---------- ENVIO DO FORMULÁRIO (igual versão funcional) ----------
       if (formFolgas) {
         formFolgas.addEventListener('submit', function (event) {
           event.preventDefault();
-          const form = this;
-          const formData = new FormData(form);
+          const formData = new FormData(formFolgas);
 
-          fetch(form.action, {
+          fetch(formFolgas.action, {
             method: "POST",
             body: formData
           })
           .then(response => response.text())
           .then(() => {
             alert("Folga cadastrada com sucesso!");
-            form.reset();
-            // volta o select de funcionários pro estado inicial
-            if (funcSel) {
-              funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
-            }
+            formFolgas.reset();
+            funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
             motivoOutrosDiv.style.display = "none";
           })
           .catch(() => {
@@ -217,9 +251,8 @@
         });
       }
 
-      // Inicializa tudo quando o DOM estiver pronto
+      // Inicializa funcionários
       document.addEventListener('DOMContentLoaded', inicializarFuncionarios);
-      // Também chama direto (por segurança, caso o script carregue depois do DOM)
       inicializarFuncionarios();
     })();
   </script>
