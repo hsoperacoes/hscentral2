@@ -171,9 +171,11 @@
       <div class="field">
         <label for="funcionario">Funcionário *</label>
         <select id="funcionario" name="funcionario" required>
-          <option value="">Selecione a filial primeiro</option>
+          <option value="">Carregando funcionários...</option>
         </select>
-        <div class="hint">Lista carregada da aba FUNCIONÁRIOS da planilha.</div>
+        <div class="hint" id="hint-func">
+          Lista carregada da aba FUNCIONÁRIOS da planilha.
+        </div>
       </div>
 
       <div class="grid">
@@ -224,22 +226,24 @@ K0WE NATSI
     // ======= CONFIG =======
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec';
 
-    // URL da aba FUNCIONÁRIOS (gid conforme print)
+    // URL pública da aba FUNCIONÁRIOS (precisa estar "qualquer pessoa com o link pode ver")
     const FUNCIONARIOS_SHEET_URL =
       'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?gid=1390331275';
 
-    // Mapa global preenchido a partir da planilha
     let funcionariosPorFilial = {};
+    let statusFuncionarios = 'carregando'; // 'carregando' | 'ok' | 'erro'
 
     // ======= Carrega funcionários da planilha =======
     async function carregarFuncionarios() {
+      const hint = document.getElementById('hint-func');
+      const selFunc = document.getElementById('funcionario');
+
       try {
         const resp = await fetch(FUNCIONARIOS_SHEET_URL);
         const texto = await resp.text();
 
-        // A resposta do gviz vem como: google.visualization.Query.setResponse({...});
         const matchJson = texto.match(/\{.*\}/s);
-        if (!matchJson) throw new Error('Formato inesperado da resposta da planilha.');
+        if (!matchJson) throw new Error('Resposta da planilha não está em formato gviz esperado (talvez não esteja pública).');
 
         const json = JSON.parse(matchJson[0]);
         const cols = json.table.cols || [];
@@ -250,9 +254,7 @@ K0WE NATSI
         cols.forEach((col, colIdx) => {
           if (!col.label) return;
           const header = String(col.label).trim();
-
-          // Usa a primeira palavra do cabeçalho como chave: "ARTUR MALHAS" -> "ARTUR"
-          const chave = header.split(' ')[0].toUpperCase();
+          const chave = header.split(' ')[0].toUpperCase(); // "ARTUR MALHAS" -> "ARTUR"
 
           const nomes = [];
           rows.forEach(r => {
@@ -265,9 +267,15 @@ K0WE NATSI
         });
 
         funcionariosPorFilial = mapa;
-        console.log('Funcionários carregados:', funcionariosPorFilial);
+        statusFuncionarios = 'ok';
+
+        selFunc.innerHTML = '<option value="">Selecione a filial primeiro</option>';
+        hint.textContent = 'Lista carregada com sucesso da aba FUNCIONÁRIOS.';
       } catch (e) {
-        console.error('Erro ao carregar funcionários da planilha:', e);
+        console.error('Erro ao carregar funcionários:', e);
+        statusFuncionarios = 'erro';
+        selFunc.innerHTML = '<option value="">Não foi possível carregar os funcionários</option>';
+        hint.textContent = 'Erro ao carregar lista. Verifique se a planilha está pública ("qualquer pessoa com o link pode ver").';
       }
     }
 
@@ -304,11 +312,17 @@ K0WE NATSI
       const f = e.target.value;
       const sel = document.getElementById('funcionario');
 
-      sel.innerHTML = '<option value="">Carregando funcionários...</option>';
-
-      const lista = (funcionariosPorFilial && funcionariosPorFilial[f]) || [];
+      if (statusFuncionarios === 'carregando') {
+        sel.innerHTML = '<option value="">Aguarde, carregando funcionários...</option>';
+        return;
+      }
+      if (statusFuncionarios === 'erro') {
+        sel.innerHTML = '<option value="">Erro ao carregar funcionários (veja aviso acima)</option>';
+        return;
+      }
 
       sel.innerHTML = '<option value="">Selecione</option>';
+      const lista = (funcionariosPorFilial && funcionariosPorFilial[f]) || [];
       lista.forEach(nome=>{
         const op = document.createElement('option');
         op.value = nome;
@@ -321,7 +335,6 @@ K0WE NATSI
     const pecas = document.getElementById('pecas');
     const preview = document.getElementById('previewContagem');
     pecas.addEventListener('input', ()=>{
-      // Usa quebra de linha real '\n' (igual à versão funcional)
       const qtd = pecas.value.split('\n').filter(l=>l.trim()!=='').length;
       preview.value = qtd;
     });
@@ -367,10 +380,14 @@ K0WE NATSI
         ok.style.display = 'block';
 
         form.reset();
-        document.getElementById('funcionario').innerHTML = '<option value="">Selecione a filial primeiro</option>';
+        document.getElementById('funcionario').innerHTML = '<option value="">Carregando funcionários...</option>';
         initDatas();
         preview.value = 0;
         mask.updateValue();
+
+        // recarrega funcionários para garantir que o mapa esteja atualizado
+        statusFuncionarios = 'carregando';
+        carregarFuncionarios();
       } catch(e){
         err.textContent = `Erro: ${e.message}`;
         err.style.display='block';
@@ -402,7 +419,7 @@ K0WE NATSI
 
     // Init
     initDatas();
-    carregarFuncionarios(); // carrega da planilha
+    carregarFuncionarios(); // carrega da planilha ao abrir a página
   </script>
 </body>
 </html>
