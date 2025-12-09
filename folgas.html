@@ -4,19 +4,144 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cadastro de Folgas - GERENCIAL HS</title>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+
+  <style>
+    :root { color-scheme: dark; }
+
+    body {
+      background: #0e0e0f;
+      color: #fff;
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* topo igual ao falta.html */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 auto 14px;
+      max-width: 760px;
+    }
+
+    .home-btn {
+      background:#2f3542;
+      color:#fff;
+      border:0;
+      border-radius:10px;
+      padding:10px 14px;
+      cursor:pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .home-btn:hover {
+      filter:brightness(1.1);
+    }
+
+    .section.active {
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      background:#1b1b1d;
+      border:1px solid #2b2b2e;
+      border-radius:12px;
+      padding:28px;
+      box-shadow: 0 0 24px rgba(0,0,0,.25 );
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .form-container .logo {
+      display:block;
+      margin: 0 auto 12px;
+      max-height: 60px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display:block;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #3a3a40;
+      background:#242427;
+      color:#fff;
+      font-size:14px;
+    }
+
+    button[type="submit"] {
+      width:100%;
+      padding:12px 16px;
+      border:0;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+      background:#6d4aff;
+      color:#fff;
+      margin-top:8px;
+    }
+
+    button[type="submit"]:hover {
+      filter:brightness(1.05);
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #9aa0a6;
+    }
+
+    .required-star {
+      color: #ff6b6b;
+    }
+  </style>
 </head>
 <body>
-  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <!-- topo igual ao de falta -->
+  <div class="topbar">
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-arrow-left"></i>
+      <span>Voltar à Home</span>
+    </a>
+  </div>
+
   <div id="folgas" class="section active">
     <div class="form-container">
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
-      <form id="form-folgas" method="POST" action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
+
+      <form id="form-folgas" method="POST"
+            action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
         <div class="form-group">
-          <label for="filial-folgas">Filial</label>
-          <select id="filial-folgas" name="filial" required onchange="atualizarFuncionarios()">
+          <label for="filial-folgas">Filial <span class="required-star">*</span></label>
+          <select id="filial-folgas" name="filial" required>
             <option value="">Selecione uma filial</option>
             <option value="ARTUR">ARTUR</option>
             <option value="FLORIANO">FLORIANO</option>
@@ -27,19 +152,19 @@
         </div>
 
         <div class="form-group">
-          <label for="funcionario-folgas">Funcionário</label>
+          <label for="funcionario-folgas">Funcionário <span class="required-star">*</span></label>
           <select id="funcionario-folgas" name="funcionario" required>
             <option value="">Selecione a filial primeiro</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="dataTrabalho-folgas">Dia Trabalhado</label>
+          <label for="dataTrabalho-folgas">Dia Trabalhado <span class="required-star">*</span></label>
           <input type="date" id="dataTrabalho-folgas" name="dataTrabalho" required>
         </div>
 
         <div class="form-group">
-          <label for="motivo-folgas">Motivo da Folga</label>
+          <label for="motivo-folgas">Motivo da Folga <span class="required-star">*</span></label>
           <select id="motivo-folgas" name="motivo" required>
             <option value="">Selecione um motivo</option>
             <option value="DOMINGO">DOMINGO</option>
@@ -54,7 +179,7 @@
         </div>
 
         <div class="form-group">
-          <label for="dataFolga-folgas">Data da Folga</label>
+          <label for="dataFolga-folgas">Data da Folga <span class="required-star">*</span></label>
           <input type="date" id="dataFolga-folgas" name="dataFolga" required>
         </div>
 
@@ -62,28 +187,171 @@
       </form>
     </div>
   </div>
+
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
+  <!-- STUB da Dynamsoft para evitar erro -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- teu JS existente -->
+  <!-- teu JS global (se precisar) -->
   <script src="./script.js"></script>
 
-  <!-- reforço: garante o bind mesmo se o atributo onchange sair do HTML -->
+  <!-- Lógica: funcionários da planilha + regras do motivo + envio via fetch -->
   <script>
-    (function () {
-      const filialSel = document.getElementById('filial-folgas');
+    const FORM_ACTION_URL =
+      'https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec';
 
-      if (typeof window.atualizarFuncionarios === 'function') {
-        filialSel && filialSel.addEventListener('change', window.atualizarFuncionarios);
-        if (filialSel && filialSel.value) window.atualizarFuncionarios();
+    const FUNCIONARIOS_SHEET_URL =
+      'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?gid=1390331275';
+
+    const FALLBACK_MAP = {
+      "ARTUR": ["LUCILENE","POLIANA","TAINARA"],
+      "FLORIANO": ["IOLANDA","MEIRE","SARA","GABRYELLA"],
+      "JOTA": ["BRUNO","CARINA","DENISE","FABIOLA","INGRID","MARCOS","RAYSSA","VERA"],
+      "MODA": ["ANA CLARA","DAIANE","JOANA","MARCIA","MARIA"],
+      "PONTO": ["DANIELA","EVANEUZA","ISADORA","PAULA","PRISCILA","SÔNIA","SUELI"]
+    };
+
+    let funcionariosPorFilial = {};
+
+    async function carregarFuncionarios() {
+      try {
+        const resp = await fetch(FUNCIONARIOS_SHEET_URL);
+        const texto = await resp.text();
+        const matchJson = texto.match(/\{.*\}/s);
+        if (!matchJson) throw new Error('Formato inesperado da gviz.');
+
+        const json = JSON.parse(matchJson[0]);
+        const rows = json.table.rows || [];
+        if (!rows.length) throw new Error('Nenhuma linha na aba FUNCIONÁRIOS.');
+
+        const headerRow = rows[0];
+        const mapa = {};
+
+        headerRow.c.forEach((cell, colIdx) => {
+          const headerVal = cell && cell.v ? String(cell.v).trim() : '';
+          if (!headerVal) return;
+
+          const chave = headerVal.split(' ')[0].toUpperCase();
+
+          const nomes = [];
+          for (let r = 1; r < rows.length; r++) {
+            const linha = rows[r];
+            if (!linha || !linha.c) continue;
+            const c = linha.c[colIdx];
+            const val = c && c.v ? String(c.v).trim() : '';
+            if (val) nomes.push(val);
+          }
+
+          mapa[chave] = nomes;
+        });
+
+        funcionariosPorFilial = mapa;
+        console.log('Funcionários carregados (folgas):', funcionariosPorFilial);
+      } catch (e) {
+        console.error('Erro ao carregar funcionários (folgas):', e);
+        funcionariosPorFilial = FALLBACK_MAP;
       }
-    })();
+    }
+
+    function atualizarFuncionariosFolgas() {
+      const filialSel = document.getElementById('filial-folgas');
+      const funcSel   = document.getElementById('funcionario-folgas');
+      if (!filialSel || !funcSel) return;
+
+      const filial = (filialSel.value || '').trim().toUpperCase();
+      funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
+
+      const mapa  = funcionariosPorFilial && Object.keys(funcionariosPorFilial).length
+        ? funcionariosPorFilial
+        : FALLBACK_MAP;
+
+      const lista = mapa[filial] || [];
+      lista.forEach(nome => {
+        const opt = document.createElement('option');
+        opt.value = nome;
+        opt.textContent = nome;
+        funcSel.appendChild(opt);
+      });
+    }
+
+    function verificarMotivoFolga() {
+      const motivoSelect = document.getElementById('motivo-folgas');
+      const dataTrabalhoInput = document.getElementById('dataTrabalho-folgas');
+      const dataFolgaInput = document.getElementById('dataFolga-folgas');
+      const motivoOutrosField = document.getElementById('motivoOutros-folgas');
+      const outrosMotivoInput = document.getElementById('outrosMotivo-folgas');
+
+      const motivo = motivoSelect.value;
+
+      if (!dataTrabalhoInput.value) {
+        alert("Selecione primeiro o 'Dia Trabalhado'!");
+        motivoSelect.value = '';
+        motivoOutrosField.style.display = "none";
+        if (outrosMotivoInput) outrosMotivoInput.required = false;
+        return;
+      }
+
+      const dataTrabalho = new Date(dataTrabalhoInput.value + 'T00:00:00');
+      const maxDate = new Date(dataTrabalho);
+
+      if (motivo === "DOMINGO") {
+        maxDate.setDate(dataTrabalho.getDate() + 7);
+      } else if (motivo === "FERIADO" || motivo === "OUTROS") {
+        maxDate.setDate(dataTrabalho.getDate() + 60);
+      }
+
+      dataFolgaInput.min = dataTrabalho.toISOString().split('T')[0];
+      dataFolgaInput.max = maxDate.toISOString().split('T')[0];
+
+      motivoOutrosField.style.display = motivo === "OUTROS" ? "block" : "none";
+      if (outrosMotivoInput) {
+        outrosMotivoInput.required = motivo === "OUTROS";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const filialSel = document.getElementById('filial-folgas');
+      const motivoSel = document.getElementById('motivo-folgas');
+      const dataTrabalho = document.getElementById('dataTrabalho-folgas');
+      const formFolgas = document.getElementById('form-folgas');
+
+      // carrega funcionários da planilha
+      carregarFuncionarios().then(() => {
+        // quando o usuário escolher a filial, preenche a lista
+        filialSel && filialSel.addEventListener('change', atualizarFuncionariosFolgas);
+      });
+
+      // mesma lógica antiga: dia trabalhado + motivo definem faixa de datas
+      dataTrabalho && dataTrabalho.addEventListener('change', () => {
+        if (motivoSel.value !== '') verificarMotivoFolga();
+      });
+      motivoSel && motivoSel.addEventListener('change', verificarMotivoFolga);
+
+      // envio igual à versão funcional (preventDefault + fetch)
+      formFolgas.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+
+        fetch(FORM_ACTION_URL, {
+          method: "POST",
+          body: formData
+        })
+          .then(response => response.text())
+          .then(() => {
+            alert("Folga cadastrada com sucesso!");
+            this.reset();
+            document.getElementById("funcionario-folgas").innerHTML =
+              '<option value="">Selecione a filial primeiro</option>';
+            document.getElementById("motivoOutros-folgas").style.display = "none";
+          })
+          .catch(() => alert("Erro ao enviar os dados!"));
+      });
+    });
   </script>
 </body>
 </html>
