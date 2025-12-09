@@ -1,80 +1,151 @@
-
 <!DOCTYPE html>
-<html lang="en-US">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<!-- Begin Jekyll SEO tag v2.8.0 -->
-<title>reservas</title>
-<meta name="generator" content="Jekyll v3.10.0" />
-<meta property="og:title" content="reservas" />
-<meta property="og:locale" content="en_US" />
-<link rel="canonical" href="https://hsoperacoes.github.io/reservas/" />
-<meta property="og:url" content="https://hsoperacoes.github.io/reservas/" />
-<meta property="og:site_name" content="reservas" />
-<meta property="og:type" content="website" />
-<meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="reservas" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","headline":"reservas","name":"reservas","url":"https://hsoperacoes.github.io/reservas/"}</script>
-<!-- End Jekyll SEO tag -->
-
-    <link rel="stylesheet" href="/reservas/assets/css/style.css?v=298f9a7d11bc83d811cd830f93a8f70d7cc58542">
-    <!-- start custom head snippets, customize with your own _includes/head-custom.html file -->
-
-<!-- Setup Google Analytics -->
-
-
-
-<!-- You can set your favicon here -->
-<!-- link rel="shortcut icon" type="image/x-icon" href="/reservas/favicon.ico" -->
-
-<!-- end custom head snippets -->
-
-  </head>
-  <body>
-    <div class="container-lg px-3 my-5 markdown-body">
-      
-      <h1><a href="https://hsoperacoes.github.io/reservas/">reservas</a></h1>
-      
-
-      <p>&lt;!DOCTYPE html&gt;</p>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Reserva de Peças</title>
+
+  <!-- Ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <!-- NOVA BIBLIOTECA PARA MÁSCARA DE INPUT -->
+
+  <!-- Máscara de input -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/imask/6.4.3/imask.min.js"></script>
+
   <style>
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background:#0e0e0f; color:#fff; margin:0; padding:24px; }
-    .wrap { max-width: 720px; margin: 0 auto; background:#1b1b1d; border:1px solid #2b2b2e; border-radius:12px; padding:28px; box-shadow: 0 0 24px rgba(0,0,0,.25 ); }
+
+    body {
+      font-family: Arial, sans-serif;
+      background:#0e0e0f;
+      color:#fff;
+      margin:0;
+      padding:24px;
+    }
+
+    /* Topo com botão de voltar e logo */
+    .topbar{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin:0 auto 14px;
+      max-width: 760px;
+    }
+
+    .home{
+      background:#2f3542;
+      color:#fff;
+      border:0;
+      border-radius:10px;
+      padding:10px 14px;
+      cursor:pointer;
+    }
+    .home:hover{ filter:brightness(1.1); }
+
+    .logo{
+      height:44px;
+      margin-left:auto;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      background:#1b1b1d;
+      border:1px solid #2b2b2e;
+      border-radius:12px;
+      padding:28px;
+      box-shadow: 0 0 24px rgba(0,0,0,.25 );
+    }
+
     h1 { margin:0 0 8px; font-size: 22px; }
-    p.sub { margin:0 0 24px; color:#bdbdbd; }
+    .sub { margin:0 0 24px; color:#bdbdbd; }
+
     .field { margin-bottom: 16px; }
-    label { display:block; margin:0 0 6px; font-weight: 600; color:#d7d7d7; font-size: 14px; }
-    select, input, textarea { width:100%; padding:12px; background:#242427; border:1px solid #3a3a40; border-radius:8px; color:#fff; font-size:14px; }
+    label {
+      display:block;
+      margin:0 0 6px;
+      font-weight: 600;
+      color:#d7d7d7;
+      font-size: 14px;
+    }
+
+    select, input, textarea {
+      width:100%;
+      padding:12px;
+      background:#242427;
+      border:1px solid #3a3a40;
+      border-radius:8px;
+      color:#fff;
+      font-size:14px;
+    }
+
     textarea { min-height: 120px; resize: vertical; }
-    .grid { display:grid; gap:12px; grid-template-columns: 1fr 1fr; }
+
+    .grid {
+      display:grid;
+      gap:12px;
+      grid-template-columns: 1fr 1fr;
+    }
     .grid > .field { margin-bottom:0; }
-    .hint { font-size:12px; color:#9aa0a6; margin-top:6px; }
-    .info { background:#202226; border:1px solid #30343a; border-radius:8px; padding:12px; margin: 12px 0 20px; }
+
+    .hint {
+      font-size:12px;
+      color:#9aa0a6;
+      margin-top:6px;
+    }
+
+    .info {
+      background:#202226;
+      border:1px solid #30343a;
+      border-radius:8px;
+      padding:12px;
+      margin: 12px 0 20px;
+    }
     .info strong { color:#ff6b6b; }
-    .count { font-weight:700; color:#ff6b6b; }
+
     .actions { display:flex; gap:12px; }
-    button { flex:1; padding:12px 16px; border:0; border-radius:8px; cursor:pointer; font-weight:700; }
+    button {
+      flex:1;
+      padding:12px 16px;
+      border:0;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+    }
     .primary { background:#6d4aff; color:#fff; }
     .secondary { background:#3b3f46; color:#fff; }
-    .ok { background:#113e1a; border:1px solid #2e7d32; color:#c8f7cb; padding:12px; border-radius:8px; margin-top:12px; display:none; }
-    .err { background:#3a1616; border:1px solid #b71c1c; color:#ffcdd2; padding:12px; border-radius:8px; margin-top:12px; display:none; }
+
+    .ok {
+      background:#113e1a;
+      border:1px solid #2e7d32;
+      color:#c8f7cb;
+      padding:12px;
+      border-radius:8px;
+      margin-top:12px;
+      display:none;
+    }
+    .err {
+      background:#3a1616;
+      border:1px solid #b71c1c;
+      color:#ffcdd2;
+      padding:12px;
+      border-radius:8px;
+      margin-top:12px;
+      display:none;
+    }
   </style>
 </head>
 <body>
+  <!-- Topo com botão de voltar e logo Hering -->
+  <div class="topbar">
+    <a href="index.html">
+      <button class="home">
+        <i class="fa-solid fa-arrow-left"></i> Voltar à Home
+      </button>
+    </a>
+    <img src="logo.png" class="logo" alt="HS">
+  </div>
+
   <div class="wrap">
     <h1><i class="fa-solid fa-bookmark"></i> Reserva de Peças</h1>
     <p class="sub">Preencha os dados abaixo para registrar a reserva. O prazo padrão é de <strong>2 dias úteis</strong>.</p>
@@ -87,7 +158,7 @@
     <form id="form-reserva">
       <div class="field">
         <label for="filial">Filial *</label>
-        <select id="filial" name="filial" required="">
+        <select id="filial" name="filial" required>
           <option value="">Selecione</option>
           <option value="ARTUR">ARTUR</option>
           <option value="FLORIANO">FLORIANO</option>
@@ -99,16 +170,16 @@
 
       <div class="field">
         <label for="funcionario">Funcionário *</label>
-        <select id="funcionario" name="funcionario" required="">
+        <select id="funcionario" name="funcionario" required>
           <option value="">Selecione a filial primeiro</option>
         </select>
-        <div class="hint">Lista carregada conforme a filial.</div>
+        <div class="hint">Lista carregada da aba FUNCIONÁRIOS da planilha.</div>
       </div>
 
       <div class="grid">
         <div class="field">
           <label for="data_reserva">Data da Reserva *</label>
-          <input type="text" id="data_reserva" name="data_reserva" readonly="" required="" />
+          <input type="text" id="data_reserva" name="data_reserva" readonly required />
         </div>
         <div class="field">
           <label for="cliente">Nome do Cliente</label>
@@ -119,13 +190,12 @@
       <div class="grid">
         <div class="field">
           <label for="celular">Celular *</label>
-          <!-- PLACEHOLDER ATUALIZADO -->
-          <input type="tel" id="celular" name="celular" placeholder="(DDD) XXXXX-XXXX" required="" />
-          <div class="hint">Apenas números; aplicaremos o formato E.164 automaticamente.</div>
+          <input type="tel" id="celular" name="celular" placeholder="(DDD) XXXXX-XXXX" required />
+          <div class="hint">Apenas números; aplicaremos a máscara automaticamente.</div>
         </div>
         <div class="field">
           <label for="previewContagem">Total de itens</label>
-          <input type="text" id="previewContagem" value="0" readonly="" />
+          <input type="text" id="previewContagem" value="0" readonly />
         </div>
       </div>
 
@@ -134,8 +204,8 @@
         <textarea id="pecas" name="pecas" placeholder="Ex:
 77LT N10EN
 K0WE NATSI
-..." required=""></textarea>
-        <div class="hint">Cada linha será contada como 1 item. Ex.: "REF COR TAM" ou o formato que você já usa.</div>
+..." required></textarea>
+        <div class="hint">Cada linha será contada como 1 item.</div>
       </div>
 
       <div class="actions">
@@ -146,25 +216,63 @@ K0WE NATSI
       <div id="ok" class="ok"></div>
       <div id="err" class="err"></div>
 
-      <!-- Campo oculto obrigatório p/ backend identificar o tipo -->
       <input type="hidden" name="tipo" value="reserva" />
     </form>
   </div>
 
   <script>
     // ======= CONFIG =======
-    // ATENÇÃO: Esta URL DEVE SER A URL DO SEU APP DA WEB APÓS A IMPLANTAÇÃO
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec';
-    const funcionariosPorFilial = {
-      ARTUR: ["FERNANDA","ISABELLA","LUCILENE"],
-      FLORIANO: ["FERNANDA","MEIRE","SARA","THACIANNE"],
-      JOTA: ["BRUNO","CARINA","DENISE","FABIOLA","JÉSSICA","LOUISE","NATALIA","PRISCILA","RAYSSA","VERA"],
-      MODA: ["ANA CLARA","DAIANE","JÉSSICA","MARCIA","NAISE","MARIA"],
-      PONTO: ["DANIELA","EVANEUZA","ISADORA","PAULA","PRISCILA","SANDY","SÔNIA","SUELI"]
-    };
+
+    // URL da aba FUNCIONÁRIOS (gid conforme print)
+    const FUNCIONARIOS_SHEET_URL =
+      'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?gid=1390331275';
+
+    // Mapa global preenchido a partir da planilha
+    let funcionariosPorFilial = {};
+
+    // ======= Carrega funcionários da planilha =======
+    async function carregarFuncionarios() {
+      try {
+        const resp = await fetch(FUNCIONARIOS_SHEET_URL);
+        const texto = await resp.text();
+
+        // A resposta do gviz vem como: google.visualization.Query.setResponse({...});
+        const matchJson = texto.match(/\{.*\}/s);
+        if (!matchJson) throw new Error('Formato inesperado da resposta da planilha.');
+
+        const json = JSON.parse(matchJson[0]);
+        const cols = json.table.cols || [];
+        const rows = json.table.rows || [];
+
+        const mapa = {};
+
+        cols.forEach((col, colIdx) => {
+          if (!col.label) return;
+          const header = String(col.label).trim();
+
+          // Usa a primeira palavra do cabeçalho como chave: "ARTUR MALHAS" -> "ARTUR"
+          const chave = header.split(' ')[0].toUpperCase();
+
+          const nomes = [];
+          rows.forEach(r => {
+            const cell = r.c[colIdx];
+            const val = cell && cell.v ? String(cell.v).trim() : '';
+            if (val) nomes.push(val);
+          });
+
+          mapa[chave] = nomes;
+        });
+
+        funcionariosPorFilial = mapa;
+        console.log('Funcionários carregados:', funcionariosPorFilial);
+      } catch (e) {
+        console.error('Erro ao carregar funcionários da planilha:', e);
+      }
+    }
 
     // ======= Datas =======
-    function formatarDataBR(d ){
+    function formatarDataBR(d){
       const dd = String(d.getDate()).padStart(2,'0');
       const mm = String(d.getMonth()+1).padStart(2,'0');
       const yyyy = d.getFullYear();
@@ -177,7 +285,7 @@ K0WE NATSI
       while (diasUteisAdicionados < 2) {
         base.setDate(base.getDate() + 1);
         const diaDaSemana = base.getDay();
-        if (diaDaSemana !== 0 && diaDaSemana !== 6) { // Não é Domingo (0) nem Sábado (6)
+        if (diaDaSemana !== 0 && diaDaSemana !== 6) {
           diasUteisAdicionados++;
         }
       }
@@ -193,11 +301,19 @@ K0WE NATSI
 
     // ======= Filial -> Funcionários =======
     document.getElementById('filial').addEventListener('change', e=>{
-      const f = e.target.value; const sel = document.getElementById('funcionario');
+      const f = e.target.value;
+      const sel = document.getElementById('funcionario');
+
+      sel.innerHTML = '<option value="">Carregando funcionários...</option>';
+
+      const lista = (funcionariosPorFilial && funcionariosPorFilial[f]) || [];
+
       sel.innerHTML = '<option value="">Selecione</option>';
-      (funcionariosPorFilial[f]||[]).forEach(nome=>{
+      lista.forEach(nome=>{
         const op = document.createElement('option');
-        op.value = nome; op.textContent = nome; sel.appendChild(op);
+        op.value = nome;
+        op.textContent = nome;
+        sel.appendChild(op);
       });
     });
 
@@ -205,6 +321,7 @@ K0WE NATSI
     const pecas = document.getElementById('pecas');
     const preview = document.getElementById('previewContagem');
     pecas.addEventListener('input', ()=>{
+      // Usa quebra de linha real '\n' (igual à versão funcional)
       const qtd = pecas.value.split('\n').filter(l=>l.trim()!=='').length;
       preview.value = qtd;
     });
@@ -217,13 +334,25 @@ K0WE NATSI
 
     form.addEventListener('submit', async (e)=>{
       e.preventDefault();
-      ok.style.display = 'none'; err.style.display = 'none';
+      ok.style.display = 'none';
+      err.style.display = 'none';
       btnEnviar.disabled = true;
       btnEnviar.textContent = 'Enviando...';
 
-      // Validações
-      if(!document.getElementById('filial').value){ err.textContent='Selecione a filial.'; err.style.display='block'; btnEnviar.disabled = false; btnEnviar.textContent = 'Enviar Reserva'; return; }
-      if(!document.getElementById('funcionario').value){ err.textContent='Selecione o funcionário.'; err.style.display='block'; btnEnviar.disabled = false; btnEnviar.textContent = 'Enviar Reserva'; return; }
+      if(!document.getElementById('filial').value){
+        err.textContent='Selecione a filial.';
+        err.style.display='block';
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Enviar Reserva';
+        return;
+      }
+      if(!document.getElementById('funcionario').value){
+        err.textContent='Selecione o funcionário.';
+        err.style.display='block';
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Enviar Reserva';
+        return;
+      }
 
       const fd = new FormData(form);
       fd.set('data_reserva', document.getElementById('data_reserva').value);
@@ -236,13 +365,15 @@ K0WE NATSI
 
         ok.innerHTML = `Reserva registrada. Uma notificação foi enviada para o WhatsApp para confirmação.`;
         ok.style.display = 'block';
+
         form.reset();
         document.getElementById('funcionario').innerHTML = '<option value="">Selecione a filial primeiro</option>';
         initDatas();
         preview.value = 0;
-        mask.updateValue(); // Limpa a máscara do campo celular
+        mask.updateValue();
       } catch(e){
-        err.textContent = `Erro: ${e.message}`; err.style.display='block';
+        err.textContent = `Erro: ${e.message}`;
+        err.style.display='block';
       } finally {
         btnEnviar.disabled = false;
         btnEnviar.textContent = 'Enviar Reserva';
@@ -250,7 +381,13 @@ K0WE NATSI
     });
 
     document.getElementById('btnLimpar').addEventListener('click', ()=>{
-      setTimeout(()=>{ initDatas(); preview.value=0; ok.style.display='none'; err.style.display='none'; mask.updateValue(); }, 0);
+      setTimeout(()=>{
+        initDatas();
+        preview.value=0;
+        ok.style.display='none';
+        err.style.display='none';
+        mask.updateValue();
+      }, 0);
     });
 
     // ======= Máscara de Celular =======
@@ -265,14 +402,7 @@ K0WE NATSI
 
     // Init
     initDatas();
+    carregarFuncionarios(); // carrega da planilha
   </script>
 </body>
-</html>
-
-
-      
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js" integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
-    <script>anchors.add();</script>
-  </body>
 </html>
