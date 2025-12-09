@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Ajustes visuais específicos desta página -->
   <style>
     :root { color-scheme: dark; }
 
@@ -20,7 +19,7 @@
       font-family: Arial, sans-serif;
     }
 
-    /* Topbar igual ao da reserva */
+    /* Topo: só botão voltar, sem ícone voando */
     .topbar {
       display: flex;
       align-items: center;
@@ -45,11 +44,6 @@
 
     .home-btn:hover {
       filter:brightness(1.1);
-    }
-
-    .top-logo {
-      height:44px;
-      margin-left:auto;
     }
 
     /* Card mais largo, centralizado */
@@ -131,13 +125,12 @@
   </style>
 </head>
 <body>
-  <!-- Topo igual ao reserva: botão Home + logo -->
+  <!-- Topo: igual ao reserva, mas sem ícone solto -->
   <div class="topbar">
     <a href="index.html" class="home-btn">
       <i class="fas fa-arrow-left"></i>
       <span>Voltar à Home</span>
     </a>
-    <img src="logo.png" alt="Logo HS" class="top-logo">
   </div>
 
   <div id="falta" class="section active">
@@ -191,18 +184,21 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
+  <!-- STUB da Dynamsoft para evitar erro em páginas sem leitor -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- seu JS geral -->
+  <!-- JS global do projeto, se precisar -->
   <script src="./script.js"></script>
 
-  <!-- Funcionários vindos da mesma aba FUNCIONÁRIOS + uso dos parâmetros da URL -->
+  <!-- Lógica da falta: funcionários + parâmetros de URL + envio via fetch -->
   <script>
+    const APP_WEB_URL =
+      'https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec';
+
     const FUNCIONARIOS_SHEET_URL =
       'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?gid=1390331275';
 
@@ -217,7 +213,7 @@
     let funcionariosPorFilial = {};
     let statusFuncionarios = 'carregando';
 
-    async function carregarFuncionariosFalta() {
+    async function carregarFuncionarios() {
       try {
         const resp = await fetch(FUNCIONARIOS_SHEET_URL);
         const texto = await resp.text();
@@ -252,9 +248,9 @@
 
         funcionariosPorFilial = mapa;
         statusFuncionarios = 'ok';
-        console.log('Funcionários (falta) carregados:', funcionariosPorFilial);
+        console.log('Funcionários carregados:', funcionariosPorFilial);
       } catch (e) {
-        console.error('Erro ao carregar funcionários para falta:', e);
+        console.error('Erro ao carregar funcionários:', e);
         funcionariosPorFilial = FALLBACK_MAP;
         statusFuncionarios = 'erro';
       }
@@ -278,7 +274,6 @@
         funcSel.appendChild(opt);
       });
 
-      // se veio funcionário pela URL, tenta selecionar
       if (funcionarioParam) {
         const existe = lista.includes(funcionarioParam);
         if (!existe && funcionarioParam.trim()) {
@@ -291,12 +286,19 @@
       }
     }
 
+    function atualizarVisibilidadeDiasAfastamento() {
+      const motivoSel = document.getElementById('motivo-falta');
+      const container = document.getElementById('dias-afastamento-container');
+      if (!motivoSel || !container) return;
+      container.style.display = motivoSel.value === 'ATESTADO MÉDICO' ? 'block' : 'none';
+    }
+
     function aplicarParametrosURL() {
       const params = new URLSearchParams(window.location.search);
 
       const filialParam      = params.get('filial');
       const funcionarioParam = params.get('funcionario');
-      const dataParam        = params.get('data_falta');
+      const dataParam        = params.get('data_falta'); // vem como 2025-12-10
       const motivoParam      = params.get('motivo');
       const obsParam         = params.get('observacao');
 
@@ -311,6 +313,7 @@
       }
 
       if (dataParam && dataInp) {
+        // já está em formato yyyy-mm-dd, serve direto pro input type=date
         dataInp.value = dataParam;
       }
 
@@ -320,25 +323,11 @@
       }
 
       if (obsParam && obsText) {
-        // decode + -> espaço
         obsText.value = decodeURIComponent(obsParam.replace(/\+/g, ' '));
       }
 
-      // preencher funcionários depois que mapa estiver carregado
       if (filialSel && funcSel) {
         preencherFuncionariosSelect(filialSel, funcSel, funcionarioParam);
-      }
-    }
-
-    function atualizarVisibilidadeDiasAfastamento() {
-      const motivoSel = document.getElementById('motivo-falta');
-      const container = document.getElementById('dias-afastamento-container');
-      if (!motivoSel || !container) return;
-
-      if (motivoSel.value === 'ATESTADO MÉDICO') {
-        container.style.display = 'block';
-      } else {
-        container.style.display = 'none';
       }
     }
 
@@ -346,16 +335,60 @@
       const filialSel = document.getElementById('filial-falta');
       const funcSel   = document.getElementById('funcionario-falta');
       const motivoSel = document.getElementById('motivo-falta');
+      const formFalta = document.getElementById('form-falta');
+      const diasContainer = document.getElementById('dias-afastamento-container');
+      const submitButtonFalta = formFalta.querySelector('button[type="submit"]');
 
       if (motivoSel) {
         motivoSel.addEventListener('change', atualizarVisibilidadeDiasAfastamento);
       }
 
       if (filialSel && funcSel) {
-        filialSel.addEventListener('change', () => preencherFuncionariosSelect(filialSel, funcSel));
+        filialSel.addEventListener('change', () =>
+          preencherFuncionariosSelect(filialSel, funcSel)
+        );
       }
 
-      carregarFuncionariosFalta().then(() => {
+      // Envio igual ao HTML “grandão”: preventDefault + fetch
+      formFalta.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitButtonFalta.disabled = true;
+
+        const dataInput = document.getElementById('data-falta');
+        const val = dataInput.value;
+        if (!val) {
+          alert("Informe a Data da Falta.");
+          submitButtonFalta.disabled = false;
+          return;
+        }
+
+        const formData = new FormData(formFalta);
+
+        // converte de yyyy-mm-dd para dd/mm/yyyy
+        const [yyyy, mm, dd] = val.split('-');
+        const dataFormatada = `${dd}/${mm}/${yyyy}`;
+        formData.set('data_falta', dataFormatada);
+
+        try {
+          const resp = await fetch(APP_WEB_URL, {
+            method: 'POST',
+            body: formData
+          });
+          const texto = await resp.text();
+          console.log('Resposta App Web:', texto);
+          alert("Falta cadastrada com sucesso!");
+          formFalta.reset();
+          diasContainer.style.display = 'none';
+        } catch (err) {
+          console.error(err);
+          alert("Erro ao registrar a falta. Tente novamente.");
+        } finally {
+          submitButtonFalta.disabled = false;
+        }
+      });
+
+      // Carrega funcionários da planilha e depois aplica parâmetros da URL
+      carregarFuncionarios().then(() => {
         aplicarParametrosURL();
       });
     });
