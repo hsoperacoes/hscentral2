@@ -23,7 +23,7 @@
 
     .form-container {
       width: 100%;
-      max-width: 760px;   /* largo igual reserva/falta */
+      max-width: 760px;   /* largura igual reserva/falta */
       margin: 0 auto;
     }
 
@@ -40,7 +40,7 @@
   </style>
 </head>
 <body>
-  <!-- Mesmo botão de voltar à Home dos outros HTMLs -->
+  <!-- Botão de voltar à Home igual ao das outras telas -->
   <a href="index.html" class="back-button show">
     <i class="fas fa-arrow-left"></i> Voltar à Home
   </a>
@@ -52,7 +52,7 @@
 
       <form id="form-folgas" method="POST"
             action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
-        <!-- FILIAL -->
+
         <div class="form-group">
           <label for="filial-folgas">Filial</label>
           <select id="filial-folgas" name="filial" required>
@@ -65,7 +65,6 @@
           </select>
         </div>
 
-        <!-- FUNCIONÁRIO (carregado da aba FUNCIONÁRIOS da planilha) -->
         <div class="form-group">
           <label for="funcionario-folgas">Funcionário</label>
           <select id="funcionario-folgas" name="funcionario" required>
@@ -73,13 +72,11 @@
           </select>
         </div>
 
-        <!-- DIA TRABALHADO -->
         <div class="form-group">
           <label for="dataTrabalho-folgas">Dia Trabalhado</label>
           <input type="date" id="dataTrabalho-folgas" name="dataTrabalho" required>
         </div>
 
-        <!-- MOTIVO -->
         <div class="form-group">
           <label for="motivo-folgas">Motivo da Folga</label>
           <select id="motivo-folgas" name="motivo" required>
@@ -90,7 +87,6 @@
           </select>
         </div>
 
-        <!-- MOTIVO OUTROS -->
         <div class="form-group" id="motivoOutros-folgas" style="display: none;">
           <label for="outrosMotivo-folgas">Especificar o Motivo</label>
           <input
@@ -100,7 +96,6 @@
             placeholder="Escreva o motivo">
         </div>
 
-        <!-- DATA DA FOLGA -->
         <div class="form-group">
           <label for="dataFolga-folgas">Data da Folga</label>
           <input type="date" id="dataFolga-folgas" name="dataFolga" required>
@@ -120,10 +115,6 @@
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- Lógica específica da página de FOLGAS:
-       1) Buscar funcionários na aba FUNCIONÁRIOS da planilha
-       2) Aplicar as regras de motivo / datas
-       3) Enviar formulário via fetch (igual versão funcional) -->
   <script>
     (function () {
       const SHEET_ID   = "1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4";
@@ -139,39 +130,47 @@
       const outrosMotivoInp = document.getElementById('outrosMotivo-folgas');
       const formFolgas      = document.getElementById('form-folgas');
 
-      // Mapa em memória: { ARTUR: [nomes], FLORIANO: [...], ... }
       let funcionariosPorFilial = {};
 
-      // --- 1. Carregar funcionários direto da aba FUNCIONÁRIOS ---
+      // ---------- 1. Carregar funcionários da aba FUNCIONÁRIOS ----------
       async function carregarFuncionariosDaPlanilha() {
         try {
           funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
 
-          const res = await fetch(GVIZ_URL);
+          const res   = await fetch(GVIZ_URL);
           const texto = await res.text();
 
-          // Remove o wrapper "google.visualization.Query.setResponse(...)"
+          // remove o wrapper google.visualization.Query.setResponse(...)
           const jsonStr = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
           const dados   = JSON.parse(jsonStr);
 
-          const cols = dados.table.cols.map(c => c.label); // cabeçalhos
-          const rows = dados.table.rows;                   // linhas com nomes
+          const rows = dados.table.rows || [];
+          if (!rows.length) {
+            throw new Error("Sem linhas na aba FUNCIONÁRIOS.");
+          }
+
+          // primeira linha = cabeçalho (nomes das filiais)
+          const headerCells = rows[0].c;
+          const headers = headerCells.map(c =>
+            c && c.v ? String(c.v).trim() : ""
+          );
 
           const mapaBruto = {};
-          cols.forEach((col, idx) => {
-            if (col) mapaBruto[col] = [];
+          headers.forEach(h => {
+            if (h) mapaBruto[h] = [];
           });
 
-          rows.forEach(r => {
+          // demais linhas = nomes dos funcionários
+          rows.slice(1).forEach(r => {
             r.c.forEach((cell, idx) => {
-              const header = cols[idx];
+              const header = headers[idx];
               if (!header) return;
               const valor = cell && cell.v ? String(cell.v).trim() : "";
               if (valor) mapaBruto[header].push(valor);
             });
           });
 
-          // Mapear os títulos da planilha para os códigos que você usa no sistema
+          // mapeia nomes da planilha para códigos das filiais
           const ALIAS = {
             "ARTUR MALHAS": "ARTUR",
             "FLORIANO JEANS E ACESSÓRIOS": "FLORIANO",
@@ -181,13 +180,11 @@
           };
 
           funcionariosPorFilial = {};
-
           Object.keys(mapaBruto).forEach(header => {
-            const chave = ALIAS[header] || header;
+            const chave = ALIAS[header] || header; // se título já for ARTUR, usa direto
             funcionariosPorFilial[chave] = mapaBruto[header];
           });
 
-          // Se já tiver uma filial selecionada, preenche
           atualizarFuncionariosFolgas();
         } catch (err) {
           console.error("Erro ao carregar funcionários:", err);
@@ -211,7 +208,7 @@
         }
       }
 
-      // --- 2. Regras de motivo / datas ---
+      // ---------- 2. Regras de motivo / datas ----------
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -237,7 +234,7 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      // --- 3. Envio do formulário (igual versão antiga funcional) ---
+      // ---------- 3. Envio do formulário (igual versão funcional antiga) ----------
       function configurarEnvio() {
         if (!formFolgas) return;
 
@@ -262,7 +259,7 @@
         });
       }
 
-      // --- Listeners básicos ---
+      // listeners básicos
       if (filialSel) {
         filialSel.addEventListener('change', atualizarFuncionariosFolgas);
       }
@@ -273,11 +270,9 @@
         motivoSel.addEventListener('change', verificarMotivo);
       }
 
-      // INIT
-      document.addEventListener("DOMContentLoaded", () => {
-        carregarFuncionariosDaPlanilha();
-        configurarEnvio();
-      });
+      // inicialização
+      carregarFuncionariosDaPlanilha();
+      configurarEnvio();
     })();
   </script>
 </body>
