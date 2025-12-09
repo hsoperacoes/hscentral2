@@ -23,7 +23,7 @@
 
     .form-container {
       width: 100%;
-      max-width: 760px;   /* mais largo, igual reserva/falta */
+      max-width: 760px;   /* largo igual reserva/falta */
       margin: 0 auto;
     }
 
@@ -37,28 +37,13 @@
       text-align: center;
       margin-bottom: 24px;
     }
-
-    .back-button {
-      position: fixed;
-      top: 24px;
-      left: 24px;
-      z-index: 1000;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-    }
   </style>
 </head>
 <body>
-  <!-- Botão padrão de voltar à Home (igual aos outros) -->
-  <button class="back-button" onclick="window.location.href='index.html'">
+  <!-- Mesmo botão de voltar à Home dos outros HTMLs -->
+  <a href="index.html" class="back-button show">
     <i class="fas fa-arrow-left"></i> Voltar à Home
-  </button>
+  </a>
 
   <div id="folgas" class="section active">
     <div class="form-container">
@@ -80,7 +65,7 @@
           </select>
         </div>
 
-        <!-- FUNCIONÁRIO (carregado da aba FUNCIONÁRIOS via script.js) -->
+        <!-- FUNCIONÁRIO (carregado da aba FUNCIONÁRIOS da planilha) -->
         <div class="form-group">
           <label for="funcionario-folgas">Funcionário</label>
           <select id="funcionario-folgas" name="funcionario" required>
@@ -128,40 +113,96 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft (caso script.js mexa nela) -->
+  <!-- STUB da Dynamsoft (só pra garantir se style.js um dia usar) -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- IMPORTANTE: caminho ABSOLUTO para garantir que o script.js seja achado,
-       mesmo se o folgas.html estiver em subpasta -->
-  <script src="/hscentral2/script.js"></script>
-
-  <!-- Lógica específica da página de FOLGAS -->
+  <!-- Lógica específica da página de FOLGAS:
+       1) Buscar funcionários na aba FUNCIONÁRIOS da planilha
+       2) Aplicar as regras de motivo / datas
+       3) Enviar formulário via fetch (igual versão funcional) -->
   <script>
     (function () {
-      const filialSel        = document.getElementById('filial-folgas');
-      const funcSel          = document.getElementById('funcionario-folgas');
-      const motivoSel        = document.getElementById('motivo-folgas');
-      const dataTrabInp      = document.getElementById('dataTrabalho-folgas');
-      const dataFolgaInp     = document.getElementById('dataFolga-folgas');
-      const motivoOutrosDiv  = document.getElementById('motivoOutros-folgas');
-      const outrosMotivoInp  = document.getElementById('outrosMotivo-folgas');
-      const formFolgas       = document.getElementById('form-folgas');
+      const SHEET_ID   = "1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4";
+      const SHEET_NAME = "FUNCIONÁRIOS";
+      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-      // ---------- CARREGAR FUNCIONÁRIOS ----------
+      const filialSel       = document.getElementById('filial-folgas');
+      const funcSel         = document.getElementById('funcionario-folgas');
+      const motivoSel       = document.getElementById('motivo-folgas');
+      const dataTrabInp     = document.getElementById('dataTrabalho-folgas');
+      const dataFolgaInp    = document.getElementById('dataFolga-folgas');
+      const motivoOutrosDiv = document.getElementById('motivoOutros-folgas');
+      const outrosMotivoInp = document.getElementById('outrosMotivo-folgas');
+      const formFolgas      = document.getElementById('form-folgas');
+
+      // Mapa em memória: { ARTUR: [nomes], FLORIANO: [...], ... }
+      let funcionariosPorFilial = {};
+
+      // --- 1. Carregar funcionários direto da aba FUNCIONÁRIOS ---
+      async function carregarFuncionariosDaPlanilha() {
+        try {
+          funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
+
+          const res = await fetch(GVIZ_URL);
+          const texto = await res.text();
+
+          // Remove o wrapper "google.visualization.Query.setResponse(...)"
+          const jsonStr = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
+          const dados   = JSON.parse(jsonStr);
+
+          const cols = dados.table.cols.map(c => c.label); // cabeçalhos
+          const rows = dados.table.rows;                   // linhas com nomes
+
+          const mapaBruto = {};
+          cols.forEach((col, idx) => {
+            if (col) mapaBruto[col] = [];
+          });
+
+          rows.forEach(r => {
+            r.c.forEach((cell, idx) => {
+              const header = cols[idx];
+              if (!header) return;
+              const valor = cell && cell.v ? String(cell.v).trim() : "";
+              if (valor) mapaBruto[header].push(valor);
+            });
+          });
+
+          // Mapear os títulos da planilha para os códigos que você usa no sistema
+          const ALIAS = {
+            "ARTUR MALHAS": "ARTUR",
+            "FLORIANO JEANS E ACESSÓRIOS": "FLORIANO",
+            "JOTA MALHAS": "JOTA",
+            "MODA JEANS E ACESSÓRIOS": "MODA",
+            "PONTO DA MALHA": "PONTO"
+          };
+
+          funcionariosPorFilial = {};
+
+          Object.keys(mapaBruto).forEach(header => {
+            const chave = ALIAS[header] || header;
+            funcionariosPorFilial[chave] = mapaBruto[header];
+          });
+
+          // Se já tiver uma filial selecionada, preenche
+          atualizarFuncionariosFolgas();
+        } catch (err) {
+          console.error("Erro ao carregar funcionários:", err);
+          funcSel.innerHTML = '<option value="">Erro ao carregar funcionários</option>';
+        }
+      }
+
       function atualizarFuncionariosFolgas() {
         if (!filialSel || !funcSel) return;
 
-        const mapa   = (window.funcionariosPorFilial || {});
-        const filial = (filialSel.value || '').trim();
-
+        const filial = (filialSel.value || "").trim();
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
-        if (mapa[filial] && Array.isArray(mapa[filial])) {
-          mapa[filial].forEach(function (nome) {
+        if (funcionariosPorFilial[filial] && Array.isArray(funcionariosPorFilial[filial])) {
+          funcionariosPorFilial[filial].forEach(nome => {
             const opt = document.createElement('option');
             opt.value = nome;
             opt.textContent = nome;
@@ -170,32 +211,7 @@
         }
       }
 
-      async function inicializarFuncionarios() {
-        try {
-          if (!funcSel) return;
-          funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
-
-          // Usa a mesma função da reserva, se existir
-          if (typeof window.carregarFuncionarios === 'function') {
-            await window.carregarFuncionarios();
-          }
-
-          if (filialSel) {
-            filialSel.addEventListener('change', atualizarFuncionariosFolgas);
-
-            if (filialSel.value) {
-              atualizarFuncionariosFolgas();
-            } else {
-              funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
-            }
-          }
-        } catch (err) {
-          console.error('Erro ao carregar funcionários:', err);
-          funcSel.innerHTML = '<option value="">Erro ao carregar funcionários</option>';
-        }
-      }
-
-      // ---------- REGRAS DE MOTIVO / DATAS ----------
+      // --- 2. Regras de motivo / datas ---
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -221,16 +237,11 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      if (dataTrabInp && motivoSel) {
-        dataTrabInp.addEventListener('change', function () {
-          if (motivoSel.value !== '') verificarMotivo();
-        });
-        motivoSel.addEventListener('change', verificarMotivo);
-      }
+      // --- 3. Envio do formulário (igual versão antiga funcional) ---
+      function configurarEnvio() {
+        if (!formFolgas) return;
 
-      // ---------- ENVIO DO FORMULÁRIO (igual versão funcional) ----------
-      if (formFolgas) {
-        formFolgas.addEventListener('submit', function (event) {
+        formFolgas.addEventListener("submit", function (event) {
           event.preventDefault();
           const formData = new FormData(formFolgas);
 
@@ -251,9 +262,22 @@
         });
       }
 
-      // Inicializa funcionários
-      document.addEventListener('DOMContentLoaded', inicializarFuncionarios);
-      inicializarFuncionarios();
+      // --- Listeners básicos ---
+      if (filialSel) {
+        filialSel.addEventListener('change', atualizarFuncionariosFolgas);
+      }
+      if (dataTrabInp && motivoSel) {
+        dataTrabInp.addEventListener('change', () => {
+          if (motivoSel.value !== "") verificarMotivo();
+        });
+        motivoSel.addEventListener('change', verificarMotivo);
+      }
+
+      // INIT
+      document.addEventListener("DOMContentLoaded", () => {
+        carregarFuncionariosDaPlanilha();
+        configurarEnvio();
+      });
     })();
   </script>
 </body>
