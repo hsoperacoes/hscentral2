@@ -4,15 +4,148 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cadastro de Falta - GERENCIAL HS</title>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Ajustes visuais específicos desta página -->
+  <style>
+    :root { color-scheme: dark; }
+
+    body {
+      background: #0e0e0f;
+      color: #fff;
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Topbar igual ao da reserva */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 auto 14px;
+      max-width: 760px;
+    }
+
+    .home-btn {
+      background:#2f3542;
+      color:#fff;
+      border:0;
+      border-radius:10px;
+      padding:10px 14px;
+      cursor:pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .home-btn:hover {
+      filter:brightness(1.1);
+    }
+
+    .top-logo {
+      height:44px;
+      margin-left:auto;
+    }
+
+    /* Card mais largo, centralizado */
+    .section.active {
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 720px; /* esticado para os lados */
+      margin: 0 auto;
+      background:#1b1b1d;
+      border:1px solid #2b2b2e;
+      border-radius:12px;
+      padding:28px;
+      box-shadow: 0 0 24px rgba(0,0,0,.25 );
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .form-container .logo {
+      display:block;
+      margin: 0 auto 12px;
+      max-height: 60px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display:block;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .form-group select,
+    .form-group input,
+    .form-group textarea {
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid #3a3a40;
+      background:#242427;
+      color:#fff;
+      font-size:14px;
+    }
+
+    button[type="submit"] {
+      width:100%;
+      padding:12px 16px;
+      border:0;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+      background:#6d4aff;
+      color:#fff;
+      margin-top:8px;
+    }
+
+    button[type="submit"]:hover {
+      filter:brightness(1.05);
+    }
+
+    footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: #9aa0a6;
+    }
+
+    .required-star {
+      color: #ff6b6b;
+    }
+  </style>
 </head>
 <body>
-  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <!-- Topo igual ao reserva: botão Home + logo -->
+  <div class="topbar">
+    <a href="index.html" class="home-btn">
+      <i class="fas fa-arrow-left"></i>
+      <span>Voltar à Home</span>
+    </a>
+    <img src="logo.png" alt="Logo HS" class="top-logo">
+  </div>
+
   <div id="falta" class="section active">
     <div class="form-container">
+      <!-- Logo também dentro do card (se quiser só em cima, pode remover essa linha) -->
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Falta</h2>
+
       <form id="form-falta">
         <div class="form-group">
           <label for="filial-falta">Filial <span class="required-star">*</span></label>
@@ -29,7 +162,7 @@
         <div class="form-group">
           <label for="funcionario-falta">Funcionário <span class="required-star">*</span></label>
           <select id="funcionario-falta" name="funcionario" required>
-            <option value="">Selecione um funcionário</option>
+            <option value="">Carregando funcionários...</option>
           </select>
         </div>
 
@@ -56,6 +189,7 @@
       </form>
     </div>
   </div>
+
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
   <!-- STUB da Dynamsoft para evitar ReferenceError nas páginas sem o leitor -->
@@ -66,55 +200,107 @@
     Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
   </script>
 
-  <!-- seu JS com o mapa funcionariosPorFilial -->
+  <!-- seu JS geral (caso tenha lógicas de falta/motivo/datas lá) -->
   <script src="./script.js"></script>
 
-  <!-- Ponte defensiva: usa seu mapa se existir; senão, fallback idêntico ao seu -->
+  <!-- Funcionários vindos da mesma aba FUNCIONÁRIOS da planilha -->
   <script>
-    (function () {
-      // Fallback local (igual ao que você colou no script.js)
-      const FALLBACK_MAP = {
-        "ARTUR": ["LUCILENE","POLIANA","TAINARA"],
-        "FLORIANO": ["IOLANDA","MEIRE","SARA","GABRYELLA"],
-        "JOTA": ["BRUNO","CARINA","DENISE","FABIOLA","INGRID","MARCOS","RAYSSA","VERA"],
-        "MODA": ["ANA CLARA","DAIANE","JOANA","MARCIA","MARIA"],
-        "PONTO": ["DANIELA","EVANEUZA","ISADORA","PAULA","PRISCILA","SÔNIA","SUELI"]
-      };
+    // URL pública da aba FUNCIONÁRIOS (mesma usada no reserva.html)
+    const FUNCIONARIOS_SHEET_URL =
+      'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?gid=1390331275';
 
+    // Fallback caso não consiga ler a planilha (igual ao que você já usava)
+    const FALLBACK_MAP = {
+      "ARTUR": ["LUCILENE","POLIANA","TAINARA"],
+      "FLORIANO": ["IOLANDA","MEIRE","SARA","GABRYELLA"],
+      "JOTA": ["BRUNO","CARINA","DENISE","FABIOLA","INGRID","MARCOS","RAYSSA","VERA"],
+      "MODA": ["ANA CLARA","DAIANE","JOANA","MARCIA","MARIA"],
+      "PONTO": ["DANIELA","EVANEUZA","ISADORA","PAULA","PRISCILA","SÔNIA","SUELI"]
+    };
+
+    let funcionariosPorFilial = {};
+    let statusFuncionarios = 'carregando'; // 'carregando' | 'ok' | 'erro'
+
+    async function carregarFuncionariosFalta() {
+      try {
+        const resp = await fetch(FUNCIONARIOS_SHEET_URL);
+        const texto = await resp.text();
+
+        const matchJson = texto.match(/\{.*\}/s);
+        if (!matchJson) throw new Error('Resposta da planilha em formato inesperado.');
+
+        const json = JSON.parse(matchJson[0]);
+        const rows = json.table.rows || [];
+        if (!rows.length) throw new Error('Nenhuma linha encontrada na aba FUNCIONÁRIOS.');
+
+        const headerRow = rows[0];
+        const mapa = {};
+
+        headerRow.c.forEach((cell, colIdx) => {
+          const headerVal = cell && cell.v ? String(cell.v).trim() : '';
+          if (!headerVal) return;
+
+          const chave = headerVal.split(' ')[0].toUpperCase(); // "ARTUR MALHAS" -> "ARTUR"
+
+          const nomes = [];
+          for (let r = 1; r < rows.length; r++) {
+            const linha = rows[r];
+            if (!linha || !linha.c) continue;
+            const c = linha.c[colIdx];
+            const val = c && c.v ? String(c.v).trim() : '';
+            if (val) nomes.push(val);
+          }
+
+          mapa[chave] = nomes;
+        });
+
+        funcionariosPorFilial = mapa;
+        statusFuncionarios = 'ok';
+        console.log('Funcionários (falta) carregados:', funcionariosPorFilial);
+      } catch (e) {
+        console.error('Erro ao carregar funcionários para falta:', e);
+        funcionariosPorFilial = FALLBACK_MAP;
+        statusFuncionarios = 'erro';
+      }
+    }
+
+    function preencherFuncionariosSelect(filialSel, funcSel) {
+      if (!filialSel || !funcSel) return;
+
+      const filial = (filialSel.value || '').trim().toUpperCase();
+      funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
+
+      const mapa = funcionariosPorFilial && Object.keys(funcionariosPorFilial).length
+        ? funcionariosPorFilial
+        : FALLBACK_MAP;
+
+      const lista = mapa[filial] || [];
+      lista.forEach(nome => {
+        const opt = document.createElement('option');
+        opt.value = nome;
+        opt.textContent = nome;
+        funcSel.appendChild(opt);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
       const filialSel = document.getElementById('filial-falta');
       const funcSel   = document.getElementById('funcionario-falta');
 
-      function getMapa() {
-        try {
-          if (window.funcionariosPorFilial && typeof window.funcionariosPorFilial === 'object') {
-            return window.funcionariosPorFilial;
-          }
-        } catch (_) {}
-        return FALLBACK_MAP;
-      }
-
-      function atualizarFuncionariosFalta() {
-        if (!filialSel || !funcSel) return;
-        const mapa   = getMapa();
-        const filial = (filialSel.value || '').trim();
-
-        funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
-
-        if (mapa[filial] && Array.isArray(mapa[filial])) {
-          mapa[filial].forEach(function (nome) {
-            const opt = document.createElement('option');
-            opt.value = nome;
-            opt.textContent = nome;
-            funcSel.appendChild(opt);
-          });
-        }
-      }
-
       // liga mudança
-      filialSel && filialSel.addEventListener('change', atualizarFuncionariosFalta);
-      // se já houver valor, popula
-      if (filialSel && filialSel.value) atualizarFuncionariosFalta();
-    })();
+      if (filialSel && funcSel) {
+        filialSel.addEventListener('change', () => preencherFuncionariosSelect(filialSel, funcSel));
+      }
+
+      // carrega dados da planilha e, se já tiver filial selecionada, preenche
+      carregarFuncionariosFalta().then(() => {
+        if (filialSel && filialSel.value) {
+          preencherFuncionariosSelect(filialSel, funcSel);
+        } else if (funcSel) {
+          funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
+        }
+      });
+    });
   </script>
 </body>
 </html>
