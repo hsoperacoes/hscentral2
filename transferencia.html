@@ -404,6 +404,14 @@
       }, 0);
     });
 
+    // NOVA FUNÇÃO – limpar tudo após envio com sucesso
+    function limparFormularioTrans() {
+      const form = document.getElementById('transfer-form');
+      form.reset();
+      document.getElementById('email-trans').value = '';
+      document.getElementById('total-itens-trans').textContent = '0';
+    }
+
     function enviarFormularioTrans() {
       const form = document.getElementById('transfer-form');
 
@@ -439,6 +447,8 @@
         if (json && json.numeroTransferencia) {
           mostrarMensagemSucessoTrans();
           exibirNumeroTransferencia(json.numeroTransferencia);
+          // limpa o formulário logo após o sucesso
+          limparFormularioTrans();
         } else {
           mostrarMensagemErroTrans("Erro ao enviar: Resposta inválida do servidor.");
         }
