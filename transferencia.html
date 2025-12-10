@@ -65,7 +65,8 @@
     }
 
     input,
-    select {
+    select,
+    textarea {
       width: 100%;
       padding: 10px 12px;
       border-radius: 4px;
@@ -76,10 +77,16 @@
     }
 
     input:focus,
-    select:focus {
+    select:focus,
+    textarea:focus {
       outline: none;
       border-color: #7c3aed;
       box-shadow: 0 0 0 1px rgba(124,58,237,0.6);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
     }
 
     .submit-buttons {
@@ -127,6 +134,19 @@
     .count-number {
       font-weight: 700;
       color: #facc15;
+    }
+
+    .lista-codigos-wrapper {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .lista-codigos-wrapper ul {
+      margin: 4px 0 0;
+      padding-left: 18px;
+      max-height: 120px;
+      overflow-y: auto;
     }
 
     .loading-overlay {
@@ -253,15 +273,21 @@
           </div>
           <input
             type="text"
-            name="codigoBarras"
             id="codigo-barras-trans"
-            placeholder="Leia ou digite o código de barras"
-            required
+            placeholder="Leia ou digite o código de barras e pressione Enter"
           >
         </div>
 
+        <!-- Campo oculto que vai com TODOS os códigos para o Apps Script -->
+        <textarea id="lista-codigos-trans" name="mercadorias" style="display:none;"></textarea>
+
         <div id="barcode-count-trans" class="barcode-count">
           Total de itens: <span id="total-itens-trans" class="count-number">0</span>
+        </div>
+
+        <div class="lista-codigos-wrapper" id="lista-codigos-wrapper" style="display:none;">
+          Últimos códigos lidos:
+          <ul id="lista-codigos-visual"></ul>
         </div>
 
         <div id="success-message-trans" style="display: none;">
@@ -294,15 +320,17 @@
   <script>
     const APPWEB_URL = "https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec";
 
-    // Mapeamento de Filial para Email (ajuste quando tiver os definitivos)
+    // 🔴 IMPORTANTE:
+    // COLE AQUI O MESMO MAPEAMENTO DE EMAILS QUE ESTÁ NO SEU INDEX "ENORME"
+    // (mantive exemplos só pra estrutura)
     const filialEmails = {
-      "ARTUR": "artur@exemplo.com",
+      "ARTUR":    "artur@exemplo.com",
       "FLORIANO": "floriano@exemplo.com",
-      "JOTA": "jota@exemplo.com",
-      "MODA": "moda@exemplo.com",
-      "PONTO": "ponto@exemplo.com",
-      "JA": "ja@exemplo.com",
-      "JE": "je@exemplo.com"
+      "JOTA":     "jota@exemplo.com",
+      "MODA":     "moda@exemplo.com",
+      "PONTO":    "ponto@exemplo.com",
+      "JA":       "ja@exemplo.com",
+      "JE":       "je@exemplo.com"
     };
 
     function atualizarEmailTrans() {
@@ -311,7 +339,57 @@
       emailInput.value = filialEmails[filialOrigem] || '';
     }
 
-    // Envio (mesma lógica base que você já usava / index grandão)
+    // Array para armazenar TODOS os códigos lidos
+    let codigosTrans = [];
+
+    function atualizarListaCodigosVisual() {
+      const wrapper = document.getElementById('lista-codigos-wrapper');
+      const ul = document.getElementById('lista-codigos-visual');
+      ul.innerHTML = '';
+
+      if (codigosTrans.length === 0) {
+        wrapper.style.display = 'none';
+        return;
+      }
+
+      wrapper.style.display = 'block';
+
+      // Mostra todos ou, se quiser, só os últimos N
+      codigosTrans.forEach(cod => {
+        const li = document.createElement('li');
+        li.textContent = cod;
+        ul.appendChild(li);
+      });
+    }
+
+    // Lógica para contagem de itens + armazenar na lista oculta
+    document.getElementById('codigo-barras-trans').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const barcodeInput = e.target;
+        const barcode = barcodeInput.value.trim();
+        
+        if (barcode) {
+          // guarda no array
+          codigosTrans.push(barcode);
+
+          // atualiza contador
+          const totalItensSpan = document.getElementById('total-itens-trans');
+          totalItensSpan.textContent = String(codigosTrans.length);
+
+          // atualiza campo oculto que vai pro Apps Script
+          document.getElementById('lista-codigos-trans').value = codigosTrans.join('\n');
+
+          // atualiza listinha visual
+          atualizarListaCodigosVisual();
+
+          // limpa o campo para o próximo scan
+          barcodeInput.value = '';
+        }
+      }
+    });
+
+    // Envio (agora aceitando qualquer texto de resposta — igual padrão do seu index)
     document.getElementById('transfer-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -327,6 +405,13 @@
       errorMessage.textContent = '';
       document.getElementById('numero-transferencia').style.display = 'none';
 
+      // se não tiver nenhum código, barra o envio
+      if (codigosTrans.length === 0) {
+        errorMessage.textContent = 'Inclua pelo menos um código de barras antes de enviar.';
+        errorMessage.style.display = 'block';
+        return;
+      }
+
       loadingOverlay.style.display = 'flex';
       submitButton.disabled = true;
 
@@ -338,23 +423,26 @@
         if (!response.ok) {
           throw new Error('Erro de rede ou servidor: ' + response.statusText);
         }
-        return response.json();
+        return response.text(); // não exige JSON
       })
-      .then(data => {
+      .then(texto => {
+        // aqui pouco importa o conteúdo; se chegou 200, consideramos sucesso
         loadingOverlay.style.display = 'none';
         submitButton.disabled = false;
 
-        if (data.status === 'success') {
-          successMessage.style.display = 'block';
-          document.getElementById('transfer-id').textContent = data.transferId || 'N/A';
-          document.getElementById('numero-transferencia').style.display = 'block';
-          form.reset();
-          document.getElementById('total-itens-trans').textContent = '0';
-          document.getElementById('email-trans').value = '';
-        } else {
-          errorMessage.textContent = 'Erro ao enviar: ' + (data.message || 'Resposta inesperada do servidor.');
-          errorMessage.style.display = 'block';
-        }
+        successMessage.style.display = 'block';
+
+        // se o Apps Script devolver algum ID numérico simples, você pode parsear aqui
+        // por enquanto deixo um "N/A"
+        document.getElementById('transfer-id').textContent = 'N/A';
+        document.getElementById('numero-transferencia').style.display = 'block';
+
+        form.reset();
+        codigosTrans = [];
+        document.getElementById('lista-codigos-trans').value = '';
+        document.getElementById('total-itens-trans').textContent = '0';
+        atualizarListaCodigosVisual();
+        document.getElementById('email-trans').value = '';
       })
       .catch(error => {
         loadingOverlay.style.display = 'none';
@@ -364,20 +452,13 @@
       });
     });
 
-    // Contagem simples de itens pelo Enter no campo de código de barras
-    document.getElementById('codigo-barras-trans').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const barcodeInput = e.target;
-        const barcode = barcodeInput.value.trim();
-        
-        if (barcode) {
-          const totalItensSpan = document.getElementById('total-itens-trans');
-          let totalItens = parseInt(totalItensSpan.textContent, 10) || 0;
-          totalItensSpan.textContent = totalItens + 1;
-          barcodeInput.value = '';
-        }
-      }
+    // Quando limpar o formulário pelo botão "reset", zera também a lista
+    document.getElementById('transfer-form').addEventListener('reset', function() {
+      codigosTrans = [];
+      document.getElementById('lista-codigos-trans').value = '';
+      document.getElementById('total-itens-trans').textContent = '0';
+      atualizarListaCodigosVisual();
+      document.getElementById('email-trans').value = '';
     });
   </script>
 </body>
