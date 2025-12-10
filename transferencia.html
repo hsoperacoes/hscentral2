@@ -348,10 +348,10 @@
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
   <script>
-    // MESMA URL DO APP WEB QUE JÁ ESTÁ FUNCIONANDO
+    // MESMA URL DO APP WEB
     const APPWEB_URL = "https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec";
 
-    // LISTA DE E-MAILS QUE VOCÊ MANDOU
+    // LISTA CERTA DE E-MAILS
     const emailsDestinoPorFilial = {
       ARTUR: "heringarturmachado@gmail.com",
       FLORIANO: "hs.uberlandia.floriano@gmail.com",
@@ -370,7 +370,7 @@
       // Preenche email
       emailInput.value = emailsDestinoPorFilial[filialOrigem] || "";
 
-      // Impede escolher mesma filial como destino
+      // Impede escolher a mesma filial como destino
       Array.from(filialDestinoSelect.options).forEach(opt => {
         if (!opt.value) return;
         opt.disabled = opt.value === filialOrigem;
@@ -394,6 +394,7 @@
       enviarFormularioTrans();
     });
 
+    // Reset manual via botão "Limpar formulário"
     document.getElementById('transfer-form').addEventListener('reset', function () {
       setTimeout(() => {
         document.getElementById('total-itens-trans').textContent = '0';
@@ -404,10 +405,11 @@
       }, 0);
     });
 
-    // NOVA FUNÇÃO – limpar tudo após envio com sucesso
-    function limparFormularioTrans() {
-      const form = document.getElementById('transfer-form');
-      form.reset();
+    // Limpa só os campos, sem esconder mensagens/numero
+    function limparCamposTrans() {
+      document.getElementById('filial-origem').value = '';
+      document.getElementById('filial-destino').value = '';
+      document.getElementById('mercadorias-trans').value = '';
       document.getElementById('email-trans').value = '';
       document.getElementById('total-itens-trans').textContent = '0';
     }
@@ -447,8 +449,8 @@
         if (json && json.numeroTransferencia) {
           mostrarMensagemSucessoTrans();
           exibirNumeroTransferencia(json.numeroTransferencia);
-          // limpa o formulário logo após o sucesso
-          limparFormularioTrans();
+          // aqui só limpa os campos, NÃO esconde o número / mensagem
+          limparCamposTrans();
         } else {
           mostrarMensagemErroTrans("Erro ao enviar: Resposta inválida do servidor.");
         }
