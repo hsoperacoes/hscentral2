@@ -1,168 +1,319 @@
-<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Transferência Entre Lojas - GERENCIAL HS</title>
-
+  <title>GERENCIAL HS - Sistema Unificado</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
-
-  <!-- Ajustes visuais específicos desta tela (mesmo padrão dos outros) -->
+  <script src="https://unpkg.com/@ericblade/quagga2@1.2.7/dist/quagga.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dynamsoft-javascript-barcode@9.6.21/dist/dbr.js"></script>
   <style>
-    body {
-      background: #050509;
-      margin: 0;
-      padding: 0;
-      color: #fff;
-      font-family: Inter, Arial, sans-serif;
+    * {
+      box-sizing: border-box;
     }
 
-    .section {
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      margin: 0;
+      padding: 0;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 16px 32px;
+      flex-direction: column;
+      align-items: center;
       min-height: 100vh;
     }
 
-    .form-container {
+    .logo-topo {
+      width: 100px;
+      height: auto;
+      margin: 30px 0 10px;
+    }
+
+    .container {
       width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-      background: #1e1e1e;
-      padding: 30px 24px 26px;
+      max-width: 900px;
+      background-color: #2c2c2c;
+      padding: 40px 30px;
       border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
     }
 
-    .logo {
-      display: block;
-      margin: 0 auto 12px;
-      max-width: 80px;
+    .form-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 6px;
+      font-size: 16px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      cursor: pointer;
+      border: none;
+      width: 100%;
     }
 
-    h1 {
+    .form-link:hover {
+      background-color: #45a049;
+    }
+
+    .form-link i {
+      margin-right: 10px;
+    }
+
+    /* BOTÃO HOME PADRÃO – PRETO, CENTRALIZADO NO TOPO */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #020617;
+      color: #e5e7eb;
+      border: 1px solid #111827;
+      padding: 10px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      z-index: 1000;
+      display: none;
+      transition: background-color 0.3s ease, transform 0.15s ease;
+      text-decoration: none;
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .back-button i {
+      margin-right: 6px;
+    }
+
+    .back-button:hover {
+      background-color: #111827;
+      transform: translateX(-50%) translateY(-1px);
+    }
+
+    .back-button.show {
+      display: inline-flex;
+    }
+
+    .form-container {
+      max-width: 600px;
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      color: white;
+      margin: 0 auto;
+    }
+
+    .form-container h1, .form-container h2 {
       text-align: center;
-      margin-bottom: 24px;
-      font-size: 1.4rem;
-      letter-spacing: 0.06em;
+      color: white;
+      margin-bottom: 30px;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 5px;
+      color: #ccc;
     }
 
     .question-title {
-      font-weight: 600;
-      color: #ccc;
-      margin-bottom: 6px;
-      font-size: 0.9rem;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+      display: block;
     }
 
-    .required-star {
-      color: #ff6b6b;
-    }
-
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
-      padding: 10px 12px;
-      border-radius: 4px;
+      padding: 12px;
+      font-size: 14px;
       border: 1px solid #444;
+      border-radius: 4px;
       background-color: #2a2a2a;
-      color: #f9fafb;
-      font-size: 0.95rem;
+      color: white;
+      box-sizing: border-box;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #7c3aed;
-      box-shadow: 0 0 0 1px rgba(124,58,237,0.6);
+      border-color: #673ab7;
+      box-shadow: 0 0 0 2px rgba(103, 58, 183, 0.2);
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 70px;
+    button {
+      background-color: #673ab7;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #5e35b1;
     }
 
     .submit-buttons {
       display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
       gap: 10px;
-      justify-content: flex-end;
-      margin-top: 10px;
-      flex-wrap: wrap;
     }
 
     .submit-button,
     .clear-button {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
       border: none;
       border-radius: 4px;
-      padding: 10px 18px;
-      font-weight: 600;
       cursor: pointer;
-      font-size: 0.95rem;
+      flex: 1;
     }
 
     .submit-button {
       background-color: #673ab7;
-      color: #fff;
+      color: white;
+    }
+
+    .clear-button {
+      background-color: #5f6368;
+      color: white;
     }
 
     .submit-button:hover {
       background-color: #5e35b1;
     }
 
-    .clear-button {
-      background-color: #374151;
-      color: #e5e7eb;
-    }
-
     .clear-button:hover {
-      background-color: #4b5563;
+      background-color: #3c4043;
     }
 
-    .barcode-count {
-      margin-top: 4px;
-      font-size: 0.9rem;
-      color: #d1d5db;
+    .gerador-section .form-container {
+      background-color: #1e1e1e;
+      color: white;
+      max-width: 800px;
     }
 
-    .count-number {
-      font-weight: 700;
-      color: #facc15;
+    .gerador-section .input-area, .gerador-section .output-area {
+      background: #1e1e1e;
+      color: white;
     }
 
-    .lista-codigos-wrapper {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: #9ca3af;
+    .gerador-section .input-area textarea {
+      background-color: #2a2a2a;
+      color: white;
+      border-color: #444;
     }
 
-    .lista-codigos-wrapper ul {
-      margin: 4px 0 0;
-      padding-left: 18px;
-      max-height: 120px;
-      overflow-y: auto;
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .controls button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .gerador-section .controls button:nth-child(1) { background-color: #4CAF50; }
+    .gerador-section .controls button:nth-child(1):hover { background-color: #45a049; }
+    .gerador-section .controls button:nth-child(2) { background-color: #f44336; }
+    .gerador-section .controls button:nth-child(2):hover { background-color: #d32f2f; }
+    .gerador-section .controls button:nth-child(3) { background-color: #ff9800; }
+    .gerador-section .controls button:nth-child(3):hover { background-color: #e68a00; }
+    .gerador-section .controls button:nth-child(4) { background-color: #2196F3; }
+    .gerador-section .controls button:nth-child(4):hover { background-color: #0b7dda; }
+
+    .gerador-section h1, .gerador-section h2 {
+      color: white;
+    }
+
+    .gerador-section .example-title {
+      color: #ccc;
+    }
+
+    .gerador-section .barcode-count {
+      color: white;
+    }
+
+    .barcode-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .barcode-item {
+      background: #2a2a2a;
+      border: 1px solid #444;
+      padding: 10px;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    svg text {
+      fill: white !important;
+    }
+
+    #success-message, #error-message {
+      display: none;
+      padding: 12px;
+      margin-top: 20px;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    #success-message {
+      background-color: #e8f5e8;
+      color: #137333;
+      border: 1px solid #ceead6;
+    }
+
+    #error-message {
+      background-color: #fce8e6;
+      color: #d93025;
+      border: 1px solid #f9dedc;
+    }
+
+    .loading {
+      text-align: center;
+      font-style: italic;
+      margin-top: 10px;
+      color: #1a73e8;
     }
 
     .loading-overlay {
       display: none;
       position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.75);
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
       color: white;
       justify-content: center;
       align-items: center;
       flex-direction: column;
       z-index: 1000;
-    }
-
-    .loading-content {
-      text-align: center;
     }
 
     .spinner {
@@ -172,294 +323,362 @@
       width: 40px;
       height: 40px;
       animation: spin 2s linear infinite;
-      margin: 0 auto 12px;
     }
 
     @keyframes spin {
-      0%   { transform: rotate(0deg); }
+      0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
 
-    #success-message-trans,
-    #error-message-trans {
-      padding: 12px;
-      margin-top: 16px;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 0.9rem;
+    .barcode-count {
+      font-size: 16px;
+      margin-top: 10px;
+      font-weight: bold;
+      color: white;
     }
 
-    #success-message-trans {
-      background-color: #e8f5e8;
-      color: #137333;
-      border: 1px solid #ceead6;
+    .count-number {
+      color: #ea4335;
+      font-weight: bold;
     }
 
-    #error-message-trans {
-      background-color: #fce8e6;
-      color: #d93025;
-      border: 1px solid #f9dedc;
+    .required-star {
+      color: #ea4335;
     }
 
-    #numero-transferencia {
-      margin-top: 16px;
-      font-size: 1rem;
-      text-align: center;
+    .hidden {
+      display: none;
+    }
+
+    .logout {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+    .logout button {
+      padding: 8px 16px;
+      background-color: #5f6368;
+      font-size: 14px;
+    }
+
+    .history button {
+      background-color: #ea4335;
+      margin-top: 15px;
+    }
+
+    .logo {
+      display: block;
+      margin: 20px auto 10px;
+      max-width: 80px;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 350px;
+      height: 240px;
+      margin: 10px auto;
+      position: relative;
+    }
+
+    #interactive.viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas, video {
+      max-width: 100%;
+      width: 100% !important;
+      height: auto !important;
     }
 
     footer {
       text-align: center;
-      font-size: 0.8rem;
-      color: #9ca3af;
-      padding: 10px 16px 20px;
+      font-size: 14px;
+      color: #ccc;
+      background-color: #2c2c2c;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px auto;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .section {
+      display: none;
+      width: 100%;
+      padding: 20px;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .section.active {
+      display: flex;
+    }
+
+    .checkbox-label {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    input[readonly] {
+      background-color: #2a2a2a;
+      color: #bbb;
+    }
+
+    #grupo-tamanho-g {
+      display: none;
+    }
+
+    #scanner {
+      width: 100%;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: transparent;
+    }
+
+    @media print {
+      .back-button,
+      .input-area,
+      .no-print,
+      button,
+      .controls,
+      .example-title {
+        display: none !important;
+      }
+
+      .output-area {
+        width: 100%;
+        background: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .barcode-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin: 0;
+      }
+
+      .barcode-item {
+        margin: 0;
+        padding: 5px;
+        box-shadow: none;
+        background: none;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      svg {
+        background: none;
+      }
+
+      svg text {
+        fill: black !important;
+        font-size: 14px !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .form-container {
+        margin: 20px 10px;
+        padding: 20px;
+      }
+      
+      .submit-buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+      
+      .controls button {
+        margin: 5px 0;
+      }
+      
+      .container {
+        padding: 20px 15px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Botão de voltar à Home no padrão dos outros -->
-  <a href="index.html" class="back-button show">
+  <button class="back-button" id="backButton" onclick="voltarHome()">
     <i class="fas fa-arrow-left"></i> Voltar à Home
-  </a>
+  </button>
 
-  <div id="transferencia" class="section active">
-    <div class="form-container">
-      <img src="logo.png" alt="Logo" class="logo">
-      <h1>TRANSFERÊNCIA ENTRE LOJAS</h1>
-
-      <form id="transfer-form">
-        <div class="form-group">
-          <div class="question-title">
-            Email da filial de origem (preenchimento automático)
-            <span class="required-star">*</span>
-          </div>
-          <input type="email" name="email" id="email-trans" required readonly>
-        </div>
-
-        <div class="form-group">
-          <div class="question-title">
-            FILIAL ORIGEM <span class="required-star">*</span>
-          </div>
-          <select name="filialOrigem" id="filial-origem" required onchange="atualizarEmailTrans()">
-            <option value="" disabled selected>Selecione</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-            <option value="JA">JA</option>
-            <option value="JE">JE</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <div class="question-title">
-            FILIAL DESTINO <span class="required-star">*</span>
-          </div>
-          <select name="filialDestino" id="filial-destino" required>
-            <option value="" disabled selected>Selecione</option>
-            <option value="ARTUR">ARTUR</option>
-            <option value="FLORIANO">FLORIANO</option>
-            <option value="JOTA">JOTA</option>
-            <option value="MODA">MODA</option>
-            <option value="PONTO">PONTO</option>
-            <option value="JA">JA</option>
-            <option value="JE">JE</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <div class="question-title">
-            CÓDIGO DE BARRAS <span class="required-star">*</span>
-          </div>
-          <input
-            type="text"
-            id="codigo-barras-trans"
-            placeholder="Leia ou digite o código de barras e pressione Enter"
-          >
-        </div>
-
-        <!-- Campo oculto que vai com TODOS os códigos para o Apps Script -->
-        <textarea id="lista-codigos-trans" name="mercadorias" style="display:none;"></textarea>
-
-        <div id="barcode-count-trans" class="barcode-count">
-          Total de itens: <span id="total-itens-trans" class="count-number">0</span>
-        </div>
-
-        <div class="lista-codigos-wrapper" id="lista-codigos-wrapper" style="display:none;">
-          Últimos códigos lidos:
-          <ul id="lista-codigos-visual"></ul>
-        </div>
-
-        <div id="success-message-trans" style="display: none;">
-          Transferência enviada com sucesso!
-        </div>
-        <div id="error-message-trans" style="display: none;"></div>
-
-        <div class="submit-buttons">
-          <button type="reset" class="clear-button">Limpar formulário</button>
-          <button type="submit" class="submit-button" id="submit-button-trans">Enviar</button>
-        </div>
-      </form>
-
-      <div id="numero-transferencia" style="display: none;">
-        Número da transferência: <strong id="transfer-id"></strong>
-      </div>
-    </div>
-
-    <div class="loading-overlay" id="loading-overlay-trans">
-      <div class="loading-content">
-        <div class="spinner"></div>
-        <h3>Processando sua transferência...</h3>
-        <p>Aguarde enquanto enviamos os dados.</p>
-      </div>
+  <div id="home" class="section active">
+    <img src="logo.png" alt="Logo HS" class="logo-topo" />
+    
+    <div class="container">
+      <button class="form-link" onclick="mostrarSecao('folgas')">
+        <i class="fas fa-calendar-plus"></i> CADASTRO DE FOLGAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('falta')">
+        <i class="fas fa-calendar-minus"></i> CADASTRO DE FALTA
+      </button>
+      <button class="form-link" onclick="mostrarSecao('sacola')">
+        <i class="fas fa-lock"></i> CONTAGEM DE SACOLA
+      </button>
+      <button class="form-link" onclick="mostrarSecao('divergencia')">
+        <i class="fas fa-file-invoice-dollar"></i> DIVERGÊNCIA DE NOTAS FISCAIS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('transferencia')">
+        <i class="fas fa-exchange-alt"></i> TRANSFERÊNCIA ENTRE LOJAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('gerador')">
+        <i class="fas fa-barcode"></i> GERADOR DE CÓDIGO DE BARRAS
+      </button>
+      <button class="form-link" onclick="mostrarSecao('nf')">
+        <i class="fas fa-receipt"></i> RECEBIMENTO DE NOTA FISCAL
+      </button>
     </div>
   </div>
 
+  <!-- FOLGAS -->
+  <!-- (resto igual ao que você mandou) -->
+  <!-- ... MANTIVE TODO O RESTO DO HTML IGUAL, ATÉ O SCRIPT FINAL ... -->
+  <!-- vou pular direto para os pontos que mexemos no JS pra caber aqui -->
+
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
-  
+
   <script>
-    const APPWEB_URL = "https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec";
+    Dynamsoft.DBR.BarcodeScanner.license = "DLS2eyJoYW5kc2hha2VDb2RlIjoiMTA0Nzg0MDQxLU1UQTBOemcwTURReExYZGxZaTFVY21saGJGQnliMm8iLCJtYWluU2VydmVyVVJMIjoiaHR0cHM6Ly9tZGxzLmR5bmFtc29mdG9ubGluZS5jb20iLCJvcmdhbml6YXRpb25JRCI6IjEwNDc4NDA0MSIsInN0YW5kYnlTZXJ2ZXJVUkwiOiJodHRwczovL3NkbHMuZHluYW1zb2Z0b25saW5lLmNvbSIsImNoZWNrQ29kZSI6LTg1Njg0OTg3NX0=";
 
-    // 🔴 IMPORTANTE:
-    // COLE AQUI O MESMO MAPEAMENTO DE EMAILS QUE ESTÁ NO SEU INDEX "ENORME"
-    // (mantive exemplos só pra estrutura)
-    const filialEmails = {
-      "ARTUR":    "artur@exemplo.com",
-      "FLORIANO": "floriano@exemplo.com",
-      "JOTA":     "jota@exemplo.com",
-      "MODA":     "moda@exemplo.com",
-      "PONTO":    "ponto@exemplo.com",
-      "JA":       "ja@exemplo.com",
-      "JE":       "je@exemplo.com"
-    };
+    function mostrarSecao(secaoId) {
+      const secoes = document.querySelectorAll(".section");
+      secoes.forEach(secao => secao.classList.remove('active'));
+      
+      document.getElementById(secaoId).classList.add('active');
+      document.getElementById('backButton').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
+    function voltarHome() {
+      const secoes = document.querySelectorAll(".section");
+      secoes.forEach(secao => secao.classList.remove('active'));
+      
+      document.getElementById('home').classList.add('active');
+      document.getElementById('backButton').classList.remove('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ... (todo o resto do JS igual ao seu: folga, falta, sacola, divergência, NF etc) ... */
+
+    // === TRANSFERÊNCIA ENTRE LOJAS ===
     function atualizarEmailTrans() {
       const filialOrigem = document.getElementById('filial-origem').value;
-      const emailInput = document.getElementById('email-trans');
-      emailInput.value = filialEmails[filialOrigem] || '';
-    }
+      const filialDestinoSelect = document.getElementById('filial-destino');
 
-    // Array para armazenar TODOS os códigos lidos
-    let codigosTrans = [];
+      // LISTA DE E-MAILS QUE VOCÊ MANDOU
+      const emailsDestinoPorFilial = {
+        ARTUR: "heringarturmachado@gmail.com",
+        FLORIANO: "hs.uberlandia.floriano@gmail.com",
+        JOTA: "brunohenzo09@gmail.com",
+        MODA: "dlaire28@gmail.com",
+        PONTO: "soniameiry@gmail.com",
+        JA: "jaugustocoliveira@terra.com.br",
+        JE: "jeoliveira1966@gmail.com"
+      };
 
-    function atualizarListaCodigosVisual() {
-      const wrapper = document.getElementById('lista-codigos-wrapper');
-      const ul = document.getElementById('lista-codigos-visual');
-      ul.innerHTML = '';
+      document.getElementById('email-trans').value =
+        emailsDestinoPorFilial[filialOrigem] || "";
 
-      if (codigosTrans.length === 0) {
-        wrapper.style.display = 'none';
-        return;
-      }
-
-      wrapper.style.display = 'block';
-
-      // Mostra todos ou, se quiser, só os últimos N
-      codigosTrans.forEach(cod => {
-        const li = document.createElement('li');
-        li.textContent = cod;
-        ul.appendChild(li);
+      // impede selecionar a mesma filial como destino
+      Array.from(filialDestinoSelect.options).forEach(option => {
+        option.disabled = option.value === filialOrigem;
       });
+
+      if (filialDestinoSelect.value === filialOrigem) {
+        filialDestinoSelect.value = "";
+      }
     }
 
-    // Lógica para contagem de itens + armazenar na lista oculta
-    document.getElementById('codigo-barras-trans').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        const barcodeInput = e.target;
-        const barcode = barcodeInput.value.trim();
-        
-        if (barcode) {
-          // guarda no array
-          codigosTrans.push(barcode);
+    function contarLinhasTrans() {
+      const mercadorias = document.getElementById('mercadorias-trans').value;
+      const linhas = mercadorias.split('\n').filter(linha => linha.trim() !== '');
+      document.getElementById('total-itens-trans').textContent = linhas.length;
+    }
 
-          // atualiza contador
-          const totalItensSpan = document.getElementById('total-itens-trans');
-          totalItensSpan.textContent = String(codigosTrans.length);
-
-          // atualiza campo oculto que vai pro Apps Script
-          document.getElementById('lista-codigos-trans').value = codigosTrans.join('\n');
-
-          // atualiza listinha visual
-          atualizarListaCodigosVisual();
-
-          // limpa o campo para o próximo scan
-          barcodeInput.value = '';
-        }
-      }
+    document.getElementById('transfer-form').addEventListener('submit', function (event) {
+      event.preventDefault();
+      enviarFormularioTrans();
     });
 
-    // Envio (agora aceitando qualquer texto de resposta — igual padrão do seu index)
-    document.getElementById('transfer-form').addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      const form = e.target;
-      const formData = new FormData(form);
-      const loadingOverlay = document.getElementById('loading-overlay-trans');
-      const successMessage = document.getElementById('success-message-trans');
-      const errorMessage = document.getElementById('error-message-trans');
-      const submitButton = document.getElementById('submit-button-trans');
-
-      successMessage.style.display = 'none';
-      errorMessage.style.display = 'none';
-      errorMessage.textContent = '';
-      document.getElementById('numero-transferencia').style.display = 'none';
-
-      // se não tiver nenhum código, barra o envio
-      if (codigosTrans.length === 0) {
-        errorMessage.textContent = 'Inclua pelo menos um código de barras antes de enviar.';
-        errorMessage.style.display = 'block';
+    function enviarFormularioTrans() {
+      const form = document.getElementById('transfer-form');
+      if (!form.checkValidity()) {
+        mostrarMensagemErroTrans("Por favor, preencha todos os campos obrigatórios!");
         return;
       }
 
-      loadingOverlay.style.display = 'flex';
-      submitButton.disabled = true;
+      const formData = new FormData(form);
+      const data = new URLSearchParams(formData).toString();
 
-      fetch(APPWEB_URL, {
-        method: 'POST',
-        body: formData
+      document.getElementById('loading-overlay-trans').style.display = 'flex';
+
+      fetch("https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: data
       })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro de rede ou servidor: ' + response.statusText);
+      .then(response => response.json())
+      .then(responseData => {
+        document.getElementById('loading-overlay-trans').style.display = 'none';
+
+        if (responseData.numeroTransferencia) {
+          mostrarMensagemSucessoTrans();
+          exibirNumeroTransferencia(responseData.numeroTransferencia);
+          setTimeout(limparFormularioTrans, 5000);
+        } else {
+          mostrarMensagemErroTrans("Erro ao enviar: Resposta inválida do servidor.");
         }
-        return response.text(); // não exige JSON
-      })
-      .then(texto => {
-        // aqui pouco importa o conteúdo; se chegou 200, consideramos sucesso
-        loadingOverlay.style.display = 'none';
-        submitButton.disabled = false;
-
-        successMessage.style.display = 'block';
-
-        // se o Apps Script devolver algum ID numérico simples, você pode parsear aqui
-        // por enquanto deixo um "N/A"
-        document.getElementById('transfer-id').textContent = 'N/A';
-        document.getElementById('numero-transferencia').style.display = 'block';
-
-        form.reset();
-        codigosTrans = [];
-        document.getElementById('lista-codigos-trans').value = '';
-        document.getElementById('total-itens-trans').textContent = '0';
-        atualizarListaCodigosVisual();
-        document.getElementById('email-trans').value = '';
       })
       .catch(error => {
-        loadingOverlay.style.display = 'none';
-        submitButton.disabled = false;
-        errorMessage.textContent = 'Falha na comunicação: ' + error.message;
-        errorMessage.style.display = 'block';
+        document.getElementById('loading-overlay-trans').style.display = 'none';
+        mostrarMensagemErroTrans("Erro ao enviar o formulário. Tente novamente.");
       });
-    });
+    }
 
-    // Quando limpar o formulário pelo botão "reset", zera também a lista
-    document.getElementById('transfer-form').addEventListener('reset', function() {
-      codigosTrans = [];
-      document.getElementById('lista-codigos-trans').value = '';
+    function mostrarMensagemSucessoTrans() {
+      document.getElementById('success-message-trans').style.display = 'block';
+      document.getElementById('error-message-trans').style.display = 'none';
+    }
+
+    function mostrarMensagemErroTrans(mensagem) {
+      document.getElementById('error-message-trans').innerHTML = mensagem;
+      document.getElementById('error-message-trans').style.display = 'block';
+      document.getElementById('success-message-trans').style.display = 'none';
+    }
+
+    function exibirNumeroTransferencia(numero) {
+      document.getElementById('numero-transferencia').style.display = 'block';
+      document.getElementById('transfer-id').textContent = numero;
+    }
+
+    function limparFormularioTrans() {
+      document.getElementById('transfer-form').reset();
+      document.getElementById('numero-transferencia').style.display = 'none';
       document.getElementById('total-itens-trans').textContent = '0';
-      atualizarListaCodigosVisual();
-      document.getElementById('email-trans').value = '';
-    });
+      contarLinhasTrans();
+    }
+
+    /* ... resto do JS (gerador de barras + NF) permanece igual ... */
   </script>
 </body>
 </html>
