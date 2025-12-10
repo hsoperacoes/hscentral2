@@ -25,7 +25,7 @@
 
     .wrap {
       width: 100%;
-      max-width: 920px; /* MAIS LARGO (como sua versão antiga) */
+      max-width: 920px;
       background: #121826;
       border: 1px solid #1f2a44;
       border-radius: 18px;
@@ -35,27 +35,25 @@
 
     .brand {
       text-align: center;
-      margin: 8px 0 10px; /* aproximado do título */
+      margin: 8px 0 10px;
     }
 
     .brand img {
-      width: 110px; /* logo/peixe mais ampliado */
+      width: 110px;
       height: auto;
-      filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
-      /* animação de “respiração” no logo */
+      filter: drop-shadow(0 4px 16px rgba(67,176,255,.28));
       animation: breathe-logo 3s ease-in-out infinite;
       transform-origin: center center;
     }
 
     h1 {
-      margin: 4px 0 18px; /* mais perto do logo */
+      margin: 4px 0 18px;
       text-align: center;
       font-size: 28px;
       font-weight: 800;
       letter-spacing: .3px;
-      /* animação suave também no texto */
       animation: breathe-text 3s ease-in-out infinite;
-      animation-delay: .15s;
+      animation-delay: .12s;
     }
 
     .list {
@@ -106,20 +104,20 @@
       .item{ font-size: 15px; padding: 14px 16px; }
     }
 
-    /* ===== Animações de respiração ===== */
+    /* ===== Animações de respiração (versão mais forte) ===== */
 
     @keyframes breathe-logo {
       0% {
         transform: scale(1);
-        filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
+        filter: drop-shadow(0 4px 16px rgba(67,176,255,.28));
       }
       50% {
-        transform: scale(1.06);
-        filter: drop-shadow(0 6px 24px rgba(67,176,255,.45));
+        transform: scale(1.08);
+        filter: drop-shadow(0 8px 28px rgba(67,176,255,.6));
       }
       100% {
         transform: scale(1);
-        filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
+        filter: drop-shadow(0 4px 16px rgba(67,176,255,.28));
       }
     }
 
@@ -129,8 +127,8 @@
         text-shadow: 0 0 0 rgba(67,176,255,0.0);
       }
       50% {
-        transform: translateY(-1px);
-        text-shadow: 0 0 12px rgba(67,176,255,0.35);
+        transform: translateY(-2px);
+        text-shadow: 0 0 16px rgba(67,176,255,0.55);
       }
       100% {
         transform: translateY(0);
@@ -142,12 +140,10 @@
 <body>
   <main class="wrap">
     <div class="brand">
-      <!-- Use seu logo.png (o “peixe”) para manter o visual anterior -->
       <img src="logo.png" alt="HS Central">
     </div>
     <h1>HS Central</h1>
 
-    <!-- ITENS EM COLUNA, MAIS LARGOS (um embaixo do outro) -->
     <nav class="list">
       <a class="item" href="folgas.html"><i class="fa-regular fa-calendar-plus"></i> CADASTRO DE FOLGAS</a>
       <a class="item" href="falta.html"><i class="fa-regular fa-calendar-minus"></i> CADASTRO DE FALTA</a>
