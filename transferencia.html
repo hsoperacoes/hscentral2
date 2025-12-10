@@ -347,143 +347,131 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <script>
-    // MESMA URL DO APP WEB
-    const APPWEB_URL = "https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec";
+ <script>
+  // App Web Principal (retorna numeroTransferencia)
+  const APPWEB_URL = "https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec";
 
-    // LISTA CERTA DE E-MAILS
-    const emailsDestinoPorFilial = {
-      ARTUR: "heringarturmachado@gmail.com",
-      FLORIANO: "hs.uberlandia.floriano@gmail.com",
-      JOTA: "brunohenzo09@gmail.com",
-      MODA: "dlaire28@gmail.com",
-      PONTO: "soniameiry@gmail.com",
-      JA: "jaugustocoliveira@terra.com.br",
-      JE: "jeoliveira1966@gmail.com"
-    };
+  // App Web Secundário (envia ao WhatsApp)
+  const APPWEB_WHATSAPP_URL = "https://script.google.com/macros/s/AKfycbwUbsFzEiaBzI_q-WVWywEwWTBVl5eXfmVBN4McnnLNu-rTAnhc9BacOX2qCac8LlPReA/exec";
 
-    function atualizarEmailTrans() {
-      const filialOrigem = document.getElementById('filial-origem').value;
-      const emailInput = document.getElementById('email-trans');
-      const filialDestinoSelect = document.getElementById('filial-destino');
+  // LISTA CERTA DE E-MAILS
+  const emailsDestinoPorFilial = {
+    ARTUR: "heringarturmachado@gmail.com",
+    FLORIANO: "hs.uberlandia.floriano@gmail.com",
+    JOTA: "brunohenzo09@gmail.com",
+    MODA: "dlaire28@gmail.com",
+    PONTO: "soniameiry@gmail.com",
+    JA: "jaugustocoliveira@terra.com.br",
+    JE: "jeoliveira1966@gmail.com"
+  };
 
-      // Preenche email
-      emailInput.value = emailsDestinoPorFilial[filialOrigem] || "";
+  function atualizarEmailTrans() {
+    const filialOrigem = document.getElementById('filial-origem').value;
+    const emailInput = document.getElementById('email-trans');
+    const filialDestinoSelect = document.getElementById('filial-destino');
 
-      // Impede escolher a mesma filial como destino
-      Array.from(filialDestinoSelect.options).forEach(opt => {
-        if (!opt.value) return;
-        opt.disabled = opt.value === filialOrigem;
-      });
+    emailInput.value = emailsDestinoPorFilial[filialOrigem] || "";
 
-      if (filialDestinoSelect.value === filialOrigem) {
-        filialDestinoSelect.value = "";
-      }
-    }
-
-    function contarLinhasTrans() {
-      const mercadorias = document.getElementById('mercadorias-trans').value;
-      const linhas = mercadorias.split('\n').filter(l => l.trim() !== '');
-      document.getElementById('total-itens-trans').textContent = linhas.length;
-    }
-
-    document.getElementById('mercadorias-trans').addEventListener('input', contarLinhasTrans);
-
-    document.getElementById('transfer-form').addEventListener('submit', function (event) {
-      event.preventDefault();
-      enviarFormularioTrans();
+    Array.from(filialDestinoSelect.options).forEach(opt => {
+      if (!opt.value) return;
+      opt.disabled = opt.value === filialOrigem;
     });
 
-    // Reset manual via botão "Limpar formulário"
-    document.getElementById('transfer-form').addEventListener('reset', function () {
-      setTimeout(() => {
-        document.getElementById('total-itens-trans').textContent = '0';
-        document.getElementById('email-trans').value = '';
-        document.getElementById('numero-transferencia').style.display = 'none';
-        document.getElementById('success-message-trans').style.display = 'none';
-        document.getElementById('error-message-trans').style.display = 'none';
-      }, 0);
-    });
+    if (filialDestinoSelect.value === filialOrigem) {
+      filialDestinoSelect.value = "";
+    }
+  }
 
-    // Limpa só os campos, sem esconder mensagens/numero
-    function limparCamposTrans() {
-      document.getElementById('filial-origem').value = '';
-      document.getElementById('filial-destino').value = '';
-      document.getElementById('mercadorias-trans').value = '';
-      document.getElementById('email-trans').value = '';
-      document.getElementById('total-itens-trans').textContent = '0';
+  function contarLinhasTrans() {
+    const mercadorias = document.getElementById('mercadorias-trans').value;
+    const linhas = mercadorias.split('\n').filter(l => l.trim() !== '');
+    document.getElementById('total-itens-trans').textContent = linhas.length;
+  }
+
+  document.getElementById('mercadorias-trans').addEventListener('input', contarLinhasTrans);
+
+  document.getElementById('transfer-form').addEventListener('submit', function (event) {
+    event.preventDefault();
+    enviarFormularioTrans();
+  });
+
+  function limparCamposTrans() {
+    document.getElementById('filial-origem').value = '';
+    document.getElementById('filial-destino').value = '';
+    document.getElementById('mercadorias-trans').value = '';
+    document.getElementById('email-trans').value = '';
+    document.getElementById('total-itens-trans').textContent = '0';
+  }
+
+  function enviarFormularioTrans() {
+    const form = document.getElementById('transfer-form');
+    if (!form.checkValidity()) {
+      mostrarMensagemErroTrans("Por favor, preencha todos os campos obrigatórios.");
+      return;
     }
 
-    function enviarFormularioTrans() {
-      const form = document.getElementById('transfer-form');
+    const formData = new FormData(form);
+    const data = new URLSearchParams(formData).toString();
 
-      if (!form.checkValidity()) {
-        mostrarMensagemErroTrans("Por favor, preencha todos os campos obrigatórios.");
-        return;
+    const overlay = document.getElementById('loading-overlay-trans');
+    const submitButton = document.getElementById('submit-button-trans');
+
+    overlay.style.display = 'flex';
+    submitButton.disabled = true;
+
+    // 1ª requisição → salvar na planilha
+    fetch(APPWEB_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: data
+    })
+    .then(r => r.json())
+    .then(json => {
+      if (!json || !json.numeroTransferencia) {
+        throw new Error("Resposta inválida do servidor principal");
       }
 
-      const formData = new FormData(form);
-      const data = new URLSearchParams(formData).toString();
+      exibirNumeroTransferencia(json.numeroTransferencia);
+      mostrarMensagemSucessoTrans();
 
-      const overlay = document.getElementById('loading-overlay-trans');
-      const submitButton = document.getElementById('submit-button-trans');
-
-      overlay.style.display = 'flex';
-      submitButton.disabled = true;
-
-      fetch(APPWEB_URL, {
+      // 2ª requisição → WhatsApp
+      return fetch(APPWEB_WHATSAPP_URL, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: data
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error("Erro de rede: " + response.statusText);
-        }
-        return response.json();
-      })
-      .then(json => {
-        overlay.style.display = 'none';
-        submitButton.disabled = false;
-
-        if (json && json.numeroTransferencia) {
-          mostrarMensagemSucessoTrans();
-          exibirNumeroTransferencia(json.numeroTransferencia);
-          // aqui só limpa os campos, NÃO esconde o número / mensagem
-          limparCamposTrans();
-        } else {
-          mostrarMensagemErroTrans("Erro ao enviar: Resposta inválida do servidor.");
-        }
-      })
-      .catch(err => {
-        overlay.style.display = 'none';
-        submitButton.disabled = false;
-        mostrarMensagemErroTrans("Erro ao enviar o formulário. Tente novamente.");
-        console.error(err);
       });
-    }
+    })
+    .then(() => {
+      overlay.style.display = 'none';
+      submitButton.disabled = false;
+      limparCamposTrans();
+    })
+    .catch(err => {
+      overlay.style.display = 'none';
+      submitButton.disabled = false;
+      mostrarMensagemErroTrans("Erro no envio. Confira sua conexão e tente novamente.");
+      console.error(err);
+    });
+  }
 
-    function mostrarMensagemSucessoTrans() {
-      const s = document.getElementById('success-message-trans');
-      const e = document.getElementById('error-message-trans');
-      s.style.display = 'block';
-      e.style.display = 'none';
-    }
+  function mostrarMensagemSucessoTrans() {
+    document.getElementById('success-message-trans').style.display = 'block';
+    document.getElementById('error-message-trans').style.display = 'none';
+  }
 
-    function mostrarMensagemErroTrans(msg) {
-      const s = document.getElementById('success-message-trans');
-      const e = document.getElementById('error-message-trans');
-      e.textContent = msg;
-      e.style.display = 'block';
-      s.style.display = 'none';
-    }
+  function mostrarMensagemErroTrans(msg) {
+    document.getElementById('success-message-trans').style.display = 'none';
+    const e = document.getElementById('error-message-trans');
+    e.style.display = 'block';
+    e.textContent = msg;
+  }
 
-    function exibirNumeroTransferencia(numero) {
-      const bloco = document.getElementById('numero-transferencia');
-      const span = document.getElementById('transfer-id');
-      span.textContent = numero;
-      bloco.style.display = 'block';
-    }
-  </script>
+  function exibirNumeroTransferencia(numero) {
+    const bloco = document.getElementById('numero-transferencia');
+    document.getElementById('transfer-id').textContent = numero;
+    bloco.style.display = 'block';
+  }
+</script>
+
 </body>
 </html>
