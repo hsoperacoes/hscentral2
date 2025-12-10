@@ -5,11 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gerador de Código de Barras - GERENCIAL HS</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Mantém seu style.css para o layout -->
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
-  <a href="index.html" class="back-button show"><i class="fas fa-arrow-left"></i> Voltar à Home</a>
+  <a href="index.html" class="back-button show">
+    <i class="fas fa-arrow-left"></i> Voltar à Home
+  </a>
+
   <div id="gerador" class="section gerador-section active">
     <div class="form-container">
       <img src="logo.png" alt="Logo" class="logo">
@@ -17,7 +20,9 @@
 
       <div class="input-area">
         <h2>Cole seus códigos (um por linha):</h2>
-        <textarea id="codigos-barras" placeholder="Cole aqui vários códigos EAN13, um por linha&#10;Exemplo:&#10;7891000315507&#10;7891910000197&#10;7891234567890"></textarea>
+        <textarea
+          id="codigos-barras"
+          placeholder="Cole aqui vários códigos EAN13, um por linha&#10;Exemplo:&#10;7891000315507&#10;7891910000197&#10;7891234567890"></textarea>
 
         <div class="controls">
           <button onclick="gerarTodosBarras()">Gerar Códigos</button>
@@ -35,7 +40,198 @@
       </div>
     </div>
   </div>
+
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
-  <script src="script.js"></script>
+
+  <script>
+    // ---------- LÓGICA EAN-13 (MESMA PEGADA DO INDEX GIGANTE) ----------
+
+    function calculateChecksum(code) {
+      // code = 12 dígitos
+      let sum = 0;
+      for (let i = 0; i < 12; i++) {
+        const digit = parseInt(code[i], 10);
+        sum += (i % 2 === 0) ? digit : digit * 3;
+      }
+      return (10 - (sum % 10)) % 10;
+    }
+
+    function generateEAN13(code, skipValidation = false) {
+      // Aceita 12 ou 13 dígitos numéricos
+      if (!/^\d{12,13}$/.test(code)) {
+        throw new Error(`Código inválido: "${code}" - Deve conter 12 ou 13 dígitos numéricos.`);
+      }
+
+      // Se vier com 12, calcula DV
+      if (code.length === 12) {
+        code += calculateChecksum(code);
+      } else if (!skipValidation) {
+        // Se vier com 13, valida DV (a menos que skipValidation=true)
+        const dv = calculateChecksum(code.substring(0, 12));
+        if (dv !== parseInt(code[12], 10)) {
+          throw new Error(`Dígito verificador inválido para código: "${code}"`);
+        }
+      }
+
+      // Padrões do EAN-13
+      const patterns = {
+        L: ["0001101","0011001","0010011","0111101","0100011","0110001","0101111","0111011","0110111","0001011"],
+        G: ["0100111","0110011","0011011","0100001","0011101","0111001","0000101","0010001","0001001","0010111"],
+        R: ["1110010","1100110","1101100","1000010","1011100","1001110","1010000","1000100","1001000","1110100"]
+      };
+
+      const structure = [
+        "LLLLLL","LLGLGG","LLGGLG","LLGGGL","LGLLGG",
+        "LGGLLG","LGGGLL","LGLGLG","LGLGGL","LGGLGL"
+      ];
+
+      const firstDigit = parseInt(code[0], 10);
+      const pattern = structure[firstDigit];
+
+      // Guardas + 6 dígitos da esquerda
+      let binary = "101";
+      for (let i = 1; i <= 6; i++) {
+        const digit = parseInt(code[i], 10);
+        const type = pattern[i - 1]; // L ou G
+        binary += patterns[type][digit];
+      }
+
+      // Centro
+      binary += "01010";
+
+      // 6 dígitos da direita (R)
+      for (let i = 7; i <= 12; i++) {
+        const digit = parseInt(code[i], 10);
+        binary += patterns.R[digit];
+      }
+
+      // Guarda final
+      binary += "101";
+
+      return {
+        code: code,   // sempre 13 dígitos
+        binary: binary
+      };
+    }
+
+    function renderBarcode(barcodeData, container) {
+      const binary = barcodeData.binary;
+      const code   = barcodeData.code;
+
+      const barWidth  = 2;
+      const barHeight = 60;
+      const margin    = 10;
+      const fontSize  = 14;
+
+      const svgNS = "http://www.w3.org/2000/svg";
+      const totalWidth  = (binary.length * barWidth) + (margin * 2);
+      const totalHeight = barHeight + fontSize + 15;
+
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("width", totalWidth);
+      svg.setAttribute("height", totalHeight);
+      svg.setAttribute("class", "barcode-svg");
+
+      let x = margin;
+      for (let i = 0; i < binary.length; i++) {
+        if (binary[i] === '1') {
+          const rect = document.createElementNS(svgNS, "rect");
+          rect.setAttribute("x", x);
+          rect.setAttribute("y", margin);
+          rect.setAttribute("width", barWidth);
+          rect.setAttribute("height", barHeight);
+          rect.setAttribute("fill", "#000");
+          svg.appendChild(rect);
+        }
+        x += barWidth;
+      }
+
+      const text = document.createElementNS(svgNS, "text");
+      text.setAttribute("x", totalWidth / 2);
+      text.setAttribute("y", totalHeight - 5);
+      text.setAttribute("text-anchor", "middle");
+      text.setAttribute("font-size", fontSize);
+      text.setAttribute("font-family", "monospace");
+      text.setAttribute("fill", "white");
+      text.textContent = code;
+      svg.appendChild(text);
+
+      const item = document.createElement("div");
+      item.className = "barcode-item";
+      item.appendChild(svg);
+
+      container.appendChild(item);
+    }
+
+    function gerarTodosBarras() {
+      const input = document.getElementById("codigos-barras").value.trim();
+      const container = document.getElementById("barcodes");
+      container.innerHTML = "";
+
+      if (!input) {
+        alert("Por favor, cole alguns códigos EAN13 no campo de texto.");
+        return;
+      }
+
+      const linhas = input.split("\n")
+        .map(l => l.trim())
+        .filter(l => l.length > 0);
+
+      let successCount = 0;
+      let errorCount   = 0;
+      const erros      = [];
+
+      linhas.forEach((linha, index) => {
+        try {
+          const barcodeData = generateEAN13(linha, true); // true = não trava se DV estiver errado
+          renderBarcode(barcodeData, container);
+          successCount++;
+        } catch (err) {
+          errorCount++;
+          erros.push(`Linha ${index + 1}: ${err.message}`);
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "barcode-item no-print";
+          errorDiv.style.color = "red";
+          errorDiv.textContent = `Erro: ${linha} - ${err.message}`;
+          container.appendChild(errorDiv);
+        }
+      });
+
+      if (errorCount > 0) {
+        alert(
+          `Foram gerados ${successCount} códigos com sucesso.\n\n` +
+          `Erros encontrados (${errorCount}):\n` +
+          erros.join("\n")
+        );
+      } else {
+        alert(`Todos os ${successCount} códigos foram gerados com sucesso!`);
+      }
+    }
+
+    function limparTudoBarras() {
+      document.getElementById("codigos-barras").value = "";
+      document.getElementById("barcodes").innerHTML = "";
+    }
+
+    function copiarCodigosBarras() {
+      const text = document.getElementById("codigos-barras").value;
+      if (!text.trim()) {
+        alert("Não há códigos para copiar.");
+        return;
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(() => alert("Códigos copiados para a área de transferência!"))
+          .catch(() => alert("Não foi possível copiar automaticamente. Selecione e copie manualmente."));
+      } else {
+        // fallback antigo
+        const textarea = document.getElementById("codigos-barras");
+        textarea.select();
+        document.execCommand("copy");
+        alert("Códigos copiados para a área de transferência!");
+      }
+    }
+  </script>
 </body>
 </html>
