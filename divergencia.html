@@ -234,6 +234,16 @@
       color: #ccc;
     }
 
+    /* Campo de pesquisa de itens */
+    .campo-pesquisa {
+      margin-top: 14px;
+      margin-bottom: 8px;
+    }
+
+    .campo-pesquisa input {
+      margin-bottom: 0;
+    }
+
     .lista-itens {
       margin-top: 5px;
       display: flex;
@@ -481,6 +491,15 @@
 
         <div id="resumo-nf" class="resumo-nf hidden"></div>
 
+        <!-- CAMPO DE PESQUISA POR ITEM (REF/ COR) -->
+        <div id="campo-pesquisa-itens" class="campo-pesquisa hidden">
+          <label for="filtro-itens">Buscar item (referência ou cor)</label>
+          <input
+            type="text"
+            id="filtro-itens"
+            placeholder="Digite parte da referência ou da cor..." />
+        </div>
+
         <div class="titulo-itens hidden" id="titulo-itens">
           <span>Itens da Nota Fiscal</span>
           <span id="resumo-itens"></span>
@@ -532,6 +551,7 @@
     let itensAtuais = [];
     let cabecalhoAtual = null;
     let chaveAtual = "";
+    let termoFiltroNF = "";
 
     // --- LOGIN / LOGOUT ---
 
@@ -580,9 +600,15 @@
       document.getElementById('btn-enviar-div').classList.add('hidden');
       document.getElementById('msg-divergencia').classList.add('hidden');
 
+      const campoPesquisa = document.getElementById('campo-pesquisa-itens');
+      if (campoPesquisa) campoPesquisa.classList.add('hidden');
+      const inputFiltro = document.getElementById('filtro-itens');
+      if (inputFiltro) inputFiltro.value = '';
+
       itensAtuais = [];
       cabecalhoAtual = null;
       chaveAtual = "";
+      termoFiltroNF = "";
     }
 
     // --- CONSULTA DE NF VIA FETCH ---
@@ -599,6 +625,12 @@
       document.getElementById('titulo-itens').classList.add('hidden');
       document.getElementById('btn-enviar-div').classList.add('hidden');
       document.getElementById('msg-divergencia').classList.add('hidden');
+
+      const campoPesquisa = document.getElementById('campo-pesquisa-itens');
+      if (campoPesquisa) campoPesquisa.classList.add('hidden');
+      const inputFiltro = document.getElementById('filtro-itens');
+      if (inputFiltro) inputFiltro.value = '';
+      termoFiltroNF = "";
 
       itensAtuais = [];
       cabecalhoAtual = null;
@@ -667,7 +699,7 @@
 
       // Lista de itens
       itensAtuais = itens.map((item, idx) => ({
-        index: idx,
+        index: idx, // índice original
         codigo: item.codigo || item.codigoProduto || '',
         cor: item.cor || item.corProduto || '',
         tamanho: item.tamanho || '',
@@ -675,6 +707,13 @@
         qtdDiverg: 0,
         status: 'OK'
       }));
+
+      // Zera filtro e mostra campo de pesquisa
+      termoFiltroNF = "";
+      const inputFiltro = document.getElementById('filtro-itens');
+      if (inputFiltro) inputFiltro.value = '';
+      const campoPesquisa = document.getElementById('campo-pesquisa-itens');
+      if (campoPesquisa) campoPesquisa.classList.remove('hidden');
 
       renderizarItens();
     }
@@ -684,6 +723,7 @@
       const tituloItens = document.getElementById('titulo-itens');
       const resumoItensSpan = document.getElementById('resumo-itens');
       const btnEnviar = document.getElementById('btn-enviar-div');
+      const campoPesquisa = document.getElementById('campo-pesquisa-itens');
 
       listaDiv.innerHTML = '';
 
@@ -692,8 +732,18 @@
         listaDiv.classList.add('hidden');
         resumoItensSpan.textContent = '';
         btnEnviar.classList.add('hidden');
+        if (campoPesquisa) campoPesquisa.classList.add('hidden');
         return;
       }
+
+      // Lista filtrada por referência OU cor
+      const termo = (termoFiltroNF || '').toLowerCase();
+      const listaFiltrada = termo
+        ? itensAtuais.filter(i =>
+            (i.codigo || '').toLowerCase().includes(termo) ||
+            (i.cor || '').toLowerCase().includes(termo)
+          )
+        : itensAtuais;
 
       const total = itensAtuais.length;
       const faltando = itensAtuais.filter(i => i.status === 'FALTANDO' && i.qtdDiverg > 0).length;
@@ -702,7 +752,7 @@
       resumoItensSpan.textContent =
         `Total itens: ${total} | Itens com divergência - Faltando: ${faltando} | Passando: ${passando}`;
 
-      itensAtuais.forEach((item, idx) => {
+      listaFiltrada.forEach((item) => {
         const card = document.createElement('div');
         card.className = 'item-card';
         if (item.status === 'FALTANDO') card.classList.add('faltando');
@@ -773,7 +823,7 @@
         btnFaltando.type = 'button';
         btnFaltando.textContent = 'Marcar Faltando';
         btnFaltando.onclick = function() {
-          alterarStatusItem(idx, 'FALTANDO');
+          alterarStatusItem(item.index, 'FALTANDO');
         };
 
         const btnPassando = document.createElement('button');
@@ -781,7 +831,7 @@
         btnPassando.type = 'button';
         btnPassando.textContent = 'Marcar Passando';
         btnPassando.onclick = function() {
-          alterarStatusItem(idx, 'PASSANDO');
+          alterarStatusItem(item.index, 'PASSANDO');
         };
 
         btns.appendChild(btnFaltando);
@@ -797,6 +847,7 @@
         listaDiv.appendChild(card);
       });
 
+      if (campoPesquisa) campoPesquisa.classList.remove('hidden');
       tituloItens.classList.remove('hidden');
       listaDiv.classList.remove('hidden');
       atualizarBotaoEnviar();
@@ -814,8 +865,8 @@
       }
     }
 
-    function alterarStatusItem(index, novoStatus) {
-      const item = itensAtuais[index];
+    function alterarStatusItem(originalIndex, novoStatus) {
+      const item = itensAtuais.find(i => i.index === originalIndex);
       if (!item) return;
 
       // Se quantidade divergente for 0, não deixa marcar
@@ -965,6 +1016,15 @@
         const nome = nomesFiliais[filialSalva] || "Desconhecida";
         document.getElementById('info-filial').textContent =
           `Filial logada: ${filialSalva} - ${nome}`;
+      }
+
+      // Listener do filtro de itens
+      const filtroInput = document.getElementById('filtro-itens');
+      if (filtroInput) {
+        filtroInput.addEventListener('input', function () {
+          termoFiltroNF = this.value.trim();
+          renderizarItens();
+        });
       }
     });
   </script>
