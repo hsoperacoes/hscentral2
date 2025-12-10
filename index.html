@@ -12,6 +12,7 @@
     :root { color-scheme: dark; }
     * { box-sizing: border-box; }
     html, body { height: 100%; }
+
     body {
       margin: 0;
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -21,6 +22,7 @@
       place-items: start center;
       padding: 48px 16px 32px;
     }
+
     .wrap {
       width: 100%;
       max-width: 920px; /* MAIS LARGO (como sua versão antiga) */
@@ -30,26 +32,37 @@
       padding: 28px 24px 18px;
       box-shadow: 0 12px 36px rgba(0,0,0,.45);
     }
+
     .brand {
       text-align: center;
-      margin: 8px 0 18px;
+      margin: 8px 0 10px; /* aproximado do título */
     }
+
     .brand img {
       width: 110px; /* logo/peixe mais ampliado */
       height: auto;
       filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
+      /* animação de “respiração” no logo */
+      animation: breathe-logo 3s ease-in-out infinite;
+      transform-origin: center center;
     }
+
     h1 {
-      margin: 6px 0 18px;
+      margin: 4px 0 18px; /* mais perto do logo */
       text-align: center;
       font-size: 28px;
       font-weight: 800;
       letter-spacing: .3px;
+      /* animação suave também no texto */
+      animation: breathe-text 3s ease-in-out infinite;
+      animation-delay: .15s;
     }
+
     .list {
       display: grid;
       gap: 14px;
     }
+
     .item {
       display: flex;
       align-items: center;
@@ -66,12 +79,15 @@
       box-shadow: 0 4px 24px rgba(0,0,0,.25);
       transition: transform .12s ease, box-shadow .2s ease, border-color .2s ease;
     }
+
     .item i { opacity: .9; }
+
     .item:hover {
       transform: translateY(-1px);
       box-shadow: 0 10px 30px rgba(67,176,255,.12);
       border-color: #35508a;
     }
+
     footer {
       width: 100%;
       max-width: 920px;
@@ -84,9 +100,42 @@
       padding: 10px 12px;
       font-size: 12px;
     }
+
     @media (max-width: 560px){
       .wrap{ padding: 22px 14px 12px; }
       .item{ font-size: 15px; padding: 14px 16px; }
+    }
+
+    /* ===== Animações de respiração ===== */
+
+    @keyframes breathe-logo {
+      0% {
+        transform: scale(1);
+        filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
+      }
+      50% {
+        transform: scale(1.06);
+        filter: drop-shadow(0 6px 24px rgba(67,176,255,.45));
+      }
+      100% {
+        transform: scale(1);
+        filter: drop-shadow(0 4px 16px rgba(67,176,255,.25));
+      }
+    }
+
+    @keyframes breathe-text {
+      0% {
+        transform: translateY(0);
+        text-shadow: 0 0 0 rgba(67,176,255,0.0);
+      }
+      50% {
+        transform: translateY(-1px);
+        text-shadow: 0 0 12px rgba(67,176,255,0.35);
+      }
+      100% {
+        transform: translateY(0);
+        text-shadow: 0 0 0 rgba(67,176,255,0.0);
+      }
     }
   </style>
 </head>
