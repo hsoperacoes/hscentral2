@@ -102,6 +102,88 @@
       border-radius:6px; margin: 20px auto;
       max-width: 900px; width: 100%;
     }
+
+    /* ======================================================
+       OVERLAY RECUSA (TELA SOBREPOSTA)
+       ====================================================== */
+    #recusaOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.88);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      backdrop-filter: blur(2px);
+    }
+
+    .recusa-card {
+      width: 100%;
+      max-width: 880px;
+      border: 1px solid #2a2a2f;
+      border-radius: 18px;
+      background: #0b0b0c;
+      box-shadow: 0 8px 30px rgba(0,0,0,.55);
+      overflow: hidden;
+    }
+
+    .recusa-topo {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 16px;
+      border-bottom: 1px solid #2a2a2f;
+      background: linear-gradient(180deg, #141416, #0f0f12);
+    }
+
+    .recusa-titulo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 18px;
+      font-weight: 900;
+      color: #ff3b3b;
+      letter-spacing: .2px;
+    }
+
+    .recusa-btn-fechar {
+      border: 1px solid #2a2a2f;
+      background: transparent;
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .recusa-btn-fechar:hover {
+      background: rgba(255,255,255,.06);
+    }
+
+    .recusa-conteudo {
+      padding: 16px;
+      background: #0b0b0c;
+    }
+
+    .recusa-texto {
+      white-space: pre-wrap;
+      font-size: 16px;
+      line-height: 1.55;
+      color: #fff;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #2a2a2f;
+      background: #101012;
+    }
+
+    .recusa-rodape {
+      padding: 14px 16px;
+      border-top: 1px solid #2a2a2f;
+      color: #b9b9c2;
+      font-size: 13px;
+      background: #0f0f12;
+    }
   </style>
 </head>
 
@@ -153,6 +235,64 @@
   </div>
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
+
+  <!-- ======================================================
+       OVERLAY RECUSA (SOBREPÕE O SITE)
+       ====================================================== -->
+  <div id="recusaOverlay">
+    <div class="recusa-card" role="dialog" aria-modal="true">
+      <div class="recusa-topo">
+        <div class="recusa-titulo">🚫 NOTA MARCADA PARA RECUSA</div>
+        <button class="recusa-btn-fechar" id="btn-fechar-recusa">Fechar</button>
+      </div>
+
+      <div class="recusa-conteudo">
+        <div class="recusa-texto" id="recusaTexto"></div>
+      </div>
+
+      <div class="recusa-rodape">
+        Se houver confirmação da recusa, realize também a recusa no controle de transporte e na via física destinada ao escritório.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== FUNÇÕES GLOBAIS (script_nf.js vai chamar isso) =====
+    function abrirOverlayRecusa(mensagem) {
+      const ov = document.getElementById('recusaOverlay');
+      const tx = document.getElementById('recusaTexto');
+
+      tx.textContent = (mensagem || '').toString().trim();
+      ov.style.display = 'flex';
+
+      // travar rolagem do body enquanto overlay estiver aberto
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharOverlayRecusa() {
+      const ov = document.getElementById('recusaOverlay');
+      ov.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    // fechar no botão e clicando fora do card
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btn-fechar-recusa');
+      const ov = document.getElementById('recusaOverlay');
+
+      btn.addEventListener('click', fecharOverlayRecusa);
+      ov.addEventListener('click', (e) => {
+        if (e.target === ov) fecharOverlayRecusa();
+      });
+
+      // Esc fecha
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && ov.style.display === 'flex') {
+          fecharOverlayRecusa();
+        }
+      });
+    });
+  </script>
 
   <script src="script_nf.js?v=1.0.3"></script>
 
