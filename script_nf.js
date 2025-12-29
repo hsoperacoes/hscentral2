@@ -7,7 +7,7 @@
 */
 
 // URL do seu App Web (a mesma da versão antiga que você me mandou):
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwfoYOgleHUcmbr_1B8tV_NG6cEZxcHm5zBSrJ0ItgRV_Cp7tumh3GjBzsvzTSNJ5sbmA/exec";
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwUa5DLhtKpa2kUAMxicHQsPlIG3gsLW-D3Scq6WUjAw42JIcUerAgy4f1H3TxsJLTB/exec";
 
 // Códigos válidos (iguais aos que você usava antes)
 const filiaisValidas = ["293", "488", "287", "288", "761"];
