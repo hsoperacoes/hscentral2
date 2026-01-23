@@ -40,7 +40,6 @@
       margin-bottom: 24px;
     }
 
-    /* ===== BARRA SUPERIOR COM BOTÃO DE VOLTAR (PADRÃO FALTA) ===== */
     .top-nav {
       width: 100%;
       display: flex;
@@ -66,18 +65,13 @@
       box-shadow: 0 10px 40px rgba(15, 23, 42, 0.6);
     }
 
-    .back-button i {
-      font-size: 0.85rem;
-    }
+    .back-button i { font-size: 0.85rem; }
 
-    .back-button:hover {
-      background: #1f2937;
-    }
+    .back-button:hover { background: #1f2937; }
   </style>
 </head>
 <body>
 
-  <!-- Botão de voltar à Home igual ao das outras telas -->
   <div class="top-nav">
     <a href="index.html" class="back-button show">
       <i class="fas fa-arrow-left"></i> Voltar à Home
@@ -89,7 +83,7 @@
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
 
-      <!-- ✅ IMPORTANTe: action voltando para o endpoint de FOLGAS -->
+      <!-- ✅ mantém seu endpoint de folgas (GS SEPARADO) -->
       <form id="form-folgas" method="POST"
             action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
 
@@ -148,7 +142,6 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft (só pra garantir se um dia algo for chamado) -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
@@ -157,10 +150,10 @@
 
   <script>
     (function () {
-      // ====== FUNCIONÁRIOS (vem da planilha) ======
-      const SHEET_ID   = "1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4";
-      const SHEET_NAME = "FUNCIONÁRIOS";
-      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+      // ========= FUNCIONÁRIOS (ABA FUNCIONÁRIOS) =========
+      // ✅ usa o GID da sua aba FUNCIONÁRIOS (o mesmo que você já usa e funciona)
+      const FUNCIONARIOS_GVIZ_URL =
+        'https://docs.google.com/spreadsheets/d/1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4/gviz/tq?tqx=out:json&gid=1390331275';
 
       const filialSel       = document.getElementById('filial-folgas');
       const funcSel         = document.getElementById('funcionario-folgas');
@@ -174,63 +167,54 @@
 
       let funcionariosPorFilial = {};
 
-      async function carregarFuncionariosDaPlanilha() {
+      async function carregarFuncionarios() {
         try {
           funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
 
-          const res   = await fetch(GVIZ_URL);
-          const texto = await res.text();
+          const resp = await fetch(FUNCIONARIOS_GVIZ_URL);
+          const texto = await resp.text();
 
-          // remove wrapper google.visualization.Query.setResponse(...)
-          const jsonStr = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
-          const dados   = JSON.parse(jsonStr);
+          // pega o JSON do wrapper da GVIZ de forma bem tolerante
+          const matchJson = texto.match(/\{.*\}/s);
+          if (!matchJson) throw new Error('Resposta da planilha em formato inesperado.');
 
-          const rows = (dados.table && dados.table.rows) ? dados.table.rows : [];
-          if (!rows.length) throw new Error("Sem linhas na aba FUNCIONÁRIOS.");
+          const json = JSON.parse(matchJson[0]);
+          const rows = (json.table && json.table.rows) ? json.table.rows : [];
+          if (!rows.length) throw new Error('Nenhuma linha na aba FUNCIONÁRIOS.');
 
-          // primeira linha = cabeçalho
-          const headerCells = rows[0].c || [];
-          const headers = headerCells.map(c => (c && c.v) ? String(c.v).trim() : "");
+          // ✅ aqui a primeira linha vira “cabeçalho” (igual no seu HTML de falta)
+          const headerRow = rows[0];
+          const mapa = {};
 
-          const mapaBruto = {};
-          headers.forEach(h => { if (h) mapaBruto[h] = []; });
+          (headerRow.c || []).forEach((cell, colIdx) => {
+            const headerVal = cell && cell.v ? String(cell.v).trim() : '';
+            if (!headerVal) return;
 
-          // linhas seguintes = nomes
-          rows.slice(1).forEach(r => {
-            const cols = r.c || [];
-            cols.forEach((cell, idx) => {
-              const header = headers[idx];
-              if (!header) return;
-              const valor = (cell && cell.v) ? String(cell.v).trim() : "";
-              if (valor) mapaBruto[header].push(valor);
-            });
+            // pega só a primeira palavra (ARTUR / FLORIANO / etc) quando vier "ARTUR MALHAS"
+            const chave = headerVal.split(' ')[0].toUpperCase();
+
+            const nomes = [];
+            for (let r = 1; r < rows.length; r++) {
+              const linha = rows[r];
+              if (!linha || !linha.c) continue;
+              const c = linha.c[colIdx];
+              const val = c && c.v ? String(c.v).trim() : '';
+              if (val) nomes.push(val);
+            }
+
+            mapa[chave] = nomes;
           });
 
-          // mapeia títulos longos -> nomes curtos
-          const ALIAS = {
-            "ARTUR MALHAS": "ARTUR",
-            "FLORIANO JEANS E ACESSÓRIOS": "FLORIANO",
-            "JOTA MALHAS": "JOTA",
-            "MODA JEANS E ACESSÓRIOS": "MODA",
-            "PONTO DA MALHA": "PONTO",
-            "PONTO DA MODA": "PONTO"
-          };
-
-          funcionariosPorFilial = {};
-          Object.keys(mapaBruto).forEach(header => {
-            const chave = (ALIAS[header] || header).toUpperCase().trim();
-            funcionariosPorFilial[chave] = mapaBruto[header];
-          });
-
-          atualizarFuncionariosFolgas();
-        } catch (err) {
-          console.error("Erro ao carregar funcionários:", err);
+          funcionariosPorFilial = mapa;
+          atualizarSelectFuncionarios();
+        } catch (e) {
+          console.error('Erro ao carregar funcionários:', e);
           funcSel.innerHTML = '<option value="">Erro ao carregar funcionários</option>';
         }
       }
 
-      function atualizarFuncionariosFolgas() {
-        const filial = (filialSel.value || "").trim().toUpperCase();
+      function atualizarSelectFuncionarios() {
+        const filial = (filialSel.value || '').trim().toUpperCase();
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
         const lista = funcionariosPorFilial[filial] || [];
@@ -242,7 +226,7 @@
         });
       }
 
-      // ====== REGRAS DE MOTIVO / DATAS ======
+      // ========= REGRAS MOTIVO/DATAS =========
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -268,11 +252,11 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      // ====== ENVIO DO FORM (sem “falso sucesso”) ======
+      // ========= ENVIO (SEM “SUCESSO FANTASMA”) =========
       function configurarEnvio() {
         if (!formFolgas) return;
 
-        formFolgas.addEventListener("submit", async function (event) {
+        formFolgas.addEventListener("submit", async (event) => {
           event.preventDefault();
           if (btnSubmit) btnSubmit.disabled = true;
 
@@ -285,11 +269,12 @@
             });
 
             const texto = await resp.text();
-            console.log("Resposta do App Web (folgas):", texto);
+            console.log("Resposta App Web (folgas):", texto);
 
+            // Só confirma se o GS realmente respondeu SUCESSO
             const ok = String(texto || "").toUpperCase().includes("SUCESSO");
             if (!ok) {
-              alert("O servidor não confirmou gravação.\n\nResposta: " + texto);
+              alert("Não confirmado pelo servidor.\n\nResposta: " + texto);
               return;
             }
 
@@ -297,8 +282,8 @@
             formFolgas.reset();
             funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
             motivoOutrosDiv.style.display = "none";
-          } catch (e) {
-            console.error(e);
+          } catch (err) {
+            console.error(err);
             alert("Erro ao enviar os dados!");
           } finally {
             if (btnSubmit) btnSubmit.disabled = false;
@@ -306,19 +291,16 @@
         });
       }
 
-      // ====== LISTENERS / INIT ======
-      if (filialSel) {
-        filialSel.addEventListener('change', atualizarFuncionariosFolgas);
-      }
-
-      if (dataTrabInp && motivoSel) {
+      // ========= INIT =========
+      if (filialSel) filialSel.addEventListener('change', atualizarSelectFuncionarios);
+      if (motivoSel) motivoSel.addEventListener('change', verificarMotivo);
+      if (dataTrabInp) {
         dataTrabInp.addEventListener('change', () => {
-          if (motivoSel.value !== "") verificarMotivo();
+          if (motivoSel.value) verificarMotivo();
         });
-        motivoSel.addEventListener('change', verificarMotivo);
       }
 
-      carregarFuncionariosDaPlanilha(); // carrega ao abrir
+      carregarFuncionarios();  // carrega ao abrir
       configurarEnvio();
     })();
   </script>
