@@ -14,66 +14,27 @@
   <!-- Ajustes visuais específicos desta tela -->
   <style>
     body { background: #050509; }
+    .section { display:flex; justify-content:center; align-items:flex-start; padding:40px 16px 32px; min-height:100vh; }
+    .form-container { width:100%; max-width:760px; margin:0 auto; }
+    .logo { display:block; margin:0 auto 12px; max-width:80px; }
+    h2 { text-align:center; margin-bottom:24px; }
 
-    .section {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 16px 32px;
-      min-height: 100vh;
-    }
-
-    .form-container {
-      width: 100%;
-      max-width: 760px;
-      margin: 0 auto;
-    }
-
-    .logo {
-      display: block;
-      margin: 0 auto 12px;
-      max-width: 80px;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .top-nav {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      margin: 24px 0 8px;
-    }
-
+    .top-nav { width:100%; display:flex; justify-content:center; margin:24px 0 8px; }
     .back-button {
       position: static !important;
-      left: auto;
-      top: auto;
-      transform: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid #1f2937;
-      background: #111827;
-      color: #e5e7eb;
-      font-size: 0.9rem;
-      text-decoration: none;
-      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.6);
+      left:auto; top:auto; transform:none;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 18px;
+      border-radius:999px;
+      border:1px solid #1f2937;
+      background:#111827;
+      color:#e5e7eb;
+      font-size:0.9rem;
+      text-decoration:none;
+      box-shadow:0 10px 40px rgba(15,23,42,0.6);
     }
-
-    .back-button i { font-size: 0.85rem; }
-    .back-button:hover { background: #1f2937; }
-
-    .mini-status {
-      margin-top: 6px;
-      font-size: 12px;
-      color: #9aa0a6;
-    }
-    .mini-status.erro { color: #ff6b6b; }
+    .back-button i { font-size:0.85rem; }
+    .back-button:hover { background:#1f2937; }
   </style>
 </head>
 <body>
@@ -89,7 +50,7 @@
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
 
-      <!-- ✅ action agora aponta pro MESMO GS que estamos trabalhando -->
+      <!-- ✅ ALTERAÇÃO 1: action apontando pro GS que você mandou -->
       <form id="form-folgas" method="POST"
             action="https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec">
 
@@ -107,10 +68,9 @@
 
         <div class="form-group">
           <label for="funcionario-folgas">Funcionário</label>
-          <select id="funcionario-folgas" name="funcionario" required disabled>
+          <select id="funcionario-folgas" name="funcionario" required>
             <option value="">Carregando lista de funcionários...</option>
           </select>
-          <div id="status-func-folga" class="mini-status">Buscando funcionários na planilha...</div>
         </div>
 
         <div class="form-group">
@@ -157,69 +117,74 @@
 
   <script>
     (function () {
-      // ✅ MESMO endpoint do GS (App Web)
-      const APP_WEB_URL =
-        "https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec";
+      const SHEET_ID   = "1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4";
+      const SHEET_NAME = "FUNCIONÁRIOS";
+      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
       const filialSel       = document.getElementById('filial-folgas');
       const funcSel         = document.getElementById('funcionario-folgas');
-      const statusFunc      = document.getElementById('status-func-folga');
-
       const motivoSel       = document.getElementById('motivo-folgas');
       const dataTrabInp     = document.getElementById('dataTrabalho-folgas');
       const dataFolgaInp    = document.getElementById('dataFolga-folgas');
       const motivoOutrosDiv = document.getElementById('motivoOutros-folgas');
       const outrosMotivoInp = document.getElementById('outrosMotivo-folgas');
       const formFolgas      = document.getElementById('form-folgas');
+      const btnSubmit       = formFolgas ? formFolgas.querySelector('button[type="submit"]') : null;
 
       let funcionariosPorFilial = {};
 
-      // ---------- 1) Carregar funcionários via GS (?api=funcionarios) ----------
-      async function carregarFuncionariosViaGS() {
+      async function carregarFuncionariosDaPlanilha() {
         try {
           funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
-          funcSel.disabled = true;
 
-          const url = `${APP_WEB_URL}?api=funcionarios&_ts=${Date.now()}`;
-          const resp = await fetch(url, { method: 'GET', cache: 'no-store' });
-          const text = await resp.text();
+          const res   = await fetch(GVIZ_URL);
+          const texto = await res.text();
 
-          // Se vier HTML, é permissão/deploy
-          if (text.trim().startsWith('<')) {
-            throw new Error('O App Web não retornou JSON. Confira "Quem tem acesso: Qualquer pessoa" e se implantou nova versão.');
-          }
+          const jsonStr = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
+          const dados   = JSON.parse(jsonStr);
 
-          const json = JSON.parse(text);
+          const rows = dados.table.rows || [];
+          if (!rows.length) throw new Error("Sem linhas na aba FUNCIONÁRIOS.");
 
-          if (!json || !json.success) {
-            throw new Error(json?.message || 'Resposta inválida do servidor.');
-          }
+          const headerCells = rows[0].c;
+          const headers = headerCells.map(c => c && c.v ? String(c.v).trim() : "");
 
-          funcionariosPorFilial = json.funcionarios || {};
-          if (!Object.keys(funcionariosPorFilial).length) {
-            throw new Error('Servidor respondeu OK, mas não veio nenhum funcionário.');
-          }
+          const mapaBruto = {};
+          headers.forEach(h => { if (h) mapaBruto[h] = []; });
 
-          statusFunc.textContent = 'Funcionários carregados com sucesso.';
-          statusFunc.classList.remove('erro');
+          rows.slice(1).forEach(r => {
+            r.c.forEach((cell, idx) => {
+              const header = headers[idx];
+              if (!header) return;
+              const valor = cell && cell.v ? String(cell.v).trim() : "";
+              if (valor) mapaBruto[header].push(valor);
+            });
+          });
 
-          funcSel.disabled = false;
+          const ALIAS = {
+            "ARTUR MALHAS": "ARTUR",
+            "FLORIANO JEANS E ACESSÓRIOS": "FLORIANO",
+            "JOTA MALHAS": "JOTA",
+            "MODA JEANS E ACESSÓRIOS": "MODA",
+            "PONTO DA MALHA": "PONTO",
+            "PONTO DA MODA": "PONTO"
+          };
 
-          // se já escolheu filial, preenche
-          if (filialSel.value) atualizarFuncionariosFolgas();
+          funcionariosPorFilial = {};
+          Object.keys(mapaBruto).forEach(header => {
+            const chave = (ALIAS[header] || header).toUpperCase().trim();
+            funcionariosPorFilial[chave] = mapaBruto[header];
+          });
 
+          atualizarFuncionariosFolgas();
         } catch (err) {
-          console.error("Erro ao carregar funcionários via GS:", err);
-          statusFunc.textContent = 'ERRO ao carregar funcionários: ' + (err.message || err);
-          statusFunc.classList.add('erro');
-          funcSel.innerHTML = '<option value="">Não foi possível carregar</option>';
-          funcSel.disabled = true;
+          console.error("Erro ao carregar funcionários:", err);
+          funcSel.innerHTML = '<option value="">Erro ao carregar funcionários</option>';
         }
       }
 
       function atualizarFuncionariosFolgas() {
         const filial = (filialSel.value || "").trim().toUpperCase();
-
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
         const lista = funcionariosPorFilial[filial] || [];
@@ -231,7 +196,6 @@
         });
       }
 
-      // ---------- 2) Regras de motivo / datas ----------
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -244,11 +208,8 @@
         const dataTrabalho = new Date(dataTrabInp.value + 'T00:00:00');
         const maxDate = new Date(dataTrabalho);
 
-        if (motivo === "DOMINGO") {
-          maxDate.setDate(dataTrabalho.getDate() + 7);
-        } else if (motivo === "FERIADO" || motivo === "OUTROS") {
-          maxDate.setDate(dataTrabalho.getDate() + 60);
-        }
+        if (motivo === "DOMINGO") maxDate.setDate(dataTrabalho.getDate() + 7);
+        if (motivo === "FERIADO" || motivo === "OUTROS") maxDate.setDate(dataTrabalho.getDate() + 60);
 
         dataFolgaInp.min = dataTrabalho.toISOString().split('T')[0];
         dataFolgaInp.max = maxDate.toISOString().split('T')[0];
@@ -257,44 +218,56 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      // ---------- 3) Envio do formulário (fetch) ----------
+      // ✅ ALTERAÇÃO 2: valida a resposta do GS, não “finge” que enviou
       function configurarEnvio() {
-        formFolgas.addEventListener("submit", function (event) {
+        if (!formFolgas) return;
+
+        formFolgas.addEventListener("submit", async function (event) {
           event.preventDefault();
+
+          if (btnSubmit) btnSubmit.disabled = true;
 
           const formData = new FormData(formFolgas);
 
-          fetch(formFolgas.action, {
-            method: "POST",
-            body: formData
-          })
-          .then(r => r.text())
-          .then(() => {
+          try {
+            const resp = await fetch(formFolgas.action, {
+              method: "POST",
+              body: formData
+            });
+
+            const texto = await resp.text();
+            console.log("Resposta do App Web:", texto);
+
+            const ok = String(texto || "").toUpperCase().includes("SUCESSO");
+            if (!ok) {
+              alert("O App Web não confirmou gravação.\n\nResposta: " + texto);
+              return;
+            }
+
             alert("Folga cadastrada com sucesso!");
             formFolgas.reset();
             funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
             motivoOutrosDiv.style.display = "none";
-          })
-          .catch(() => {
+
+          } catch (e) {
+            console.error(e);
             alert("Erro ao enviar os dados!");
-          });
+          } finally {
+            if (btnSubmit) btnSubmit.disabled = false;
+          }
         });
       }
 
-      // listeners
-      filialSel.addEventListener('change', () => {
-        if (funcSel.disabled) return;
-        atualizarFuncionariosFolgas();
-      });
+      if (filialSel) filialSel.addEventListener('change', atualizarFuncionariosFolgas);
 
-      dataTrabInp.addEventListener('change', () => {
-        if (motivoSel.value !== "") verificarMotivo();
-      });
+      if (dataTrabInp && motivoSel) {
+        dataTrabInp.addEventListener('change', () => {
+          if (motivoSel.value !== "") verificarMotivo();
+        });
+        motivoSel.addEventListener('change', verificarMotivo);
+      }
 
-      motivoSel.addEventListener('change', verificarMotivo);
-
-      // init
-      carregarFuncionariosViaGS();
+      carregarFuncionariosDaPlanilha();
       configurarEnvio();
     })();
   </script>
