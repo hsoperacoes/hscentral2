@@ -8,19 +8,22 @@
   <!-- Ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-  <!-- Seu tema global (mesmo usado nas outras telas) -->
+  <!-- Seu tema global -->
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Ajustes visuais específicos desta tela -->
   <style>
     body { background: #050509; }
-    .section { display:flex; justify-content:center; align-items:flex-start; padding:40px 16px 32px; min-height:100vh; }
-    .form-container { width:100%; max-width:760px; margin:0 auto; }
-    .logo { display:block; margin:0 auto 12px; max-width:80px; }
-    h2 { text-align:center; margin-bottom:24px; }
 
-    .top-nav { width:100%; display:flex; justify-content:center; margin:24px 0 8px; }
-    .back-button {
+    .section{
+      display:flex; justify-content:center; align-items:flex-start;
+      padding:40px 16px 32px; min-height:100vh;
+    }
+    .form-container{ width:100%; max-width:760px; margin:0 auto; }
+    .logo{ display:block; margin:0 auto 12px; max-width:80px; }
+    h2{ text-align:center; margin-bottom:24px; }
+
+    .top-nav{ width:100%; display:flex; justify-content:center; margin:24px 0 8px; }
+    .back-button{
       position: static !important;
       left:auto; top:auto; transform:none;
       display:inline-flex; align-items:center; gap:8px;
@@ -33,8 +36,8 @@
       text-decoration:none;
       box-shadow:0 10px 40px rgba(15,23,42,0.6);
     }
-    .back-button i { font-size:0.85rem; }
-    .back-button:hover { background:#1f2937; }
+    .back-button i{ font-size:0.85rem; }
+    .back-button:hover{ background:#1f2937; }
   </style>
 </head>
 <body>
@@ -50,7 +53,7 @@
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
 
-      <!-- ✅ ALTERAÇÃO 1: action apontando pro GS que você mandou -->
+      <!-- ✅ action = seu App Web -->
       <form id="form-folgas" method="POST"
             action="https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec">
 
@@ -90,11 +93,7 @@
 
         <div class="form-group" id="motivoOutros-folgas" style="display: none;">
           <label for="outrosMotivo-folgas">Especificar o Motivo</label>
-          <input
-            type="text"
-            id="outrosMotivo-folgas"
-            name="outrosMotivo"
-            placeholder="Escreva o motivo">
+          <input type="text" id="outrosMotivo-folgas" name="outrosMotivo" placeholder="Escreva o motivo">
         </div>
 
         <div class="form-group">
@@ -110,13 +109,8 @@
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
   <script>
-    window.Dynamsoft = window.Dynamsoft || {};
-    Dynamsoft.DBR = Dynamsoft.DBR || {};
-    Dynamsoft.DBR.BarcodeScanner = Dynamsoft.DBR.BarcodeScanner || {};
-  </script>
-
-  <script>
     (function () {
+      // ======== A) BUSCAR FUNCIONÁRIOS DA PLANILHA (GVIZ) ========
       const SHEET_ID   = "1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4";
       const SHEET_NAME = "FUNCIONÁRIOS";
       const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
@@ -137,30 +131,35 @@
         try {
           funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
 
-          const res   = await fetch(GVIZ_URL);
+          const res = await fetch(GVIZ_URL, { method: 'GET' });
           const texto = await res.text();
 
+          // GVIZ vem como: google.visualization.Query.setResponse({...});
           const jsonStr = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
-          const dados   = JSON.parse(jsonStr);
+          const dados = JSON.parse(jsonStr);
 
-          const rows = dados.table.rows || [];
+          const rows = (dados.table && dados.table.rows) ? dados.table.rows : [];
           if (!rows.length) throw new Error("Sem linhas na aba FUNCIONÁRIOS.");
 
-          const headerCells = rows[0].c;
-          const headers = headerCells.map(c => c && c.v ? String(c.v).trim() : "");
+          // Primeira linha = cabeçalho (nomes das filiais/colunas)
+          const headerCells = rows[0].c || [];
+          const headers = headerCells.map(c => (c && c.v) ? String(c.v).trim() : "");
 
           const mapaBruto = {};
           headers.forEach(h => { if (h) mapaBruto[h] = []; });
 
+          // Demais linhas = nomes
           rows.slice(1).forEach(r => {
-            r.c.forEach((cell, idx) => {
+            const cols = r.c || [];
+            cols.forEach((cell, idx) => {
               const header = headers[idx];
               if (!header) return;
-              const valor = cell && cell.v ? String(cell.v).trim() : "";
+              const valor = (cell && cell.v) ? String(cell.v).trim() : "";
               if (valor) mapaBruto[header].push(valor);
             });
           });
 
+          // Ajusta títulos longos -> nomes curtos usados no select
           const ALIAS = {
             "ARTUR MALHAS": "ARTUR",
             "FLORIANO JEANS E ACESSÓRIOS": "FLORIANO",
@@ -176,6 +175,7 @@
             funcionariosPorFilial[chave] = mapaBruto[header];
           });
 
+          // Se já tiver filial selecionada, preenche na hora
           atualizarFuncionariosFolgas();
         } catch (err) {
           console.error("Erro ao carregar funcionários:", err);
@@ -196,6 +196,7 @@
         });
       }
 
+      // ======== B) REGRAS DE DATA/MOTIVO (igual estava) ========
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -218,18 +219,17 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      // ✅ ALTERAÇÃO 2: valida a resposta do GS, não “finge” que enviou
+      // ======== C) ENVIO DO FORM (fetch + valida retorno) ========
       function configurarEnvio() {
         if (!formFolgas) return;
 
         formFolgas.addEventListener("submit", async function (event) {
           event.preventDefault();
-
           if (btnSubmit) btnSubmit.disabled = true;
 
-          const formData = new FormData(formFolgas);
-
           try {
+            const formData = new FormData(formFolgas);
+
             const resp = await fetch(formFolgas.action, {
               method: "POST",
               body: formData
@@ -258,6 +258,7 @@
         });
       }
 
+      // ======== LISTENERS / INIT ========
       if (filialSel) filialSel.addEventListener('change', atualizarFuncionariosFolgas);
 
       if (dataTrabInp && motivoSel) {
@@ -267,7 +268,7 @@
         motivoSel.addEventListener('change', verificarMotivo);
       }
 
-      carregarFuncionariosDaPlanilha();
+      carregarFuncionariosDaPlanilha(); // já começa ao abrir
       configurarEnvio();
     })();
   </script>
