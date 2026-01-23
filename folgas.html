@@ -13,9 +13,7 @@
 
   <!-- Ajustes visuais específicos desta tela -->
   <style>
-    body {
-      background: #050509;
-    }
+    body { background: #050509; }
 
     .section {
       display: flex;
@@ -27,7 +25,7 @@
 
     .form-container {
       width: 100%;
-      max-width: 760px;   /* largura igual reserva/falta */
+      max-width: 760px;
       margin: 0 auto;
     }
 
@@ -42,7 +40,6 @@
       margin-bottom: 24px;
     }
 
-    /* ===== BARRA SUPERIOR COM BOTÃO DE VOLTAR (PADRÃO FALTA) ===== */
     .top-nav {
       width: 100%;
       display: flex;
@@ -50,7 +47,6 @@
       margin: 24px 0 8px;
     }
 
-    /* sobrescreve o .back-button antigo (fixed na esquerda) */
     .back-button {
       position: static !important;
       left: auto;
@@ -69,18 +65,19 @@
       box-shadow: 0 10px 40px rgba(15, 23, 42, 0.6);
     }
 
-    .back-button i {
-      font-size: 0.85rem;
-    }
+    .back-button i { font-size: 0.85rem; }
+    .back-button:hover { background: #1f2937; }
 
-    .back-button:hover {
-      background: #1f2937;
+    .mini-status {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #9aa0a6;
     }
+    .mini-status.erro { color: #ff6b6b; }
   </style>
 </head>
 <body>
 
-  <!-- Botão de voltar à Home igual ao das outras telas -->
   <div class="top-nav">
     <a href="index.html" class="back-button show">
       <i class="fas fa-arrow-left"></i> Voltar à Home
@@ -92,8 +89,9 @@
       <img src="logo.png" alt="Logo" class="logo">
       <h2>Cadastro de Folga Funcionários</h2>
 
+      <!-- ✅ action agora aponta pro MESMO GS que estamos trabalhando -->
       <form id="form-folgas" method="POST"
-            action="https://script.google.com/macros/s/AKfycbwh-YUwL2o3_i-bfcV9RMzLcoI98vyyGwEXf4LHlG5KJ59gIAlUe1_VVlFQMBqU6PwR/exec">
+            action="https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec">
 
         <div class="form-group">
           <label for="filial-folgas">Filial</label>
@@ -109,9 +107,10 @@
 
         <div class="form-group">
           <label for="funcionario-folgas">Funcionário</label>
-          <select id="funcionario-folgas" name="funcionario" required>
+          <select id="funcionario-folgas" name="funcionario" required disabled>
             <option value="">Carregando lista de funcionários...</option>
           </select>
+          <div id="status-func-folga" class="mini-status">Buscando funcionários na planilha...</div>
         </div>
 
         <div class="form-group">
@@ -150,7 +149,6 @@
 
   <footer>HS Operações © 2025 - Todos os direitos reservados</footer>
 
-  <!-- STUB da Dynamsoft (só pra garantir se um dia algo for chamado) -->
   <script>
     window.Dynamsoft = window.Dynamsoft || {};
     Dynamsoft.DBR = Dynamsoft.DBR || {};
@@ -159,12 +157,14 @@
 
   <script>
     (function () {
-      const SHEET_ID   = "1PqDe40nKZbslvzJhJSRAP4naHeIp1uiu1xPk1nvssb4";
-      const SHEET_NAME = "FUNCIONÁRIOS";
-      const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NAME)}`;
+      // ✅ MESMO endpoint do GS (App Web)
+      const APP_WEB_URL =
+        "https://script.google.com/macros/s/AKfycbxu_jVaotWytMOQh4UCZetFZFOxgk5ePrOkaviDd-qKNPiu2_8BjCaNczAVZzaDwAbj/exec";
 
       const filialSel       = document.getElementById('filial-folgas');
       const funcSel         = document.getElementById('funcionario-folgas');
+      const statusFunc      = document.getElementById('status-func-folga');
+
       const motivoSel       = document.getElementById('motivo-folgas');
       const dataTrabInp     = document.getElementById('dataTrabalho-folgas');
       const dataFolgaInp    = document.getElementById('dataFolga-folgas');
@@ -174,83 +174,64 @@
 
       let funcionariosPorFilial = {};
 
-      // ---------- 1. Carregar funcionários da aba FUNCIONÁRIOS ----------
-      async function carregarFuncionariosDaPlanilha() {
+      // ---------- 1) Carregar funcionários via GS (?api=funcionarios) ----------
+      async function carregarFuncionariosViaGS() {
         try {
           funcSel.innerHTML = '<option value="">Carregando funcionários...</option>';
+          funcSel.disabled = true;
 
-          const res   = await fetch(GVIZ_URL);
-          const texto = await res.text();
+          const url = `${APP_WEB_URL}?api=funcionarios&_ts=${Date.now()}`;
+          const resp = await fetch(url, { method: 'GET', cache: 'no-store' });
+          const text = await resp.text();
 
-          // remove o wrapper google.visualization.Query.setResponse(...)
-          const jsonStr = texto.substring(texto.indexOf('{'), texto.lastIndexOf('}') + 1);
-          const dados   = JSON.parse(jsonStr);
-
-          const rows = dados.table.rows || [];
-          if (!rows.length) {
-            throw new Error("Sem linhas na aba FUNCIONÁRIOS.");
+          // Se vier HTML, é permissão/deploy
+          if (text.trim().startsWith('<')) {
+            throw new Error('O App Web não retornou JSON. Confira "Quem tem acesso: Qualquer pessoa" e se implantou nova versão.');
           }
 
-          // primeira linha = cabeçalho (nomes das filiais)
-          const headerCells = rows[0].c;
-          const headers = headerCells.map(c =>
-            c && c.v ? String(c.v).trim() : ""
-          );
+          const json = JSON.parse(text);
 
-          const mapaBruto = {};
-          headers.forEach(h => {
-            if (h) mapaBruto[h] = [];
-          });
+          if (!json || !json.success) {
+            throw new Error(json?.message || 'Resposta inválida do servidor.');
+          }
 
-          // demais linhas = nomes dos funcionários
-          rows.slice(1).forEach(r => {
-            r.c.forEach((cell, idx) => {
-              const header = headers[idx];
-              if (!header) return;
-              const valor = cell && cell.v ? String(cell.v).trim() : "";
-              if (valor) mapaBruto[header].push(valor);
-            });
-          });
+          funcionariosPorFilial = json.funcionarios || {};
+          if (!Object.keys(funcionariosPorFilial).length) {
+            throw new Error('Servidor respondeu OK, mas não veio nenhum funcionário.');
+          }
 
-          // mapeia nomes da planilha para códigos das filiais
-          const ALIAS = {
-            "ARTUR MALHAS": "ARTUR",
-            "FLORIANO JEANS E ACESSÓRIOS": "FLORIANO",
-            "JOTA MALHAS": "JOTA",
-            "MODA JEANS E ACESSÓRIOS": "MODA",
-            "PONTO DA MALHA": "PONTO"
-          };
+          statusFunc.textContent = 'Funcionários carregados com sucesso.';
+          statusFunc.classList.remove('erro');
 
-          funcionariosPorFilial = {};
-          Object.keys(mapaBruto).forEach(header => {
-            const chave = ALIAS[header] || header; // se título já for ARTUR, usa direto
-            funcionariosPorFilial[chave] = mapaBruto[header];
-          });
+          funcSel.disabled = false;
 
-          atualizarFuncionariosFolgas();
+          // se já escolheu filial, preenche
+          if (filialSel.value) atualizarFuncionariosFolgas();
+
         } catch (err) {
-          console.error("Erro ao carregar funcionários:", err);
-          funcSel.innerHTML = '<option value="">Erro ao carregar funcionários</option>';
+          console.error("Erro ao carregar funcionários via GS:", err);
+          statusFunc.textContent = 'ERRO ao carregar funcionários: ' + (err.message || err);
+          statusFunc.classList.add('erro');
+          funcSel.innerHTML = '<option value="">Não foi possível carregar</option>';
+          funcSel.disabled = true;
         }
       }
 
       function atualizarFuncionariosFolgas() {
-        if (!filialSel || !funcSel) return;
+        const filial = (filialSel.value || "").trim().toUpperCase();
 
-        const filial = (filialSel.value || "").trim();
         funcSel.innerHTML = '<option value="">Selecione um funcionário</option>';
 
-        if (funcionariosPorFilial[filial] && Array.isArray(funcionariosPorFilial[filial])) {
-          funcionariosPorFilial[filial].forEach(nome => {
-            const opt = document.createElement('option');
-            opt.value = nome;
-            opt.textContent = nome;
-            funcSel.appendChild(opt);
-          });
-        }
+        const lista = funcionariosPorFilial[filial] || [];
+        lista.forEach(nome => {
+          const opt = document.createElement('option');
+          opt.value = nome;
+          opt.textContent = nome;
+          funcSel.appendChild(opt);
+        });
       }
 
-      // ---------- 2. Regras de motivo / datas ----------
+      // ---------- 2) Regras de motivo / datas ----------
       function verificarMotivo() {
         const motivo = motivoSel.value;
 
@@ -276,19 +257,18 @@
         outrosMotivoInp.required = (motivo === "OUTROS");
       }
 
-      // ---------- 3. Envio do formulário ----------
+      // ---------- 3) Envio do formulário (fetch) ----------
       function configurarEnvio() {
-        if (!formFolgas) return;
-
         formFolgas.addEventListener("submit", function (event) {
           event.preventDefault();
+
           const formData = new FormData(formFolgas);
 
           fetch(formFolgas.action, {
             method: "POST",
             body: formData
           })
-          .then(response => response.text())
+          .then(r => r.text())
           .then(() => {
             alert("Folga cadastrada com sucesso!");
             formFolgas.reset();
@@ -301,19 +281,20 @@
         });
       }
 
-      // listeners básicos
-      if (filialSel) {
-        filialSel.addEventListener('change', atualizarFuncionariosFolgas);
-      }
-      if (dataTrabInp && motivoSel) {
-        dataTrabInp.addEventListener('change', () => {
-          if (motivoSel.value !== "") verificarMotivo();
-        });
-        motivoSel.addEventListener('change', verificarMotivo);
-      }
+      // listeners
+      filialSel.addEventListener('change', () => {
+        if (funcSel.disabled) return;
+        atualizarFuncionariosFolgas();
+      });
 
-      // inicialização
-      carregarFuncionariosDaPlanilha();
+      dataTrabInp.addEventListener('change', () => {
+        if (motivoSel.value !== "") verificarMotivo();
+      });
+
+      motivoSel.addEventListener('change', verificarMotivo);
+
+      // init
+      carregarFuncionariosViaGS();
       configurarEnvio();
     })();
   </script>
